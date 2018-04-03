@@ -8,14 +8,18 @@
     <label for="annualExpenses">Annual Expenses</label>
     <input
       [(ngModel)]="annualExpenses"
-      type="number" step="10000" class="form-control" id="annualExpenses" aria-describedby="annualExpensesHelp" placeholder="30000">
+      type="number" step="5000" class="form-control" id="annualExpenses" aria-describedby="annualExpensesHelp" placeholder="30000">
     <small id="annualExpensesHelp" class="form-text text-muted">The average amount spent per year</small>
   </div>
   <div class="form-group">
-    <label for="netWorth">Annual Expenses</label>
+    <label for="netWorth">Net Worth</label>
     <input
       [(ngModel)]="netWorth"
       type="number" step="10000" class="form-control" id="netWorth" aria-describedby="netWorthHelp" placeholder="150000">
     <small id="netWorthHelp" class="form-text text-muted">Your total Net Worth</small>
   </div>
 </div>
+<app-milestones-chart
+  [netWorth]="netWorth"
+  [annualExpenses]="annualExpenses">
+</app-milestones-chart>
