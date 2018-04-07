@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
 import { MilestonesModule } from './milestones/milestones.module';
+import { YnabModule } from './ynab/ynab.module';
 
 
 @NgModule({
@@ -11,7 +12,8 @@ import { MilestonesModule } from './milestones/milestones.module';
   ],
   imports: [
     BrowserModule,
-    MilestonesModule
+    MilestonesModule,
+    YnabModule
   ],
   providers: [],
   bootstrap: [AppComponent]
