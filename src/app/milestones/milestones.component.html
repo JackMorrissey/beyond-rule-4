@@ -20,9 +20,16 @@
   </div>
 </div> -->
 
-<app-milestones-chart
-[forecast]="forecast"
-[milestones]="milestones">
-</app-milestones-chart>
+<div class="row">
+  <app-milestones-chart
+    class="milestones-chart col-sm"
+    [forecast]="forecast"
+    [milestones]="milestones">
+  </app-milestones-chart>
+</div>
+<div class="row">
+  <div>
+    <pre>{{forecast | json}}</pre>
+  </div>
+</div>
 
-<pre>{{forecast | json}}</pre>

@@ -1,3 +1,19 @@
-<div>
-  <nvd3 [options]="options" [data]="data"></nvd3>
+<div #chartContainer class="chart-container">
+  <ngx-charts-line-chart
+    [view]="view"
+    [scheme]="colorScheme"
+    [results]="data"
+    [gradient]="gradient"
+    [xAxis]="showXAxis"
+    [yAxis]="showYAxis"
+    [legend]="showLegend"
+    [showXAxisLabel]="showXAxisLabel"
+    [showYAxisLabel]="showYAxisLabel"
+    [referenceLines]="referenceLines"
+    [showRefLines]="'true'"
+    [xAxisLabel]="xAxisLabel"
+    [yAxisLabel]="yAxisLabel"
+    [autoScale]="true"
+    (select)="onSelect($event)">
+  </ngx-charts-line-chart>
 </div>

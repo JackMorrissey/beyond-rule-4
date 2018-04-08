@@ -9,6 +9,7 @@ export class Forecast {
 export class MonthlyForecast {
   monthIndex: number;
   netWorth: number;
+  lastMonthNetWorth: number;
   contribution: number;
   interestGains: number;
   timesAnnualExpenses: number;

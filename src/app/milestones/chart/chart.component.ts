@@ -1,4 +1,7 @@
-import { Component, OnInit, ViewEncapsulation, Input, OnChanges, SimpleChanges } from '@angular/core';
+import {
+  Component, OnInit, ViewEncapsulation, Input, OnChanges, SimpleChanges,
+  AfterContentInit, ElementRef, ViewChild
+} from '@angular/core';
 import { CalculateInput } from '../../models/calculate-input.model';
 import { Forecast, MonthlyForecast } from '../../models/forecast.model';
 import { Milestones } from '../milestone.model';
@@ -9,50 +12,44 @@ declare let d3: any;
   selector: 'app-milestones-chart',
   templateUrl: './chart.component.html',
   styleUrls: [
-    '../../../../node_modules/nvd3/build/nv.d3.css',
     './chart.component.css'
   ],
   encapsulation: ViewEncapsulation.None
 })
-export class ChartComponent implements OnInit, OnChanges {
+export class ChartComponent implements OnInit, AfterContentInit, OnChanges {
+  @ViewChild('chartContainer') elementView: ElementRef;
 
-  options;
-  data;
+  data: any[];
+
+  view: any[];
+
+  // options
+  showXAxis = true;
+  showYAxis = true;
+  gradient = false;
+  showLegend = true;
+  showXAxisLabel = true;
+  xAxisLabel = 'Time';
+  showYAxisLabel = true;
+  yAxisLabel = 'Net Worth';
+  referenceLines: any[];
+
+  colorScheme = {
+    domain: ['#5AA454', '#A10A28', '#C7B42C', '#AAAAAA']
+  };
+
+  // line, area
+  autoScale = true;
 
   @Input() forecast: Forecast;
   @Input() milestones: Milestones;
 
-
-  constructor() { }
-
   ngOnInit() {
-    this.options = {
-      chart: {
-        type: 'discreteBarChart',
-        height: 450,
-        margin : {
-          top: 20,
-          right: 20,
-          bottom: 50,
-          left: 55
-        },
-        x: function(d) {return d.label; },
-        y: function(d) {return d.value; },
-        showValues: true,
-        valueFormat: function(d) {
-          return d3.format('.4s')(d);
-        },
-        duration: 500,
-        xAxis: {
-          axisLabel: 'Time'
-        },
-        yAxis: {
-          axisLabel: 'Portfolio Value',
-          axisLabelDistance: -0
-        }
-      }
-    };
     this.calculateData();
+  }
+
+  ngAfterContentInit () {
+    this.view = [this.elementView.nativeElement.offsetWidth, this.elementView.nativeElement.offsetHeight];
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -64,19 +61,49 @@ export class ChartComponent implements OnInit, OnChanges {
       return;
     }
 
-    const values = this.milestones.milestones.map((milestone => {
+    const milestones = this.milestones.milestones.map((milestone => {
       return {
-        label: milestone.label,
+        name: milestone.label,
         value: milestone.value
       };
     }));
 
+    const netWorth = this.forecast.monthlyForecasts.map((monthForecast) => {
+      return {
+        name: monthForecast.monthIndex,
+        value: monthForecast.netWorth
+      };
+    });
+
+    const contributions = this.forecast.monthlyForecasts.map((monthForecast) => {
+      return {
+        name: monthForecast.monthIndex,
+        value: monthForecast.totalContributions
+      };
+    });
+
+    const interest = this.forecast.monthlyForecasts.map((monthForecast) => {
+      return {
+        name: monthForecast.monthIndex,
+        value: monthForecast.totalInterestGains
+      };
+    });
+
     this.data = [
       {
-        key: 'Cumulative Return',
-        values: values
+        name: 'Net Worth',
+        series: netWorth
+      },
+      {
+        name: 'Contributions',
+        series: contributions
+      },
+      {
+        name: 'Interest',
+        series: interest
       }
     ];
+    this.referenceLines = milestones;
   }
 
 }

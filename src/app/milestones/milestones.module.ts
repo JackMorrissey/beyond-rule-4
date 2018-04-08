@@ -1,10 +1,8 @@
-import 'd3';
-import 'nvd3';
-
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { NvD3Module } from 'ng2-nvd3';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { MilestonesComponent } from './milestones.component';
 import { ChartComponent } from './chart/chart.component';
@@ -13,7 +11,8 @@ import { ChartComponent } from './chart/chart.component';
   imports: [
     CommonModule,
     FormsModule,
-    NvD3Module
+    BrowserAnimationsModule,
+    NgxChartsModule
   ],
   declarations: [
     MilestonesComponent,

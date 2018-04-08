@@ -49,6 +49,7 @@ export class MilestonesComponent implements OnInit {
     const monthlyForecasts = [new MonthlyForecast({
       monthIndex: 0,
       netWorth: startingNetWorth,
+      lastMonthNetWorth: 0,
       contribution: 0,
       interestGains: 0,
       timesAnnualExpenses: round(startingNetWorth / annualExpenses),
@@ -66,6 +67,7 @@ export class MilestonesComponent implements OnInit {
       monthlyForecasts.push(new MonthlyForecast({
         monthIndex: month,
         netWorth: newNetWorth,
+        lastMonthNetWorth: currentNetWorth,
         contribution: contribution,
         interestGains: interestGain,
         timesAnnualExpenses: timesAnnualExpenses,
