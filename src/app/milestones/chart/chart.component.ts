@@ -1,4 +1,8 @@
 import { Component, OnInit, ViewEncapsulation, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { CalculateInput } from '../../models/calculate-input.model';
+import { Forecast, MonthlyForecast } from '../../models/forecast.model';
+import { Milestones } from '../milestone.model';
+
 declare let d3: any;
 
 @Component({
@@ -15,8 +19,8 @@ export class ChartComponent implements OnInit, OnChanges {
   options;
   data;
 
-  @Input() netWorth;
-  @Input() annualExpenses;
+  @Input() forecast: Forecast;
+  @Input() milestones: Milestones;
 
 
   constructor() { }
@@ -56,38 +60,21 @@ export class ChartComponent implements OnInit, OnChanges {
   }
 
   private calculateData() {
-    if (!this.annualExpenses || !this.netWorth) {
+    if (!this.forecast || !this.milestones) {
       return;
     }
+
+    const values = this.milestones.milestones.map((milestone => {
+      return {
+        label: milestone.label,
+        value: milestone.value
+      };
+    }));
+
     this.data = [
       {
         key: 'Cumulative Return',
-        values: [
-          {
-            'label' : 'FU$ (2.5x)' ,
-            'value' : this.annualExpenses * 2.5
-          } ,
-          {
-            'label' : 'Half FI' ,
-            'value' : this.annualExpenses * 12.5
-          } ,
-          {
-            'label' : 'Lean FI' ,
-            'value' : this.annualExpenses * 0.7 * 25
-          } ,
-          {
-            'label' : 'Flex FI' ,
-            'value' : this.annualExpenses * 20
-          } ,
-          {
-            'label' : 'FI' ,
-            'value' : this.annualExpenses * 25
-          } ,
-          {
-            'label' : 'Fat FI' ,
-            'value' : this.annualExpenses * 30
-          }
-        ]
+        values: values
       }
     ];
   }
