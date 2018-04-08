@@ -1,9 +1,11 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
+import { ForecastingModule } from './forecasting/forecasting.module';
+
 import { AppComponent } from './app.component';
-import { MilestonesModule } from './milestones/milestones.module';
-import { YnabModule } from './ynab/ynab.module';
+
+
 
 
 @NgModule({
@@ -12,8 +14,7 @@ import { YnabModule } from './ynab/ynab.module';
   ],
   imports: [
     BrowserModule,
-    MilestonesModule,
-    YnabModule
+    ForecastingModule
   ],
   providers: [],
   bootstrap: [AppComponent]
