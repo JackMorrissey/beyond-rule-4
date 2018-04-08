@@ -1,9 +1,9 @@
 import { Component, OnInit, Input } from '@angular/core';
 
-import { round } from '../utilities/number-utility';
+import { round } from '../../utilities/number-utility';
 
-import { CalculateInput } from '../models/calculate-input.model';
-import { Forecast, MonthlyForecast } from '../models/forecast.model';
+import { CalculateInput } from '../../models/calculate-input.model';
+import { Forecast, MonthlyForecast } from '../../models/forecast.model';
 import { Milestones } from './milestone.model';
 
 @Component({

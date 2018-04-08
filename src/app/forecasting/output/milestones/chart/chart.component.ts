@@ -2,8 +2,8 @@ import {
   Component, OnInit, ViewEncapsulation, Input, OnChanges, SimpleChanges,
   AfterContentInit, ElementRef, ViewChild
 } from '@angular/core';
-import { CalculateInput } from '../../models/calculate-input.model';
-import { Forecast, MonthlyForecast } from '../../models/forecast.model';
+import { CalculateInput } from '../../../models/calculate-input.model';
+import { Forecast, MonthlyForecast } from '../../../models/forecast.model';
 import { Milestones } from '../milestone.model';
 
 declare let d3: any;

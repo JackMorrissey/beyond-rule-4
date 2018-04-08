@@ -1,13 +1,13 @@
 import { NgModule } from '@angular/core';
-import { MilestonesModule } from './milestones/milestones.module';
-import { YnabModule } from './ynab/ynab.module';
+import { InputModule } from './input/input.module';
+import { OutputModule } from './output/output.module';
 
 import { ForecastingComponent } from './forecasting.component';
 
 @NgModule({
   imports: [
-    MilestonesModule,
-    YnabModule
+    InputModule,
+    OutputModule
   ],
   exports: [ForecastingComponent],
   declarations: [ForecastingComponent],

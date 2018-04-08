@@ -1,4 +1,4 @@
-import { round } from '../utilities/number-utility';
+import { round } from '../../utilities/number-utility';
 
 export class Milestones {
   milestones: Milestone[];
