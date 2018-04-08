@@ -1,1 +1,18 @@
-Basic Input
+<h3>Basic Info</h3>
+<form [formGroup]="basicInputForm" (ngSubmit)="onSubmit(basicInputForm)">
+  <div class="form-group">
+      <label for="netWorth">Net Worth</label>
+      <input
+        formControlName="netWorth"
+        type="number" step="10000" class="form-control" id="netWorth" aria-describedby="netWorthHelp" placeholder="150000">
+      <small id="netWorthHelp" class="form-text text-muted">Current total Net Worth <a href="http://www.mrmoneymustache.com/2015/01/26/calculating-net-worth/">Calculating Net Worth</a></small>
+    </div>
+    <div class="form-group">
+      <label for="annualExpenses">Annual Expenses</label>
+      <input
+        formControlName="annualExpenses"
+        type="number" step="5000" class="form-control" id="annualExpenses" aria-describedby="annualExpensesHelp" placeholder="30000">
+      <small id="annualExpensesHelp" class="form-text text-muted">The average amount spent per year</small>
+    </div>
+    <button type="submit">Update</button>
+</form>

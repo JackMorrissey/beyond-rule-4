@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, EventEmitter, Input, Output } from '@angular/core';
+
+import { CalculateInput } from '../models/calculate-input.model';
 
 @Component({
   selector: 'app-forecasting-input',
@@ -6,7 +8,25 @@ import { Component, OnInit } from '@angular/core';
 })
 
 export class ForecastingInputComponent implements OnInit {
-  constructor() { }
+  calculateInput: CalculateInput;
+  @Output() calculateInputChange = new EventEmitter<CalculateInput>();
 
-  ngOnInit() { }
+  constructor() {
+    const input = new CalculateInput();
+    input.annualExpenses = 30000;
+    input.annualSafeWithdrawalRate = 0.04;
+    input.expectedAnnualGrowthRate = 0.08;
+    input.leanFiPercentage = 0.7;
+    input.netWorth = 300000;
+    input.monthlyContribution = 3000;
+    this.calculateInput = input;
+  }
+
+  ngOnInit() {
+    this.calculateInputChange.emit(this.calculateInput);
+  }
+
+  onCalculateInputChange($event) {
+    this.calculateInputChange.emit($event);
+  }
 }

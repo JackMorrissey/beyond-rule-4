@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
+
+import { CalculateInput } from '../models/calculate-input.model';
 
 @Component({
   selector: 'app-forecasting-output',
@@ -6,6 +8,7 @@ import { Component, OnInit } from '@angular/core';
 })
 
 export class ForecastingOutputComponent implements OnInit {
+  @Input() calculateInput: CalculateInput;
   constructor() { }
 
   ngOnInit() { }

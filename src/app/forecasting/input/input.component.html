@@ -1,1 +1,5 @@
-<app-basic-input></app-basic-input>
+<app-basic-input
+  *ngIf="calculateInput"
+  [calculateInput]="calculateInput"
+  (calculateInputChange)="onCalculateInputChange($event)">
+</app-basic-input>
