@@ -19,12 +19,12 @@ export class MilestonesComponent implements OnInit {
 
   constructor() {
     const input = new CalculateInput();
-    input.annualExpenses = 25000;
-    input.annualSafeWithdrawlRate = 0.03;
+    input.annualExpenses = 28000;
+    input.annualSafeWithdrawalRate = 0.04;
     input.expectedAnnualGrowthRate = 0.08;
     input.leanFiPercentage = 0.7;
-    input.netWorth = 150000;
-    input.monthlyContribution = 2000;
+    input.netWorth = 155000;
+    input.monthlyContribution = 3000;
     this.calculateInput = input;
   }
 
@@ -33,9 +33,9 @@ export class MilestonesComponent implements OnInit {
   }
 
   calculate() {
-    const fiNumber = 1 / this.calculateInput.annualSafeWithdrawlRate * this.calculateInput.annualExpenses;
+    const fiNumber = 1 / this.calculateInput.annualSafeWithdrawalRate * this.calculateInput.annualExpenses;
     this.milestones = new Milestones(fiNumber, this.calculateInput.leanFiPercentage);
-    const stopForecastingAmount = fiNumber * 1.2; // default to Fat FI.
+    const stopForecastingAmount = fiNumber * 1.3; // default to ludicrous Fi.
     this.forecast = this.getForecast(stopForecastingAmount);
   }
 
@@ -56,7 +56,7 @@ export class MilestonesComponent implements OnInit {
       totalContributions: totalContributions,
       totalInterestGains: 0
     })];
-    while (currentNetWorth < stopForecastingAmount && month < 500) {
+    while (currentNetWorth < stopForecastingAmount && month < 1000) {
       const contribution = this.calculateInput.monthlyContribution;
       const newNetWorth = round(((currentNetWorth + contribution) * 100 * monthlyAverageGrowth) / 100);
       const interestGain = round(newNetWorth - currentNetWorth - contribution);
