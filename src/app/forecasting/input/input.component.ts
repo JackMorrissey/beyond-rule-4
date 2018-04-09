@@ -14,11 +14,9 @@ export class ForecastingInputComponent implements OnInit {
   constructor() {
     const input = new CalculateInput();
     input.annualExpenses = 30000;
-    input.annualSafeWithdrawalRate = 0.04;
-    input.expectedAnnualGrowthRate = 0.08;
     input.leanFiPercentage = 0.7;
-    input.netWorth = 300000;
-    input.monthlyContribution = 3000;
+    input.netWorth = 100000;
+    input.monthlyContribution = 1500;
     this.calculateInput = input;
   }
 

@@ -29,7 +29,7 @@ export class ChartComponent implements OnInit, AfterContentInit, OnChanges {
   gradient = true;
   showLegend = true;
   showXAxisLabel = true;
-  timeline = true;
+  timeline = false;
   xAxisLabel = 'Date';
   showYAxisLabel = true;
   yAxisLabel = 'Net Worth';
