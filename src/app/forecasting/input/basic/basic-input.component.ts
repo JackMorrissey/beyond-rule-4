@@ -40,7 +40,7 @@ export class BasicInputComponent implements OnInit, OnChanges {
   }
 
   onFormChanges(): void {
-    const debounced = this.basicInputForm.valueChanges.pipe(debounce(() => timer(500)));
+    const debounced = this.basicInputForm.valueChanges.pipe(debounce(() => timer(300)));
     debounced.subscribe(val => {
       if (this.basicInputForm.valid && !this.basicInputForm.pristine) {
         const formValues = JSON.stringify(val);
@@ -58,7 +58,7 @@ export class BasicInputComponent implements OnInit, OnChanges {
     result.expectedAnnualGrowthRate /= 100;
     result.annualSafeWithdrawalRate /= 100;
     result.leanFiPercentage /= 100;
-    result.round();
+    result.roundAll();
     return result;
   }
 
@@ -67,7 +67,7 @@ export class BasicInputComponent implements OnInit, OnChanges {
     result.expectedAnnualGrowthRate *= 100;
     result.annualSafeWithdrawalRate *= 100;
     result.leanFiPercentage *= 100;
-    result.round();
+    result.roundAll();
     return result;
   }
 }

@@ -61,13 +61,13 @@ export class ChartComponent implements OnInit, AfterContentInit, OnChanges {
   }
 
   onSelect($event) {
-    console.log($event);
+
   }
 
   getToolTipDate(tooltipItem: any) {
     const forecastDate: Date = tooltipItem.name;
-    const date = forecastDate.toLocaleString('en-us', {month: 'long', year: 'numeric'});
-    const distance = this.getToolTipDistance(forecastDate);
+    const date = forecastDate.toDateString();
+    const distance = this.forecast.getDistanceFromFirstMonthText(forecastDate);
     if (!distance) {
       return date;
     }
@@ -86,35 +86,6 @@ export class ChartComponent implements OnInit, AfterContentInit, OnChanges {
       result += tooltipItem.value.toLocaleString();
     }
     return result;
-  }
-
-  private getToolTipDistance(forecastDate: Date): string {
-    let monthDifference =
-      ((forecastDate.getFullYear() - this.dateNow.getFullYear()) * 12)
-      + (forecastDate.getMonth() - this.dateNow.getMonth());
-
-    if (monthDifference === 0) {
-      return;
-    }
-
-    const inPast = monthDifference < 0;
-    monthDifference = Math.abs(monthDifference);
-
-    const months = monthDifference % 12;
-    const years = (monthDifference - months) / 12;
-    const difference = this.getTimeString(years, 'year') + this.getTimeString(months, 'month');
-    const suffix = inPast ? 'ago' : '';
-    return difference + suffix;
-  }
-
-  private getTimeString(timeDifference: number, unit: string): string {
-    if (timeDifference === 0) {
-      return '';
-    }
-    if (timeDifference === 1) {
-      return `1 ${unit} `;
-    }
-    return `${timeDifference} ${unit}s `;
   }
 
   private calculateData() {

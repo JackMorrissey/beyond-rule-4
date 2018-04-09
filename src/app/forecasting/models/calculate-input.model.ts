@@ -14,14 +14,14 @@ export class CalculateInput {
       leanFiPercentage: 0.7,
       expectedAnnualGrowthRate: 0.07,
     }, init);
-    this.round();
+    this.roundAll();
   }
 
-  public round() {
+  public roundAll() {
     this.netWorth = round(this.netWorth);
     this.annualExpenses = round(this.annualExpenses);
-    this.annualSafeWithdrawalRate = round(this.annualSafeWithdrawalRate);
-    this.expectedAnnualGrowthRate = round(this.expectedAnnualGrowthRate);
+    this.annualSafeWithdrawalRate = round(this.annualSafeWithdrawalRate, 4);
+    this.expectedAnnualGrowthRate = round(this.expectedAnnualGrowthRate, 4);
     this.monthlyContribution = round(this.monthlyContribution);
     this.leanFiPercentage = round(this.leanFiPercentage);
   }

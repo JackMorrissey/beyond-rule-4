@@ -1,0 +1,15 @@
+<h3>Results</h3>
+<p class="border border-primary rounded text-center">{{fiDate}} • {{dateDistance}}</p>
+<p>
+  At a safe withdrawal rate of {{calculateInput.annualSafeWithdrawalRate * 100}}%,
+  Financial Independence is reached at a Net Worth of {{safeWithdrawalTimes}} times annual expenses.
+</p>
+<p>
+  With annual expenses of {{calculateInput.annualExpenses | number}},
+  we're aiming for a Net Worth of {{fiNumber | number}}.
+</p>
+<p>
+  That Net Worth is forecasted to be {{fiDate}}; {{dateDistance}} from the first month.
+  By that point, Net Worth is at {{fiMonthForecast.netWorth | number}}.
+  Of that total, contributions account for {{fiMonthForecast.totalContributions | number}} while {{fiMonthForecast.totalInterestGains | number}} was gained from interest.
+</p>
