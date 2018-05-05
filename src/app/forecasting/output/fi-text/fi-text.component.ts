@@ -15,6 +15,7 @@ export class FiTextComponent implements OnInit, OnChanges {
   @Input() forecast: Forecast;
 
   safeWithdrawalTimes: number;
+  safeWithdrawalRate: number;
   fiNumber: number;
   fiMonthForecast: MonthlyForecast;
   fiDate: string;
@@ -31,6 +32,7 @@ export class FiTextComponent implements OnInit, OnChanges {
   calculate() {
     const safeWithdrawalTimes = 1 / this.calculateInput.annualSafeWithdrawalRate;
     this.safeWithdrawalTimes = round(safeWithdrawalTimes);
+    this.safeWithdrawalRate = round(this.calculateInput.annualSafeWithdrawalRate * 100);
     const fiNumber = round(safeWithdrawalTimes * this.calculateInput.annualExpenses);
     this.fiNumber = fiNumber;
     const foundFiForecast = this.forecast.monthlyForecasts.find(f => f.netWorth >= fiNumber);
