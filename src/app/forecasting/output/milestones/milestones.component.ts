@@ -19,7 +19,6 @@ export class MilestonesComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-    // this.calculate();
   }
 
   ngOnChanges(changes: SimpleChanges) {

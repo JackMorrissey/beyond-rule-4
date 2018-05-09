@@ -7,14 +7,13 @@ import * as ynab from 'ynab';
 
 import { devAccessToken } from './token.secret';
 import { SampleData } from './sample-data.secret';
-import { BudgetSummary, MonthSummary } from 'ynab';
 
 
 @Injectable()
 export class YnabService {
   private ynabApi: ynab.api;
 
-  private useSampleData = true;
+  private useSampleData = false;
 
   constructor(private http: Http) {
     this.ynabApi = new ynab.api(devAccessToken);
@@ -36,6 +35,15 @@ export class YnabService {
 
     const months = await this.ynabApi.months.getBudgetMonths(budgetId);
     return months.data.months;
+  }
+
+  async getMonth(budgetId: string, budgetMonth: Date | 'current'): Promise<ynab.MonthDetail> {
+    if (this.useSampleData) {
+      return SampleData.Month;
+    }
+
+    const month = await this.ynabApi.months.getBudgetMonth(budgetId, budgetMonth);
+    return month.data.month;
   }
 
   async getAccounts(budgetId: string): Promise<ynab.Account[]> {

@@ -1,14 +1,17 @@
 import { NgModule } from '@angular/core';
-import { SharedModule } from '../../shared.module';
 import { ReactiveFormsModule } from '@angular/forms';
+import { SharedModule } from '../../shared.module';
+
+import { YnabModule } from './ynab/ynab.module';
 
 import { ForecastingInputComponent } from './input.component';
 import { BasicInputComponent } from './basic/basic-input.component';
 
 @NgModule({
   imports: [
+    ReactiveFormsModule,
     SharedModule,
-    ReactiveFormsModule
+    YnabModule,
   ],
   exports: [ForecastingInputComponent],
   declarations: [
