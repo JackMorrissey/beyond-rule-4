@@ -13,7 +13,7 @@ import { SampleData } from './sample-data.secret';
 export class YnabService {
   private ynabApi: ynab.api;
 
-  private useSampleData = false;
+  private useSampleData = true;
 
   constructor(private http: Http) {
     this.ynabApi = new ynab.api(devAccessToken);
@@ -53,5 +53,14 @@ export class YnabService {
 
     const accounts = await this.ynabApi.accounts.getAccounts(budgetId);
     return accounts.data.accounts;
+  }
+
+  async getCategoryGroupsWithCategories(budgetId: string): Promise<ynab.CategoryGroupWithCategories[]> {
+    if (this.useSampleData) {
+      return SampleData.CategoryGroupsWithCategories;
+    }
+
+    const categories = await this.ynabApi.categories.getCategories(budgetId);
+    return categories.data.category_groups;
   }
 }

@@ -14,4 +14,10 @@
 <div>Estimated Annual Expenses</div>
 <div>{{ annualExpenses }}</div>
 
-<pre>{{currentMonth | json}}</pre>
+
+<div *ngFor="let categoryGroup of categoriesDisplay">
+  <h3>{{categoryGroup.name}}</h3>
+  <div *ngFor="let category of categoryGroup.categories">
+    {{category | json}}
+  </div>
+</div>

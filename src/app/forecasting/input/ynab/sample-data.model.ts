@@ -4,4 +4,5 @@ export interface YnabSampleData {
   Accounts: ynab.Account[];
   Months: ynab.MonthSummary[];
   Month: ynab.MonthDetail;
+  CategoryGroupsWithCategories: ynab.CategoryGroupWithCategories[];
 }
