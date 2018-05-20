@@ -24,10 +24,13 @@ export class YnabComponent implements OnInit {
   public annualExpenses: number;
   public categoriesDisplay: any;
 
-  private ignoredMasterCategories = [
+  private hiddenMasterCategories = [
     'Credit Card Payments',
     'Internal Master Category',
+  ];
+  private ignoredMasterCategories = [
     'Financial Independence',
+    ...this.hiddenMasterCategories,
   ];
 
   constructor(private ynabService: YnabService) { }
@@ -62,7 +65,6 @@ export class YnabComponent implements OnInit {
   private getMonthlyExpenses(categoriesDisplay) {
     const expenses = categoriesDisplay.map(categoryGroup => {
       return categoryGroup.categories.map(category => {
-        console.log(category);
         return category.budgeted;
       }).reduce((prev, next) => {
         return prev + next;
@@ -93,12 +95,20 @@ export class YnabComponent implements OnInit {
     }
     const categories = categoryGroupsWithCategories.map(c => {
       const childrenIgnore = c.hidden || this.ignoredMasterCategories.includes(c.name);
+      const mappedCategories = c.categories.map(ca => this.mapCategory(ca, childrenIgnore, monthDetail));
+      const hidden = c.hidden || this.hiddenMasterCategories.includes(c.name) || mappedCategories.every(mc => mc.hidden);
       return {
         name: c.name,
-        hidden: c.hidden,
         id: c.id,
-        categories: c.categories.map(ca => this.mapCategory(ca, childrenIgnore, monthDetail))
+        hidden,
+        categories: mappedCategories
       };
+    });
+    categories.sort((a, b) => {
+      if (a.hidden === b.hidden) { return -1; }
+      if (a.hidden) { return 1; }
+      if (b.hidden) { return -1; }
+      return 0;
     });
     return categories;
   }

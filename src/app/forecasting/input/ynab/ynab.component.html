@@ -14,10 +14,26 @@
 <div>Estimated Annual Expenses</div>
 <div>{{ annualExpenses }}</div>
 
-
-<div *ngFor="let categoryGroup of categoriesDisplay">
-  <h3>{{categoryGroup.name}}</h3>
-  <div *ngFor="let category of categoryGroup.categories">
-    {{category | json}}
-  </div>
-</div>
+<table class="table .thead-light">
+  <thead>
+    <tr>
+      <th>Category</th>
+      <th>YNAB Budgeted</th>
+      <th>Budgeted</th>
+    </tr>
+  </thead>
+  <tbody>
+  <ng-container *ngFor="let categoryGroup of categoriesDisplay">
+    <tr>
+      <th colspan="3">{{categoryGroup.name}}</th>
+    </tr>
+    <tr *ngFor="let category of categoryGroup.categories">
+      <td>{{category.name}}</td>
+      <td>{{category.retrievedBudgeted}}</td>
+      <td>
+        <input [value]="category.budgeted" />
+      </td>
+    </tr>
+  </ng-container>
+  </tbody>
+</table>
