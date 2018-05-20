@@ -3,6 +3,7 @@ import * as ynab from 'ynab';
 
 import { YnabService } from './ynab.service';
 import { CalculateInput } from '../../models/calculate-input.model';
+import { round } from '../../utilities/number-utility';
 
 @Component({
   selector: 'app-ynab',
@@ -73,7 +74,7 @@ export class YnabComponent implements OnInit {
       return prev + next;
     });
 
-    return ynab.utils.convertMilliUnitsToCurrencyAmount(expenses);
+    return round(expenses);
   }
 
   private getNetWorth(allAccounts: ynab.Account[]) {
@@ -116,7 +117,7 @@ export class YnabComponent implements OnInit {
   private mapCategory(category: ynab.Category, childrenIgnore: boolean, monthDetail: ynab.MonthDetail) {
     const ignore = childrenIgnore || category.hidden;
     const found = monthDetail.categories.find(c => category.id === c.id);
-    const retrievedBudgeted = !found ? 0 : found.budgeted;
+    const retrievedBudgeted = !found ? 0 : ynab.utils.convertMilliUnitsToCurrencyAmount(found.budgeted);
     const budgeted = ignore ? 0 : retrievedBudgeted;
 
     return {
