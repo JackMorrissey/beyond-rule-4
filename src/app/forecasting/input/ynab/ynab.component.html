@@ -1,24 +1,42 @@
-<div>Net Worth</div>
-<div>{{netWorth}}</div>
-
-<!-- <pre>{{budgets | json}}</pre>
-
-<pre>{{accounts | json}}</pre>
-
-<pre>{{months | json}}</pre> -->
-
-
-<div>Monthly Expenses</div>
-<div>{{ monthlyExpenses }}</div>
-
-<div>Estimated Annual Expenses</div>
-<div>{{ annualExpenses }}</div>
-
-<!-- {{budgetForm.value | json}} -->
-
 <form [formGroup]="budgetForm">
-  <table class="table thead-light">
-    <thead>
+
+  <div class="form-group row">
+    <label for="netWorth" class="col-sm-12 col-md-4 col-form-label">Net Worth</label>
+    <div class="col">
+      <input type="number" class="form-control" id="netWorth" formControlName="netWorth">
+    </div>
+  </div>
+  <div class="form-group row">
+    <label for="monthlyContribution" class="col-sm-12 col-md-4 col-form-label">Monthly Contribution</label>
+    <div class="col">
+      <input type="number" class="form-control" id="monthlyContribution" formControlName="monthlyContribution">
+    </div>
+  </div>
+
+  <table class="table">
+    <thead class="thead-light">
+      <tr>
+        <th>Calculated</th>
+        <th>YNAB</th>
+        <th>FI</th>
+        <th>Lean FI</th>
+      </tr>
+    </thead>
+    <tbody >
+      <tr>
+        <th>Monthly Expenses</th>
+        <td>{{expenses.ynab.monthly | number}}</td>
+        <td>{{expenses.fi.monthly | number}}</td>
+        <td>{{expenses.leanFi.monthly | number}}</td>
+      </tr>
+      <tr>
+        <th>Estimated Annual Expenses</th>
+        <td>{{expenses.ynab.annual | number}}</td>
+        <td>{{expenses.fi.annual | number}}</td>
+        <td>{{expenses.leanFi.annual | number}}</td>
+      </tr>
+    </tbody>
+    <thead class="thead-light">
       <tr>
         <th>Category</th>
         <th>YNAB Budget</th>

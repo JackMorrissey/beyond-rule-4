@@ -26,21 +26,59 @@ export class YnabComponent implements OnInit {
   public categoryGroupsWithCategories: ynab.CategoryGroupWithCategories[];
 
   public netWorth: number;
+  public categoriesDisplay: any;
   public monthlyExpenses: number;
   public annualExpenses: number;
-  public categoriesDisplay: any;
+  public leanMonthlyExpenses: number;
+  public leanAnnualExpenses: number;
+  public expenses: {
+    ynab: {
+      monthly: number,
+      annual: number
+    },
+    fi: {
+      monthly: number,
+      annual: number
+    },
+    leanFi: {
+      monthly: number,
+      annual: number
+    }
+  };
 
-  private hiddenMasterCategories = [
+  private hiddenCategoryGroups = [
     'Credit Card Payments',
     'Internal Master Category',
   ];
-  private ignoredMasterCategories = [
+  private ignoredCategoryGroups = [
+    'Debt Payments',
     'Financial Independence',
-    ...this.hiddenMasterCategories,
+    ...this.hiddenCategoryGroups,
+  ];
+  private leanFiIgnoredCategoryGroups = [
+    'Just for Fun',
+    'Quality of Life Goals',
+    ...this.ignoredCategoryGroups
   ];
 
   constructor(private ynabService: YnabService, private formBuilder: FormBuilder) {
+    this.expenses = {
+      ynab: {
+        monthly: 0,
+        annual: 0
+      },
+      fi: {
+        monthly: 0,
+        annual: 0
+      },
+      leanFi: {
+        monthly: 0,
+        annual: 0
+      }
+    };
     this.budgetForm = this.formBuilder.group({
+      netWorth: [0, [Validators.required]],
+      monthlyContribution: [0, [Validators.required]],
       categoryGroups: this.formBuilder.array([])
     });
   }
@@ -59,12 +97,14 @@ export class YnabComponent implements OnInit {
 
     this.categoryGroupsWithCategories = await this.ynabService.getCategoryGroupsWithCategories(budgetId);
 
-    this.netWorth = this.getNetWorth(this.accounts);
+    const netWorth = this.getNetWorth(this.accounts);
     const categoryGroups = this.mapCategoryGroups(this.categoryGroupsWithCategories, this.currentMonth);
-    this.resetForm(categoryGroups);
+    const monthlyContribution = 3000; // TODO: compute this
+    this.resetForm(netWorth, categoryGroups, monthlyContribution);
 
     const formChanges = this.budgetForm.valueChanges.pipe(debounce(() => timer(500)));
     formChanges.subscribe(() => {
+      // TODO: lets check what changed here
       this.updateInput();
     });
 
@@ -72,15 +112,30 @@ export class YnabComponent implements OnInit {
   }
 
   updateInput() {
-    this.monthlyExpenses = this.getMonthlyExpenses(this.budgetForm.value.categoryGroups, 'fiBudget');
-    this.annualExpenses = this.monthlyExpenses * 12;
+    const fiMonthlyExpenses = this.getMonthlyExpenses(this.budgetForm.value.categoryGroups, 'fiBudget');
     const leanMonthlyExpenses = this.getMonthlyExpenses(this.budgetForm.value.categoryGroups, 'leanFiBudget');
-    const leanAnnualExpenses = leanMonthlyExpenses * 12;
+    const retrievedBudgetedMonthlyExpenses = this.getMonthlyExpenses(this.budgetForm.value.categoryGroups, 'retrievedBudgeted');
+
+    this.expenses = {
+      ynab: {
+        monthly: retrievedBudgetedMonthlyExpenses,
+        annual: retrievedBudgetedMonthlyExpenses * 12
+      },
+      fi: {
+        monthly: fiMonthlyExpenses,
+        annual: fiMonthlyExpenses * 12
+      },
+      leanFi: {
+        monthly: leanMonthlyExpenses,
+        annual: leanMonthlyExpenses * 12
+      }
+    };
+
     const result = new CalculateInput();
-    result.annualExpenses = this.annualExpenses;
-    result.leanAnnualExpenses = leanAnnualExpenses;
-    result.netWorth = this.netWorth;
-    result.monthlyContribution = 3000;
+    result.annualExpenses = this.expenses.fi.annual;
+    result.leanAnnualExpenses = this.expenses.leanFi.annual;
+    result.netWorth = this.budgetForm.value.netWorth;
+    result.monthlyContribution = this.budgetForm.value.monthlyContribution;
     result.roundAll();
     this.calculateInputChange.emit(result);
   }
@@ -117,9 +172,10 @@ export class YnabComponent implements OnInit {
       return [];
     }
     const categoryGroups = categoryGroupsWithCategories.map(c => {
-      const childrenIgnore = c.hidden || this.ignoredMasterCategories.includes(c.name);
-      const mappedCategories = c.categories.map(ca => this.mapCategory(ca, childrenIgnore, monthDetail));
-      const hidden = c.hidden || this.hiddenMasterCategories.includes(c.name) || mappedCategories.every(mc => mc.hidden);
+      const categoryGroupIgnore = c.hidden || this.ignoredCategoryGroups.includes(c.name);
+      const leanFiIgnore = categoryGroupIgnore || this.leanFiIgnoredCategoryGroups.includes(c.name);
+      const mappedCategories = c.categories.map(ca => this.mapCategory(ca, monthDetail, categoryGroupIgnore, leanFiIgnore));
+      const hidden = c.hidden || this.hiddenCategoryGroups.includes(c.name) || mappedCategories.every(mc => mc.hidden);
       return {
         name: c.name,
         id: c.id,
@@ -137,12 +193,12 @@ export class YnabComponent implements OnInit {
     return categoryGroups;
   }
 
-  private mapCategory(category: ynab.Category, childrenIgnore: boolean, monthDetail: ynab.MonthDetail) {
+  private mapCategory(category: ynab.Category, monthDetail: ynab.MonthDetail, childrenIgnore: boolean, leanFiIgnore: boolean) {
     const ignore = childrenIgnore || category.hidden;
     const found = monthDetail.categories.find(c => category.id === c.id);
     const retrievedBudgeted = !found ? 0 : ynab.utils.convertMilliUnitsToCurrencyAmount(found.budgeted);
     const computedFiBudget = ignore ? 0 : retrievedBudgeted;
-    const computedLeanFiBudget = round(computedFiBudget * .7);
+    const computedLeanFiBudget = leanFiIgnore ? 0 : computedFiBudget;
 
     return {
       name: category.name,
@@ -155,7 +211,12 @@ export class YnabComponent implements OnInit {
     };
   }
 
-  private resetForm(categoriesDisplay) {
+  private resetForm(netWorth, categoriesDisplay, monthlyContribution) {
+    this.budgetForm.reset({
+      netWorth,
+      monthlyContribution,
+    });
+
     const categoryGroupFormGroups = categoriesDisplay.map(cg => this.formBuilder.group({
       name: cg.name,
       id: cg.id,
