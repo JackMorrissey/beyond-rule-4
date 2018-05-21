@@ -1,4 +1,7 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { FormGroup, FormArray, FormControl, FormBuilder, Validators } from '@angular/forms';
+import { timer } from 'rxjs/observable/timer';
+import { debounce } from 'rxjs/operators';
 import * as ynab from 'ynab';
 
 import { YnabService } from './ynab.service';
@@ -12,6 +15,8 @@ import { round } from '../../utilities/number-utility';
 
 export class YnabComponent implements OnInit {
   @Output() calculateInputChange = new EventEmitter<CalculateInput>();
+
+  budgetForm: FormGroup;
 
   public budgets: ynab.BudgetSummary[];
   public budget: ynab.BudgetSummary;
@@ -34,7 +39,15 @@ export class YnabComponent implements OnInit {
     ...this.hiddenMasterCategories,
   ];
 
-  constructor(private ynabService: YnabService) { }
+  constructor(private ynabService: YnabService, private formBuilder: FormBuilder) {
+    this.budgetForm = this.formBuilder.group({
+      categoryGroups: this.formBuilder.array([])
+    });
+  }
+
+  get categoryGroups(): FormArray {
+    return this.budgetForm.get('categoryGroups') as FormArray;
+  }
 
   async ngOnInit() {
     this.budgets = await this.ynabService.getBudgets();
@@ -48,12 +61,20 @@ export class YnabComponent implements OnInit {
 
     this.netWorth = this.getNetWorth(this.accounts);
     this.categoriesDisplay = this.getCategoriesDisplay(this.categoryGroupsWithCategories, this.currentMonth);
+    this.resetForm(this.categoriesDisplay);
+
+    const formChanges = this.budgetForm.valueChanges.pipe(debounce(() => timer(500)));
+    formChanges.subscribe(() => {
+      console.log(JSON.stringify(this.budgetForm.value.categoryGroups));
+      this.updateInput();
+    });
 
     this.updateInput();
   }
 
   updateInput() {
-    this.monthlyExpenses = this.getMonthlyExpenses(this.categoriesDisplay);
+    // this.monthlyExpenses = this.getMonthlyExpenses(this.categoriesDisplay);
+    this.monthlyExpenses = this.getMonthlyExpenses(this.budgetForm.value.categoryGroups);
     this.annualExpenses = this.monthlyExpenses * 12;
     const result = new CalculateInput();
     result.annualExpenses = this.annualExpenses;
@@ -94,7 +115,7 @@ export class YnabComponent implements OnInit {
     if (!categoryGroupsWithCategories) {
       return [];
     }
-    const categories = categoryGroupsWithCategories.map(c => {
+    const categoryGroups = categoryGroupsWithCategories.map(c => {
       const childrenIgnore = c.hidden || this.ignoredMasterCategories.includes(c.name);
       const mappedCategories = c.categories.map(ca => this.mapCategory(ca, childrenIgnore, monthDetail));
       const hidden = c.hidden || this.hiddenMasterCategories.includes(c.name) || mappedCategories.every(mc => mc.hidden);
@@ -105,13 +126,30 @@ export class YnabComponent implements OnInit {
         categories: mappedCategories
       };
     });
-    categories.sort((a, b) => {
+    categoryGroups.sort((a, b) => {
       if (a.hidden === b.hidden) { return -1; }
       if (a.hidden) { return 1; }
       if (b.hidden) { return -1; }
       return 0;
     });
-    return categories;
+
+    return categoryGroups;
+  }
+
+  private resetForm(categoriesDisplay) {
+    const categoryGroupFormGroups = categoriesDisplay.map(cg => this.formBuilder.group({
+      name: cg.name,
+      id: cg.id,
+      hidden: cg.id,
+      categories: this.formBuilder.array(cg.categories.map(c => this.formBuilder.group({
+        name: c.name,
+        budgeted: c.budgeted,
+        retrievedBudgeted: c.retrievedBudgeted,
+        ignore: c.ignore
+      })))
+    }));
+    const categoryGroups = this.formBuilder.array(categoryGroupFormGroups);
+    this.budgetForm.setControl('categoryGroups', categoryGroups);
   }
 
   private mapCategory(category: ynab.Category, childrenIgnore: boolean, monthDetail: ynab.MonthDetail) {

@@ -14,7 +14,39 @@
 <div>Estimated Annual Expenses</div>
 <div>{{ annualExpenses }}</div>
 
-<table class="table .thead-light">
+<!-- {{budgetForm.value | json}} -->
+
+<form [formGroup]="budgetForm">
+  <table class="table thead-light">
+    <thead>
+      <tr>
+        <th>Category</th>
+        <th>YNAB Budgeted</th>
+        <th>Budgeted</th>
+      </tr>
+    </thead>
+    <tbody formArrayName="categoryGroups">
+    <ng-container *ngFor="let categoryGroup of categoryGroups.controls; let i=index" [formGroupName]="i">
+      <tr>
+        <th colspan="3">{{categoryGroup.value.name}}</th>
+      </tr>
+      <ng-container formArrayName="categories">
+        <tr *ngFor="let category of categoryGroup.get('categories').controls; let j=index" [formGroupName]="j">
+          <td>{{category.value.name}}</td>
+          <td>{{category.value.retrievedBudgeted}}</td>
+          <td>
+            <input class="form-control" formControlName="budgeted" type="number" />
+          </td>
+        </tr>
+      </ng-container>
+    </ng-container>
+    </tbody>
+  </table>
+</form>
+
+<h3>OLD</h3>
+
+<table class="table thead-light table-dark">
   <thead>
     <tr>
       <th>Category</th>
