@@ -3,6 +3,7 @@ import { round } from '../utilities/number-utility';
 export class CalculateInput {
   netWorth = 0;
   annualExpenses = 0;
+  leanAnnualExpenses = 0;
   annualSafeWithdrawalRate = 0;
   expectedAnnualGrowthRate = 0;
   monthlyContribution = 0;
@@ -24,5 +25,6 @@ export class CalculateInput {
     this.expectedAnnualGrowthRate = round(this.expectedAnnualGrowthRate, 4);
     this.monthlyContribution = round(this.monthlyContribution);
     this.leanFiPercentage = round(this.leanFiPercentage);
+    this.leanAnnualExpenses = round(this.leanAnnualExpenses);
   }
 }

@@ -23,12 +23,13 @@
         <th>Category</th>
         <th>YNAB Budget</th>
         <th>FI Budget</th>
+        <th>Lean FI Budget</th>
       </tr>
     </thead>
     <tbody formArrayName="categoryGroups">
     <ng-container *ngFor="let categoryGroup of categoryGroups.controls; let i=index" [formGroupName]="i">
       <tr>
-        <th colspan="3">{{categoryGroup.value.name}}</th>
+        <th colspan="4">{{categoryGroup.value.name}}</th>
       </tr>
       <ng-container formArrayName="categories">
         <tr *ngFor="let category of categoryGroup.get('categories').controls; let j=index" [formGroupName]="j">
@@ -37,6 +38,9 @@
           <td>
             <input class="form-control" formControlName="fiBudget" type="number" />
           </td>
+          <td>
+              <input class="form-control" formControlName="leanFiBudget" type="number" />
+            </td>
         </tr>
       </ng-container>
     </ng-container>

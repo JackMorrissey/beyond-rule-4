@@ -29,6 +29,10 @@ export class MilestonesComponent implements OnInit, OnChanges {
 
   calculate() {
     const fiNumber = 1 / this.calculateInput.annualSafeWithdrawalRate * this.calculateInput.annualExpenses;
-    this.milestones = new Milestones(fiNumber, this.calculateInput.leanFiPercentage);
+    let leanFiNumber = fiNumber * this.calculateInput.leanFiPercentage;
+    if (this.calculateInput.leanAnnualExpenses) {
+      leanFiNumber = 1 / this.calculateInput.annualSafeWithdrawalRate * this.calculateInput.leanAnnualExpenses;
+    }
+    this.milestones = new Milestones(fiNumber, leanFiNumber);
   }
 }

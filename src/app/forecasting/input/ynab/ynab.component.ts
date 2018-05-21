@@ -72,20 +72,23 @@ export class YnabComponent implements OnInit {
   }
 
   updateInput() {
-    this.monthlyExpenses = this.getMonthlyExpenses(this.budgetForm.value.categoryGroups);
+    this.monthlyExpenses = this.getMonthlyExpenses(this.budgetForm.value.categoryGroups, 'fiBudget');
     this.annualExpenses = this.monthlyExpenses * 12;
+    const leanMonthlyExpenses = this.getMonthlyExpenses(this.budgetForm.value.categoryGroups, 'leanFiBudget');
+    const leanAnnualExpenses = leanMonthlyExpenses * 12;
     const result = new CalculateInput();
     result.annualExpenses = this.annualExpenses;
+    result.leanAnnualExpenses = leanAnnualExpenses;
     result.netWorth = this.netWorth;
     result.monthlyContribution = 3000;
     result.roundAll();
     this.calculateInputChange.emit(result);
   }
 
-  private getMonthlyExpenses(categoryGroups) {
+  private getMonthlyExpenses(categoryGroups, budgetPropertyName) {
     const expenses = categoryGroups.map(categoryGroup => {
       return categoryGroup.categories.map(category => {
-        return category.fiBudget;
+        return category[budgetPropertyName];
       }).reduce((prev, next) => {
         return prev + next;
       });
@@ -139,7 +142,7 @@ export class YnabComponent implements OnInit {
     const found = monthDetail.categories.find(c => category.id === c.id);
     const retrievedBudgeted = !found ? 0 : ynab.utils.convertMilliUnitsToCurrencyAmount(found.budgeted);
     const computedFiBudget = ignore ? 0 : retrievedBudgeted;
-    const computedLeanFiBudget = computedFiBudget * .7;
+    const computedLeanFiBudget = round(computedFiBudget * .7);
 
     return {
       name: category.name,

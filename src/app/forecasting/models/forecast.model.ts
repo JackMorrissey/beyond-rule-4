@@ -9,7 +9,7 @@ export class Forecast {
     if (!this.month0Date) {
       this.month0Date = new Date();
     }
-    this.month0Date.setDate(1);
+    this.month0Date.setDate(1); // make it the first of the month
     this.computeForecast(calculateInput);
     this.setDates();
   }
