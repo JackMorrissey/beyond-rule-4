@@ -28,9 +28,7 @@ export class YnabComponent implements OnInit {
   public netWorth: number;
   public categoriesDisplay: any;
   public monthlyExpenses: number;
-  public annualExpenses: number;
   public leanMonthlyExpenses: number;
-  public leanAnnualExpenses: number;
   public expenses: {
     ynab: {
       monthly: number,

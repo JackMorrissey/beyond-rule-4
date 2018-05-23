@@ -22,6 +22,7 @@ export class BasicInputComponent implements OnInit, OnChanges {
     this.basicInputForm = this.formBuilder.group({
       netWorth: [0, [Validators.required]],
       annualExpenses: [0, [Validators.required]],
+      leanAnnualExpenses: [0, [Validators.required]],
       annualSafeWithdrawalRate: [0, [Validators.required]],
       expectedAnnualGrowthRate: [0, [Validators.required]],
       monthlyContribution: [0, [Validators.required]],

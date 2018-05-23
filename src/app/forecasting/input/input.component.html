@@ -1,8 +1,19 @@
-<!-- <app-basic-input
-  *ngIf="calculateInput"
-  [calculateInput]="calculateInput"
-  (calculateInputChange)="onCalculateInputChange($event)">
-</app-basic-input> -->
-<app-ynab
-  (calculateInputChange)="onCalculateInputChange($event)">
-</app-ynab>
+<ngb-tabset #t="ngbTabset" type="pills">
+  <ngb-tab title="Basic">
+    <ng-template ngbTabContent>
+      <app-basic-input
+        *ngIf="calculateInput"
+        [calculateInput]="calculateInput"
+        (calculateInputChange)="onCalculateInputChange($event)">
+      </app-basic-input>
+    </ng-template>
+  </ngb-tab>
+  <ngb-tab>
+    <ng-template ngbTabTitle>YNAB</ng-template>
+    <ng-template ngbTabContent>
+      <app-ynab
+        (calculateInputChange)="onCalculateInputChange($event)">
+      </app-ynab>
+    </ng-template>
+  </ngb-tab>
+</ngb-tabset>
