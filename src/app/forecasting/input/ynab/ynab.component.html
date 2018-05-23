@@ -52,7 +52,7 @@
       <ng-container formArrayName="categories">
         <tr *ngFor="let category of categoryGroup.get('categories').controls; let j=index" [formGroupName]="j">
           <td>{{category.value.name}}</td>
-          <td>{{category.value.retrievedBudgeted}}</td>
+          <td>{{category.value.retrievedBudgeted | number}}</td>
           <td>
             <input class="form-control" formControlName="fiBudget" type="number" />
           </td>

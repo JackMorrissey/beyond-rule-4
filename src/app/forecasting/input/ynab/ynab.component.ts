@@ -47,17 +47,24 @@ export class YnabComponent implements OnInit {
   };
 
   private hiddenCategoryGroups = [
-    'Credit Card Payments',
-    'Internal Master Category',
+    'credit card payments',
+    'internal master category',
+  ];
+  private contributionCategoryGroups = [
+    'fi',
+    'fire',
+    'financial independence',
+    'investments',
+    'retirement'
   ];
   private ignoredCategoryGroups = [
-    'Debt Payments',
-    'Financial Independence',
+    'debt payments',
+    ...this.contributionCategoryGroups,
     ...this.hiddenCategoryGroups,
   ];
   private leanFiIgnoredCategoryGroups = [
-    'Just for Fun',
-    'Quality of Life Goals',
+    'just for fun',
+    'quality of life goals',
     ...this.ignoredCategoryGroups
   ];
 
@@ -99,7 +106,9 @@ export class YnabComponent implements OnInit {
 
     const netWorth = this.getNetWorth(this.accounts);
     const categoryGroups = this.mapCategoryGroups(this.categoryGroupsWithCategories, this.currentMonth);
-    const monthlyContribution = 3000; // TODO: compute this
+    const parsedCommands = this.getParsedCommands(this.currentMonth);
+    console.log(parsedCommands);
+    const monthlyContribution = this.getMonthlyContribution(parsedCommands);
     this.resetForm(netWorth, categoryGroups, monthlyContribution);
 
     const formChanges = this.budgetForm.valueChanges.pipe(debounce(() => timer(500)));
@@ -172,10 +181,10 @@ export class YnabComponent implements OnInit {
       return [];
     }
     const categoryGroups = categoryGroupsWithCategories.map(c => {
-      const categoryGroupIgnore = c.hidden || this.ignoredCategoryGroups.includes(c.name);
-      const leanFiIgnore = categoryGroupIgnore || this.leanFiIgnoredCategoryGroups.includes(c.name);
+      const categoryGroupIgnore = c.hidden || this.ignoredCategoryGroups.includes(c.name.toLowerCase());
+      const leanFiIgnore = categoryGroupIgnore || this.leanFiIgnoredCategoryGroups.includes(c.name.toLowerCase());
       const mappedCategories = c.categories.map(ca => this.mapCategory(ca, monthDetail, categoryGroupIgnore, leanFiIgnore));
-      const hidden = c.hidden || this.hiddenCategoryGroups.includes(c.name) || mappedCategories.every(mc => mc.hidden);
+      const hidden = c.hidden || this.hiddenCategoryGroups.includes(c.name.toLowerCase()) || mappedCategories.every(mc => mc.hidden);
       return {
         name: c.name,
         id: c.id,
@@ -209,6 +218,63 @@ export class YnabComponent implements OnInit {
       computedFiBudget,
       computedLeanFiBudget,
     };
+  }
+
+  private getParsedCommands(monthDetail: ynab.MonthDetail) {
+    const categoriesWithCommands = [];
+    const commandPrefix = 'fi:';
+
+    monthDetail.categories.forEach(c => {
+      if (!c.note) {
+        return;
+      }
+      const lines = c.note.toLowerCase().split('\n').map(l => l.trim());
+      const commandLines = lines.filter((l) => {
+        return l.startsWith(commandPrefix);
+      }).map((l) => {
+        return l.substr(commandPrefix.length);
+      });
+      if (commandLines.length) {
+        categoriesWithCommands.push({
+          category: c,
+          commandLines
+        });
+      }
+    });
+    return categoriesWithCommands;
+  }
+
+  private getMonthlyContribution(parsedCommands): number {
+    let contribution = 0;
+    const monthlyPrefix = '+monthly:';
+    const yearlyPrefix = '+yearly:';
+    parsedCommands.forEach(categoryWithCommands => {
+      const commandLines: string[] = categoryWithCommands.commandLines;
+      const categoryName = categoryWithCommands.category.name;
+      const monthlyContribution = commandLines.filter((c) => {
+        return c.trim().startsWith(monthlyPrefix);
+      }).map(l => {
+        return Number(l.trim().substr(monthlyPrefix.length).trim());
+      }).reduce((prev, next) => {
+        if (!next) {
+          return prev;
+        }
+        return prev + next;
+      }, 0);
+      const yearlyContribution = commandLines.filter((c) => {
+        return c.trim().startsWith(yearlyPrefix);
+      }).map(l => {
+        return Number(l.trim().substr(yearlyPrefix.length).trim());
+      }).reduce((prev, next) => {
+        if (!next) {
+          return prev;
+        }
+        return prev + next;
+      }, 0);
+      contribution += monthlyContribution + (yearlyContribution / 12);
+    });
+
+    return round(contribution);
   }
 
   private resetForm(netWorth, categoriesDisplay, monthlyContribution) {
