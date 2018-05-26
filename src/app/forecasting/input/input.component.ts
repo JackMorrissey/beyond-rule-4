@@ -14,6 +14,7 @@ export class ForecastingInputComponent implements OnInit {
   constructor() {
     const input = new CalculateInput();
     input.annualExpenses = 30000;
+    input.leanAnnualExpenses = 25000;
     input.leanFiPercentage = 0.7;
     input.netWorth = 100000;
     input.monthlyContribution = 1500;
@@ -25,6 +26,7 @@ export class ForecastingInputComponent implements OnInit {
   }
 
   onCalculateInputChange($event) {
+    this.calculateInput = $event;
     this.calculateInputChange.emit($event);
   }
 }

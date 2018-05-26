@@ -13,7 +13,7 @@ import { SampleData } from './sample-data.secret';
 export class YnabService {
   private ynabApi: ynab.api;
 
-  private useSampleData = true;
+  private useSampleData = false;
 
   constructor(private http: Http) {
     this.ynabApi = new ynab.api(devAccessToken);
