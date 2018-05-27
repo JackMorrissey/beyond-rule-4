@@ -33,6 +33,15 @@ export class MilestonesComponent implements OnInit, OnChanges {
     if (this.calculateInput.leanAnnualExpenses) {
       leanFiNumber = 1 / this.calculateInput.annualSafeWithdrawalRate * this.calculateInput.leanAnnualExpenses;
     }
-    this.milestones = new Milestones(fiNumber, leanFiNumber);
+    const eclipseForecast = this.forecast.monthlyForecasts.find(m => {
+      return m.totalContributions <= m.totalInterestGains;
+    });
+    if (!eclipseForecast) {
+      this.milestones = new Milestones(fiNumber, leanFiNumber, 0);
+      return;
+    }
+
+    const eclipseMarker = Math.min(eclipseForecast.totalContributions, eclipseForecast.totalInterestGains);
+    this.milestones = new Milestones(fiNumber, leanFiNumber, eclipseMarker * 2);
   }
 }

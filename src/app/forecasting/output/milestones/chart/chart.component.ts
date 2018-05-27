@@ -56,6 +56,8 @@ export class ChartComponent implements OnInit, AfterContentInit, OnChanges {
     this.view = [this.elementView.nativeElement.offsetWidth, this.elementView.nativeElement.offsetHeight];
   }
 
+  // TODO: graph on browser change
+
   ngOnChanges(changes: SimpleChanges): void {
     this.calculateData();
   }
@@ -66,7 +68,8 @@ export class ChartComponent implements OnInit, AfterContentInit, OnChanges {
 
   getToolTipDate(tooltipItem: any) {
     const forecastDate: Date = tooltipItem.name;
-    const date = forecastDate.toDateString();
+    const options = { year: 'numeric', month: 'short' };
+    const date = forecastDate.toLocaleDateString('en-US', options);
     const distance = this.forecast.getDistanceFromFirstMonthText(forecastDate);
     if (!distance) {
       return date;

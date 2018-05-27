@@ -1,0 +1,22 @@
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Milestone</th>
+      <th>Net Worth</th>
+      <th>Forecast Date</th>
+      <th>Distance</th>
+      <th>Contributions</th>
+      <th>Interest Gains</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let m of milestonesWithForecast">
+      <td>{{ m.milestone.label }}</td>
+      <td>{{ m.milestone.value | number}}</td>
+      <td>{{ m.forecastDate }}</td>
+      <td>{{ m.distance }}</td>
+      <td>{{ m.forecast.totalContributions | number}}</td>
+      <td>{{ m.forecast.totalInterestGains | number}}</td>
+    </tr>
+  </tbody>
+</table>
