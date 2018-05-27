@@ -1,6 +1,6 @@
 import {
   Component, OnInit, ViewEncapsulation, Input, OnChanges, SimpleChanges,
-  AfterContentInit, ElementRef, ViewChild
+  AfterContentInit, ElementRef, ViewChild, HostListener
 } from '@angular/core';
 import { CalculateInput } from '../../../models/calculate-input.model';
 import { Forecast, MonthlyForecast } from '../../../models/forecast.model';
@@ -52,11 +52,14 @@ export class ChartComponent implements OnInit, AfterContentInit, OnChanges {
     this.dateNow = new Date();
   }
 
-  ngAfterContentInit () {
-    this.view = [this.elementView.nativeElement.offsetWidth, this.elementView.nativeElement.offsetHeight];
+  @HostListener('window:resize', ['$event'])
+  onResize(event) {
+    this.setViewDimensions();
   }
 
-  // TODO: graph on browser change
+  ngAfterContentInit () {
+    this.setViewDimensions();
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     this.calculateData();
@@ -64,6 +67,10 @@ export class ChartComponent implements OnInit, AfterContentInit, OnChanges {
 
   onSelect($event) {
 
+  }
+
+  setViewDimensions () {
+    this.view = [this.elementView.nativeElement.offsetWidth, this.elementView.nativeElement.offsetHeight];
   }
 
   getToolTipDate(tooltipItem: any) {
