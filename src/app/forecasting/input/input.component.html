@@ -1,4 +1,4 @@
-<!-- <ngb-tabset #t="ngbTabset" type="pills">
+<ngb-tabset #t="ngbTabset" type="pills">
   <ngb-tab title="Basic">
     <ng-template ngbTabContent>
       <app-basic-input
@@ -16,10 +16,4 @@
       </app-ynab>
     </ng-template>
   </ngb-tab>
-</ngb-tabset> -->
-
-<app-basic-input
-  *ngIf="calculateInput"
-  [calculateInput]="calculateInput"
-  (calculateInputChange)="onCalculateInputChange($event)">
-</app-basic-input>
+</ngb-tabset>

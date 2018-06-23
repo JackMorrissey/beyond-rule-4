@@ -16,7 +16,7 @@ export class ForecastingInputComponent implements OnInit {
     input.annualExpenses = 30000;
     input.leanAnnualExpenses = 25000;
     input.leanFiPercentage = 0.7;
-    input.netWorth = 50000;
+    input.netWorth = 100000;
     input.monthlyContribution = 1500;
     this.calculateInput = input;
   }
