@@ -1,0 +1,14 @@
+<div class="container">
+  <h1>Home</h1>
+
+  <div *ngIf="isAuthorized">
+    <p>Successfully authorized with YNAB! What's next?</p>
+    <ul>
+      <li><a routerLink="/forecasting">FI Forecasting</a></li>
+    </ul>
+  </div>
+  <div *ngIf="!isAuthorized">
+      <p>Let's get started!</p>
+      <button (click)="authorize()" class="btn btn-primary">Authorize with YNAB</button>
+  </div>
+</div>

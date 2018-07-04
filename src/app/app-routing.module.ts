@@ -17,8 +17,8 @@ const appRoutes: Routes = [
   //   loadChildren: 'app/crisis-center/crisis-center.module#CrisisCenterModule',
   //   data: { preload: true }
   // },
-  { path: '', redirectTo: '/connect', pathMatch: 'full' },
-  { path: '**', redirectTo: '/connect' }
+  { path: '', redirectTo: '/home', pathMatch: 'full' },
+  { path: '**', redirectTo: '/home' }
 ];
 
 @NgModule({

@@ -22,7 +22,7 @@ export class YnabConnectService {
     sessionStorage.removeItem('ynab_access_token');
   }
 
-  isTokenSet() {
+  isAuthorized() {
     return !!this.getToken();
   }
 
@@ -39,6 +39,6 @@ export class YnabConnectService {
       window.location.hash = '';
       return true;
     }
-    return this.isTokenSet();
+    return this.isAuthorized();
   }
 }

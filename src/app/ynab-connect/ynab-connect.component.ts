@@ -13,7 +13,7 @@ export class YnabConnectComponent implements OnInit {
 
   ngOnInit() {
     if (this.ynabConnectService.findYnabToken()) {
-      this.router.navigate(['/forecasting']);
+      this.router.navigate(['/']);
     }
   }
 
