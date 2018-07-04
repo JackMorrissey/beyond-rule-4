@@ -2,7 +2,10 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
+import { AppRoutingModule } from './app-routing.module';
+
 import { ForecastingModule } from './forecasting/forecasting.module';
+import { YnabConnectModule } from './ynab-connect/ynab-connect.module';
 
 import { AppComponent } from './app.component';
 
@@ -16,7 +19,9 @@ import { AppComponent } from './app.component';
   imports: [
     BrowserModule,
     NgbModule.forRoot(),
-    ForecastingModule
+    ForecastingModule,
+    YnabConnectModule,
+    AppRoutingModule
   ],
   providers: [],
   bootstrap: [AppComponent]
