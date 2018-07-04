@@ -1,6 +1,6 @@
 import { Component, OnInit, OnChanges, SimpleChanges, Input, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormControl, FormBuilder, Validators } from '@angular/forms';
-import { timer } from 'rxjs/observable/timer';
+import { timer } from 'rxjs';
 import { debounce } from 'rxjs/operators';
 
 import { CalculateInput } from '../../models/calculate-input.model';

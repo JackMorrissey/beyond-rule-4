@@ -1,6 +1,6 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormArray, FormControl, FormBuilder, Validators } from '@angular/forms';
-import { timer } from 'rxjs/observable/timer';
+import { timer } from 'rxjs';
 import { debounce } from 'rxjs/operators';
 import * as ynab from 'ynab';
 
