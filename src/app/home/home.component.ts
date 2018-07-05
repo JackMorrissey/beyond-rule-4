@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { YnabConnectService } from '../ynab-connect/ynab-connect.service';
+import { YnabApiService } from '../ynab-api/ynab-api.service';
 
 @Component({
   selector: 'app-home',
@@ -8,15 +8,15 @@ import { YnabConnectService } from '../ynab-connect/ynab-connect.service';
 })
 
 export class HomeComponent implements OnInit {
-  constructor(private ynabConnectService: YnabConnectService) { }
+  constructor(private ynabApiService: YnabApiService) { }
 
   public isAuthorized = false;
 
   ngOnInit() {
-    this.isAuthorized = this.ynabConnectService.isAuthorized();
+    this.isAuthorized = this.ynabApiService.isAuthorized();
   }
 
   authorize() {
-    this.ynabConnectService.authorize();
+    this.ynabApiService.authorize();
   }
 }

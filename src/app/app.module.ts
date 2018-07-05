@@ -7,6 +7,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { HomeModule } from './home/home.module';
 import { ForecastingModule } from './forecasting/forecasting.module';
 import { YnabConnectModule } from './ynab-connect/ynab-connect.module';
+import { YnabApiModule } from './ynab-api/ynab-api.module';
 
 import { AppComponent } from './app.component';
 
@@ -23,6 +24,7 @@ import { AppComponent } from './app.component';
     HomeModule,
     ForecastingModule,
     YnabConnectModule,
+    YnabApiModule,
     AppRoutingModule
   ],
   providers: [],

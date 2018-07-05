@@ -2,19 +2,66 @@ import { Injectable } from '@angular/core';
 
 
 import * as ynab from 'ynab';
+import { environment } from '../../environments/environment';
 
-import { devAccessToken } from './token.secret';
 import { SampleData } from './sample-data.secret';
 
 
 @Injectable()
-export class YnabService {
+export class YnabApiService {
   private ynabApi: ynab.api;
 
-  private useSampleData = false;
+  private useSampleData = true;
 
   constructor() {
-    this.ynabApi = new ynab.api(devAccessToken);
+    this.setApiAccess();
+  }
+
+  authorize() {
+    const uri =
+    // tslint:disable-next-line:max-line-length
+    `https://app.youneedabudget.com/oauth/authorize?client_id=${environment.clientId}&redirect_uri=${environment.redirectUri}&response_type=token`;
+    location.replace(uri);
+  }
+
+  getToken() {
+    return sessionStorage.getItem('ynab_access_token');
+  }
+
+  clearToken() {
+    sessionStorage.removeItem('ynab_access_token');
+    this.useSampleData = true;
+  }
+
+  isAuthorized() {
+    return !!this.getToken();
+  }
+
+  setApiAccess() {
+    const token = this.getToken();
+    if (token) {
+      this.useSampleData = false;
+      this.ynabApi = new ynab.api(token);
+    } else {
+      this.useSampleData = true;
+    }
+  }
+
+  // thanks Ynab Starter!
+  findYnabToken(): boolean {
+    let token = null;
+    const search = window.location.hash.substring(1).replace(/&/g, '","').replace(/=/g, '":"');
+    if (search && search !== '') {
+      // Try to get access_token from the hash returned by OAuth
+      const params = JSON.parse('{"' + search + '"}', function(key, value) {
+        return key === '' ? value : decodeURIComponent(value);
+      });
+      token = params.access_token;
+      sessionStorage.setItem('ynab_access_token', token);
+      window.location.hash = '';
+    }
+    this.setApiAccess();
+    return !this.useSampleData;
   }
 
   async getBudgets(): Promise<ynab.BudgetSummary[]> {

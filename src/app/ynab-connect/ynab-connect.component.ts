@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { YnabConnectService } from './ynab-connect.service';
+import { YnabApiService } from '../ynab-api/ynab-api.service';
 
 @Component({
   selector: 'app-ynab-connect',
@@ -9,15 +9,15 @@ import { YnabConnectService } from './ynab-connect.service';
 })
 
 export class YnabConnectComponent implements OnInit {
-  constructor(private ynabConnectService: YnabConnectService, private router: Router) { }
+  constructor(private ynabApiService: YnabApiService, private router: Router) { }
 
   ngOnInit() {
-    if (this.ynabConnectService.findYnabToken()) {
+    if (this.ynabApiService.findYnabToken()) {
       this.router.navigate(['/']);
     }
   }
 
   authorize() {
-    this.ynabConnectService.authorize();
+    this.ynabApiService.authorize();
   }
 }

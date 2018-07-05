@@ -4,7 +4,7 @@ import { timer } from 'rxjs';
 import { debounce } from 'rxjs/operators';
 import * as ynab from 'ynab';
 
-import { YnabService } from './ynab.service';
+import { YnabApiService } from '../../../ynab-api/ynab-api.service';
 import { CalculateInput } from '../../models/calculate-input.model';
 import { round } from '../../utilities/number-utility';
 
@@ -66,7 +66,7 @@ export class YnabComponent implements OnInit {
     ...this.ignoredCategoryGroups
   ];
 
-  constructor(private ynabService: YnabService, private formBuilder: FormBuilder) {
+  constructor(private ynabService: YnabApiService, private formBuilder: FormBuilder) {
     this.expenses = {
       ynab: {
         monthly: 0,
