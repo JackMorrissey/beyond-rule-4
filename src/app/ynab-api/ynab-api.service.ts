@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 
 
 import * as ynab from 'ynab';
@@ -12,6 +13,8 @@ export class YnabApiService {
   private ynabApi: ynab.api;
 
   private useSampleData = true;
+
+  public isAuthorized$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   constructor() {
     this.setApiAccess();
@@ -31,6 +34,7 @@ export class YnabApiService {
   clearToken() {
     sessionStorage.removeItem('ynab_access_token');
     this.useSampleData = true;
+    this.isAuthorized$.next(false);
   }
 
   isAuthorized() {
@@ -39,6 +43,7 @@ export class YnabApiService {
 
   setApiAccess() {
     const token = this.getToken();
+    this.isAuthorized$.next(!!token);
     if (token) {
       this.useSampleData = false;
       this.ynabApi = new ynab.api(token);

@@ -1,14 +1,50 @@
 <div class="container">
-  <h1>Home</h1>
+  <h2>Winning YNAB</h2>
 
-  <div *ngIf="isAuthorized">
-    <p>Successfully authorized with YNAB! What's next?</p>
+  <p>Let's take inventory of your budget.</p>
+  <ul>
+
+    <li><i class="far fa-check-square"></i> Every dollar has a job.</li>
+    <li><i class="far fa-check-square"></i> You've embraced your true expenses.</li>
+    <li><i class="far fa-check-square"></i> You're rolling with the punches.</li>
+    <li><i class="far fa-check-square"></i> Your money has aged 30 days.</li>
+  </ul>
+
+  <p>Congratulations! You've conquered the four rules. You are well on your way to financial peace. Now what?</p>
+
+  <h2>Beyond Rule 4</h2>
+
+  <p>Once you've mastered the 4 rules you may be left yearning for additional milestones.</p>
+
+  <p>Authorize with YNAB and lets see if we can find some additional goals you'd like to conquer.</p>
+
+  <div *ngIf="isAuthorized" class="mb-2">
+    <p class="text-success">Successfully authorized with YNAB! What's next?</p>
     <ul>
       <li><a routerLink="/forecasting">FI Forecasting</a></li>
     </ul>
   </div>
-  <div *ngIf="!isAuthorized">
+  <div *ngIf="!isAuthorized" class="mb-3">
       <p>Let's get started!</p>
-      <button (click)="authorize()" class="btn btn-primary">Authorize with YNAB</button>
+      <div><button (click)="authorize()" class="btn btn-primary">Authorize with YNAB</button></div>
+      <small>(We don't collect any information. We don't even have a backend server...)</small>
+
+      <div class="alert alert-secondary">
+        <p><strong>Don't want to Authorize? No worries!</strong></p>
+        <p>Take the application for a spin with example data and authorize when you're ready.</p>
+      </div>
   </div>
+
+
+  <h3>Financial Independence</h3>
+
+  <p>FI is the idea that if you can save up enough money, eventually it can support your expenses and "work" becomes optional.</p>
+
+  <p>Read more at YNAB: <a href="https://www.youneedabudget.com/is-the-fire-movement-for-you/">Is the FIRE movement for you?</a></p>
+
+  <p>One of the obstacles with FI is that it's a marathon, not a sprint. It might be tough to stay motivated if you can't visualize how the small choices you make today can vastly benefit the future.</p>
+
+  <p>So... what if you could foreshadow the future based on the actions of today? </p>
+
+  <p><a routerLink="/forecasting">FI Forecasting</a></p>
 </div>
