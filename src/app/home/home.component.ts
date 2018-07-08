@@ -13,7 +13,12 @@ export class HomeComponent implements OnInit {
   public isAuthorized = false;
 
   ngOnInit() {
-    this.isAuthorized = this.ynabApiService.isAuthorized();
+    this.ynabApiService.isAuthorized$
+    .subscribe({
+      next: (isAuthorized) => {
+        this.isAuthorized = isAuthorized;
+      }
+    });
   }
 
   authorize() {

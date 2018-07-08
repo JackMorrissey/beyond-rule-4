@@ -1,0 +1,21 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" routerLink="/">Beyond Rule 4</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item" routerLinkActive="active" routerLink="/home">
+        <a class="nav-link">Home <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item" routerLinkActive="active" routerLink="/forecasting">
+        <a class="nav-link">FI Forecasting</a>
+      </li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0">
+      <button *ngIf="!isAuthorized" class="btn btn-outline-primary my-2 my-sm-0" (click)="authorize()" type="button">Authorize with YNAB</button>
+      <button *ngIf="isAuthorized" class="btn btn-outline-primary my-2 my-sm-0" (click)="logOut()" type="button">Log Out</button>
+    </form>
+  </div>
+</nav>
