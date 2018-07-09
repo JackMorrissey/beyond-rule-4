@@ -21,6 +21,10 @@ export class FiTextComponent implements OnInit, OnChanges {
   fiDate: string;
   dateDistance: string;
 
+  leanFiNumber: number;
+  leanFiDate: string;
+  leanFiDateDistance: string;
+
   constructor() { }
 
   ngOnInit() { }
@@ -39,5 +43,11 @@ export class FiTextComponent implements OnInit, OnChanges {
     this.fiDate = foundFiForecast.toDateString();
     this.dateDistance = this.forecast.getDistanceFromFirstMonthText(foundFiForecast.date);
     this.fiMonthForecast = foundFiForecast;
+
+    const leanFiNumber = round(this.safeWithdrawalTimes * this.calculateInput.leanAnnualExpenses);
+    this.leanFiNumber = leanFiNumber;
+    const foundLeanFiForecast = this.forecast.monthlyForecasts.find(f => f.netWorth >= leanFiNumber);
+    this.leanFiDate = foundLeanFiForecast.toDateString();
+    this.leanFiDateDistance = this.forecast.getDistanceFromFirstMonthText(foundLeanFiForecast.date);
   }
 }
