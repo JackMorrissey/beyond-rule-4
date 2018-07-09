@@ -1,7 +1,12 @@
-# BEGIN SSL Redirect
-<IfModule mod_rewrite.c>
+## https://www.askapache.com/htaccess/#Htaccess_Evolved
 RewriteEngine On
-RewriteCond %{HTTP:X-Forwarded-Proto} =http
-RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
-</IfModule>
-# END SSL Redirect
+
+## REQUIRE SSL EVEN WHEN MOD_SSL IS NOT LOADED
+RewriteCond %{HTTPS} !=on [NC]
+RewriteRule ^.*$ https://%{SERVER_NAME}%{REQUEST_URI} [R,L]
+
+### ALTERNATATIVE TO USING ERRORDOCUMENT
+# http://www.htaccesselite.com/d/htaccess-errordocument-examples-vt11.html
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^.*$ /index.html [L]

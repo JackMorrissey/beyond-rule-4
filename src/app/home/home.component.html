@@ -1,7 +1,7 @@
 <div class="container">
   <h2>Winning YNAB</h2>
 
-  <p>Let's take inventory of your budget.</p>
+  <p><a href="https://www.youneedabudget.com/method/">Rule check!</a> How are you doing?</p>
   <ul>
 
     <li><i class="far fa-check-square"></i> Every dollar has a job.</li>
@@ -20,31 +20,15 @@
 
   <div *ngIf="isAuthorized" class="mb-2">
     <p class="text-success">Successfully authorized with YNAB! What's next?</p>
-    <ul>
-      <li><a routerLink="/forecasting">FI Forecasting</a></li>
-    </ul>
+    <div class="mb-2"><a routerLink="/beyond" class="btn btn-success">Go Beyond</a></div>
   </div>
   <div *ngIf="!isAuthorized" class="mb-3">
       <p>Let's get started!</p>
-      <div><button (click)="authorize()" class="btn btn-primary">Authorize with YNAB</button></div>
-      <small>(We don't collect any information. We don't even have a backend server...)</small>
+      <div class="mb-4"><button (click)="authorize()" class="btn btn-primary btn-lg">Authorize with YNAB</button></div>
 
-      <div class="alert alert-secondary">
-        <p><strong>Don't want to Authorize? No worries!</strong></p>
-        <p>Take the application for a spin with example data and authorize when you're ready.</p>
+      <div>
+        <p>Just browsing? No worries!</p>
+        <div class="mb-2"><a routerLink="/beyond" class="btn btn-secondary">Continue With Example Data</a></div>
       </div>
   </div>
-
-
-  <h3>Financial Independence</h3>
-
-  <p>FI is the idea that if you can save up enough money, eventually it can support your expenses and "work" becomes optional.</p>
-
-  <p>Read more at YNAB: <a href="https://www.youneedabudget.com/is-the-fire-movement-for-you/">Is the FIRE movement for you?</a></p>
-
-  <p>One of the obstacles with FI is that it's a marathon, not a sprint. It might be tough to stay motivated if you can't visualize how the small choices you make today can vastly benefit the future.</p>
-
-  <p>So... what if you could foreshadow the future based on the actions of today? </p>
-
-  <p><a routerLink="/forecasting">FI Forecasting</a></p>
 </div>
