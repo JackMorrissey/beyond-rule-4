@@ -1,0 +1,16 @@
+/* https://github.com/ng-bootstrap/ng-bootstrap/issues/2337#issuecomment-384327123 */
+
+::ng-deep > h5 > button {
+  width: 100%;
+  height: 100%;
+}
+
+::ng-deep ngb-accordion .card-header > h5 > button {
+  width: 100%;
+  height: 100%;
+  padding: .5rem 1.25rem; /* Or whatever padding you would have applied in the next rule*/
+}
+
+ngb-accordion .card-header {
+  padding: 0; /* Just to make sure the <a> fills the whole card header */
+}

@@ -1,67 +1,111 @@
 <form [formGroup]="budgetForm">
 
-  <div class="form-group row">
-    <label for="netWorth" class="col-sm-12 col-md-4 col-form-label">Net Worth</label>
-    <div class="col">
-      <input type="number" class="form-control" id="netWorth" formControlName="netWorth">
-    </div>
-  </div>
-  <div class="form-group row">
-    <label for="monthlyContribution" class="col-sm-12 col-md-4 col-form-label">Monthly Contribution</label>
-    <div class="col">
-      <input type="number" class="form-control" id="monthlyContribution" formControlName="monthlyContribution">
-    </div>
-  </div>
+  <ngb-accordion [closeOthers]="false" activeIds="p-netWorth,p-contributions,p-expenses">
+      <ngb-panel id="p-netWorth" title="Net Worth">
+        <ng-template ngbPanelContent>
+          <!-- <div class="row">
+            <div class="col mb-2">
+              <div class="media">
+                <div class="media-body">
+                  <h5 class="mt-0 mb-1">Net Worth</h5>
+                  Calculated by summing all Budget and Tracking accounts together.
+                </div>
+                <div class="ml-3">
+                  <button type="button" class="btn btn-light mr-2 fa-lg" placement="left" ngbTooltip="Toggle Instructions">
+                    <i class="fas fa-info-circle" ></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div> -->
+          <div class="form-group row">
+            <label for="netWorth" class="col-sm-12 col-md-4 col-form-label">Net Worth</label>
+            <div class="col">
+              <input type="number" class="form-control" id="netWorth" formControlName="netWorth">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              Calculated as a sum of all Budget and Tracking accounts.
+              <div><small>Read More: <a target="fi-read-more" href="http://www.mrmoneymustache.com/2015/01/26/calculating-net-worth/">Calculating Net Worth - Mr. Money Mustache <i class="fas fa-external-link-square-alt fa-sm"></i></a></small></div>
+            </div>
+          </div>
+        </ng-template>
+      </ngb-panel>
+      <ngb-panel id="p-contributions" title="Contributions">
+        <ng-template ngbPanelContent>
+          <div class="form-group row">
+            <label for="monthlyContribution" class="col-sm-12 col-md-4 col-form-label">Monthly Contribution</label>
+            <div class="col">
+              <input type="number" class="form-control" id="monthlyContribution" formControlName="monthlyContribution">
+            </div>
+          </div>
+          <div class="row">
+              <div class="col">
+                Monthly Contribution to Investments
+              </div>
+            </div>
+        </ng-template>
+      </ngb-panel>
+      <ngb-panel id="p-expenses" title="Expenses">
+        <ng-template ngbPanelContent>
+          <table class="table">
+            <thead class="thead-light">
+              <tr>
+                <th>Calculated</th>
+                <th>YNAB</th>
+                <th>FI</th>
+                <th>Lean FI</th>
+              </tr>
+            </thead>
+            <tbody >
+              <tr>
+                <th>Monthly Expenses</th>
+                <td>{{expenses.ynab.monthly | number}}</td>
+                <td>{{expenses.fi.monthly | number}}</td>
+                <td>{{expenses.leanFi.monthly | number}}</td>
+              </tr>
+              <tr>
+                <th>Estimated Annual Expenses</th>
+                <td>{{expenses.ynab.annual | number}}</td>
+                <td>{{expenses.fi.annual | number}}</td>
+                <td>{{expenses.leanFi.annual | number}}</td>
+              </tr>
+            </tbody>
+            <thead class="thead-light">
+              <tr>
+                <th>Category</th>
+                <th>YNAB Budget</th>
+                <th>FI Budget</th>
+                <th>Lean FI Budget</th>
+              </tr>
+            </thead>
+            <tbody formArrayName="categoryGroups">
+            <ng-container *ngFor="let categoryGroup of categoryGroups.controls; let i=index" [formGroupName]="i">
+              <tr>
+                <th colspan="4">{{categoryGroup.value.name}}</th>
+              </tr>
+              <ng-container formArrayName="categories">
+                <tr *ngFor="let category of categoryGroup.get('categories').controls; let j=index" [formGroupName]="j">
+                  <td>{{category.value.name}}</td>
+                  <td>{{category.value.retrievedBudgeted | number}}</td>
+                  <td>
+                    <input class="form-control" formControlName="fiBudget" type="number" />
+                  </td>
+                  <td>
+                      <input class="form-control" formControlName="leanFiBudget" type="number" />
+                    </td>
+                </tr>
+              </ng-container>
+            </ng-container>
+            </tbody>
+          </table>
+        </ng-template>
+      </ngb-panel>
+    </ngb-accordion>
 
-  <table class="table">
-    <thead class="thead-light">
-      <tr>
-        <th>Calculated</th>
-        <th>YNAB</th>
-        <th>FI</th>
-        <th>Lean FI</th>
-      </tr>
-    </thead>
-    <tbody >
-      <tr>
-        <th>Monthly Expenses</th>
-        <td>{{expenses.ynab.monthly | number}}</td>
-        <td>{{expenses.fi.monthly | number}}</td>
-        <td>{{expenses.leanFi.monthly | number}}</td>
-      </tr>
-      <tr>
-        <th>Estimated Annual Expenses</th>
-        <td>{{expenses.ynab.annual | number}}</td>
-        <td>{{expenses.fi.annual | number}}</td>
-        <td>{{expenses.leanFi.annual | number}}</td>
-      </tr>
-    </tbody>
-    <thead class="thead-light">
-      <tr>
-        <th>Category</th>
-        <th>YNAB Budget</th>
-        <th>FI Budget</th>
-        <th>Lean FI Budget</th>
-      </tr>
-    </thead>
-    <tbody formArrayName="categoryGroups">
-    <ng-container *ngFor="let categoryGroup of categoryGroups.controls; let i=index" [formGroupName]="i">
-      <tr>
-        <th colspan="4">{{categoryGroup.value.name}}</th>
-      </tr>
-      <ng-container formArrayName="categories">
-        <tr *ngFor="let category of categoryGroup.get('categories').controls; let j=index" [formGroupName]="j">
-          <td>{{category.value.name}}</td>
-          <td>{{category.value.retrievedBudgeted | number}}</td>
-          <td>
-            <input class="form-control" formControlName="fiBudget" type="number" />
-          </td>
-          <td>
-              <input class="form-control" formControlName="leanFiBudget" type="number" />
-            </td>
-        </tr>
-      </ng-container>
-    </ng-container>
-    </tbody>
-  </table>
+
+
+
+
 </form>

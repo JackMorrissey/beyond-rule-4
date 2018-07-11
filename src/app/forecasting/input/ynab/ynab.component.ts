@@ -10,7 +10,8 @@ import { round } from '../../utilities/number-utility';
 
 @Component({
   selector: 'app-ynab',
-  templateUrl: 'ynab.component.html'
+  templateUrl: 'ynab.component.html',
+  styleUrls: ['./ynab.component.css']
 })
 
 export class YnabComponent implements OnInit {
