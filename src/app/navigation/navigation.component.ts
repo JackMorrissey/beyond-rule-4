@@ -8,6 +8,7 @@ import { YnabApiService } from '../ynab-api/ynab-api.service';
 })
 
 export class NavigationComponent implements OnInit {
+  isOpen = false;
   isAuthorized = false;
 
   constructor(private ynabApiService: YnabApiService) { }

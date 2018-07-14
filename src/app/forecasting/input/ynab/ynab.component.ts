@@ -18,6 +18,7 @@ export class YnabComponent implements OnInit {
   @Output() calculateInputChange = new EventEmitter<CalculateInput>();
 
   budgetForm: FormGroup;
+  displayContributionInfo = true;
 
   public budgets: ynab.BudgetSummary[];
   public budget: ynab.BudgetSummary;
@@ -207,6 +208,7 @@ export class YnabComponent implements OnInit {
     const retrievedBudgeted = !found ? 0 : ynab.utils.convertMilliUnitsToCurrencyAmount(found.budgeted);
     const computedFiBudget = ignore ? 0 : retrievedBudgeted;
     const computedLeanFiBudget = leanFiIgnore ? 0 : computedFiBudget;
+    // TODO: parse commands here from notes
 
     return {
       name: category.name,
@@ -221,7 +223,7 @@ export class YnabComponent implements OnInit {
 
   private getParsedCommands(monthDetail: ynab.MonthDetail) {
     const categoriesWithCommands = [];
-    const commandPrefix = 'fi:';
+    const commandPrefix = 'br4:';
 
     monthDetail.categories.forEach(c => {
       if (!c.note) {
@@ -245,8 +247,8 @@ export class YnabComponent implements OnInit {
 
   private getMonthlyContribution(parsedCommands): number {
     let contribution = 0;
-    const monthlyPrefix = '+monthly:';
-    const yearlyPrefix = '+yearly:';
+    const monthlyPrefix = '+:';
+    const yearlyPrefix = '+y:';
     parsedCommands.forEach(categoryWithCommands => {
       const commandLines: string[] = categoryWithCommands.commandLines;
       const categoryName = categoryWithCommands.category.name;
