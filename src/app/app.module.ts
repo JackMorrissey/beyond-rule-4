@@ -5,6 +5,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AppRoutingModule } from './app-routing.module';
 
 import { HomeModule } from './home/home.module';
+import { AboutModule } from './about/about.module';
 import { BeyondModule } from './beyond/beyond.module';
 import { NavigationModule } from './navigation/navigation.module';
 import { ForecastingModule } from './forecasting/forecasting.module';
@@ -24,6 +25,7 @@ import { AppComponent } from './app.component';
     BrowserModule,
     NgbModule.forRoot(),
     HomeModule,
+    AboutModule,
     BeyondModule,
     NavigationModule,
     ForecastingModule,
