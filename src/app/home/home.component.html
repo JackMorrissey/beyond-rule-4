@@ -14,17 +14,22 @@
 
   <h2>Beyond Rule 4</h2>
 
-  <p>Once you've mastered the 4 rules you may be left yearning for additional milestones.</p>
+  <p>Once you've mastered the 4 rules you may be left yearning for additional milestones. What would you like to conquer next?</p>
 
-  <p>Authorize with YNAB and lets see if we can find some additional goals you'd like to conquer.</p>
+  <h5>Financial Independence</h5>
+
+  <p>Financial Independence is the idea that if you can save up enough money, eventually the earnings on those investments can cover your expenses and "work" becomes optional. <a href="https://www.youneedabudget.com/is-the-fire-movement-for-you/">Is the FIRE movement for you?</a> How far are you in your journey to financial freedom?</p>
+
+  <!-- <p>Authorize with YNAB and lets see if we can find some additional goals you'd like to conquer.</p> -->
 
   <div *ngIf="isAuthorized" class="mb-2">
     <p class="text-success">Successfully authorized with YNAB! What's next?</p>
     <div class="mb-2"><a routerLink="/beyond" class="btn btn-success">Go Beyond</a></div>
   </div>
   <div *ngIf="!isAuthorized" class="mb-3">
-      <p>Let's get started!</p>
-      <div class="mb-4"><button (click)="authorize()" class="btn btn-primary btn-lg">Authorize with YNAB</button></div>
+      <p>Authorize with YNAB and let's find out!</p>
+      <div class=""><button (click)="authorize()" class="btn btn-primary btn-lg">Authorize with YNAB</button></div>
+      <div class="text-small mb-4">We do not track or collect personal information. <a routerLink="/about">About and Privacy Policy</a></div>
 
       <div>
         <p>Just browsing? No worries!</p>
