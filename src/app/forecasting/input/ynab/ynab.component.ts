@@ -45,6 +45,7 @@ export class YnabComponent implements OnInit {
       annual: number
     }
   };
+  public contributionCategories: any;
 
   private hiddenCategoryGroups = [
     'credit card payments',
@@ -106,10 +107,9 @@ export class YnabComponent implements OnInit {
 
     const netWorth = this.getNetWorth(this.accounts);
     const categoryGroups = this.mapCategoryGroups(this.categoryGroupsWithCategories, this.currentMonth);
-    const parsedCommands = this.getParsedCommands(this.currentMonth);
-    console.log(parsedCommands);
-    const monthlyContribution = this.getMonthlyContribution(parsedCommands);
-    this.resetForm(netWorth, categoryGroups, monthlyContribution);
+    const monthlyContribution = this.getMonthlyContribution(categoryGroups);
+    this.contributionCategories = monthlyContribution.categories;
+    this.resetForm(netWorth, categoryGroups, monthlyContribution.value);
 
     const formChanges = this.budgetForm.valueChanges.pipe(debounce(() => timer(500)));
     formChanges.subscribe(() => {
@@ -183,7 +183,8 @@ export class YnabComponent implements OnInit {
     const categoryGroups = categoryGroupsWithCategories.map(c => {
       const categoryGroupIgnore = c.hidden || this.ignoredCategoryGroups.includes(c.name.toLowerCase());
       const leanFiIgnore = categoryGroupIgnore || this.leanFiIgnoredCategoryGroups.includes(c.name.toLowerCase());
-      const mappedCategories = c.categories.map(ca => this.mapCategory(ca, monthDetail, categoryGroupIgnore, leanFiIgnore));
+      const isContribution = this.contributionCategoryGroups.includes(c.name.toLowerCase());
+      const mappedCategories = c.categories.map(ca => this.mapCategory(ca, monthDetail, categoryGroupIgnore, leanFiIgnore, isContribution));
       const hidden = c.hidden || this.hiddenCategoryGroups.includes(c.name.toLowerCase()) || mappedCategories.every(mc => mc.hidden);
       return {
         name: c.name,
@@ -202,15 +203,30 @@ export class YnabComponent implements OnInit {
     return categoryGroups;
   }
 
-  private mapCategory(category: ynab.Category, monthDetail: ynab.MonthDetail, childrenIgnore: boolean, leanFiIgnore: boolean) {
+  private mapCategory(category: ynab.Category, monthDetail: ynab.MonthDetail,
+    childrenIgnore: boolean, leanFiIgnore: boolean, isContribution: boolean) {
     const ignore = childrenIgnore || category.hidden;
     const found = monthDetail.categories.find(c => category.id === c.id);
     const retrievedBudgeted = !found ? 0 : ynab.utils.convertMilliUnitsToCurrencyAmount(found.budgeted);
-    const computedFiBudget = ignore ? 0 : retrievedBudgeted;
-    const computedLeanFiBudget = leanFiIgnore ? 0 : computedFiBudget;
-    // TODO: parse commands here from notes
 
-    return {
+    const overrides = this.getNoteOverrides(found.note);
+
+    let computedFiBudget = ignore ? 0 : retrievedBudgeted;
+    if (overrides.computedFiBudget !== undefined) {
+      computedFiBudget = overrides.computedFiBudget;
+    }
+
+    let computedLeanFiBudget = leanFiIgnore ? 0 : computedFiBudget;
+    if (overrides.computedLeanFiBudget !== undefined) {
+      computedLeanFiBudget = overrides.computedLeanFiBudget;
+    }
+
+    let contributionBudget = isContribution ? retrievedBudgeted : 0;
+    if (overrides.contributionBudget !== undefined) {
+      contributionBudget = overrides.contributionBudget;
+    }
+
+    return Object.assign({
       name: category.name,
       ignore,
       hidden: category.hidden,
@@ -218,64 +234,96 @@ export class YnabComponent implements OnInit {
       retrievedBudgeted,
       computedFiBudget,
       computedLeanFiBudget,
+      contributionBudget
+    }, );
+  }
+
+  private getNoteOverrides(note: string) {
+    const override = {
+      contributionBudget: undefined,
+      computedLeanFiBudget: undefined,
+      computedFiBudget: undefined
     };
-  }
 
-  private getParsedCommands(monthDetail: ynab.MonthDetail) {
-    const categoriesWithCommands = [];
-    const commandPrefix = 'br4:';
+    if (!note) {
+      return override;
+    }
 
-    monthDetail.categories.forEach(c => {
-      if (!c.note) {
-        return;
-      }
-      const lines = c.note.toLowerCase().split('\n').map(l => l.trim());
-      const commandLines = lines.filter((l) => {
-        return l.startsWith(commandPrefix);
-      }).map((l) => {
-        return l.substr(commandPrefix.length);
-      });
-      if (commandLines.length) {
-        categoriesWithCommands.push({
-          category: c,
-          commandLines
-        });
+    const commands = this.getCommands(note);
+
+    commands.forEach(c => {
+      switch (c.key) {
+        case '+':
+        case 'c':
+        case 'contribution':
+          override.contributionBudget = c.value;
+          break;
+        case 'l':
+        case 'lfi':
+        case 'lean':
+          override.computedLeanFiBudget = c.value;
+          break;
+        case 'f':
+        case 'fi':
+          override.computedFiBudget = c.value;
+          break;
+        default:
+          break;
       }
     });
-    return categoriesWithCommands;
+
+    return override;
   }
 
-  private getMonthlyContribution(parsedCommands): number {
+  private getCommands(originalNote: string) {
+    const note = originalNote.toLowerCase();
+    const commandPrefix = 'br4';
+    if (note.indexOf(commandPrefix) === -1) {
+      return [];
+    }
+
+    const lines = note.split(commandPrefix);
+    if (!lines || !lines.length) {
+      return [];
+    }
+
+    return lines.map(line => {
+      const cleaned = line.replace(/\:/g, ' ').replace(/\s+/g, ' ').trim();
+      const numRegex = /[+-]?\d+(?:\.\d+)?/g;
+      const match = numRegex.exec(cleaned);
+      if (!match || !match.length) {
+        return {};
+      }
+      const foundValue = match[0];
+      const key = cleaned.substr(0, cleaned.indexOf(foundValue)).trim();
+      const value = Number(foundValue);
+      return {
+        key,
+        value
+      };
+    }).filter(l => l.key);
+  }
+
+  private getMonthlyContribution(categoryGroups) {
     let contribution = 0;
-    const monthlyPrefix = '+:';
-    const yearlyPrefix = '+y:';
-    parsedCommands.forEach(categoryWithCommands => {
-      const commandLines: string[] = categoryWithCommands.commandLines;
-      const categoryName = categoryWithCommands.category.name;
-      const monthlyContribution = commandLines.filter((c) => {
-        return c.trim().startsWith(monthlyPrefix);
-      }).map(l => {
-        return Number(l.trim().substr(monthlyPrefix.length).trim());
-      }).reduce((prev, next) => {
-        if (!next) {
-          return prev;
+    const categories = [];
+
+    categoryGroups.forEach(cg => {
+      cg.categories.forEach(c => {
+        if (c.contributionBudget) {
+          contribution += c.contributionBudget;
+          categories.push({
+            name: c.name,
+            value: c.contributionBudget
+          });
         }
-        return prev + next;
-      }, 0);
-      const yearlyContribution = commandLines.filter((c) => {
-        return c.trim().startsWith(yearlyPrefix);
-      }).map(l => {
-        return Number(l.trim().substr(yearlyPrefix.length).trim());
-      }).reduce((prev, next) => {
-        if (!next) {
-          return prev;
-        }
-        return prev + next;
-      }, 0);
-      contribution += monthlyContribution + (yearlyContribution / 12);
+      });
     });
 
-    return round(contribution);
+    return {
+      value: round(contribution),
+      categories
+    };
   }
 
   private resetForm(netWorth, categoriesDisplay, monthlyContribution) {

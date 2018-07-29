@@ -36,6 +36,22 @@
             </button>
           </div>
         </div>
+        <div class="row" *ngIf="contributionCategories && contributionCategories.length">
+          <table class="table col-12">
+            <thead class="thead-light">
+              <tr>
+                <th>Category Name</th>
+                <th>Contribution</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let category of contributionCategories">
+                <td>{{category.name}}</td>
+                <td>{{category.value | number}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
         <div *ngIf="displayContributionInfo">
           <div class="row">
             <div class="col-12" >
