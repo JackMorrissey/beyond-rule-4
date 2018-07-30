@@ -56,9 +56,17 @@
           <div class="row">
             <div class="col-12" >
               <h4>Reading Contributions from YNAB</h4>
-              <p><span>In the note of any category, on a new line, add <code>BR4:+:<i>amount</i></code></span>
-                (e.g. <code>BR4:+:1000</code>).</p>
-              <p class="small">When editing a category's Notes, use <kbd>shift + enter</kbd> or <kbd>shift + return</kbd> to create a new line.</p>
+              <p>The following category groups are automatically counted as contributions: </p>
+              <ul>
+                <li>Financial Independence</li>
+                <li>Investments</li>
+                <li>Retirement</li>
+                <li>FIRE</li>
+              </ul>
+              <p><span>If you would like to override the budgeted amount add <code>BR4 + <i>amount</i></code></span>
+                (e.g. <code>BR4 + 1000</code>) to the notes of that category. This is useful for including contributions to employer accounts that aren't budgeted.</p>
+
+
             </div>
           </div>
           <div class="row">
@@ -67,7 +75,12 @@
             </div>
             <div class="col-12">
               <img src="assets/images/ContributionNotes.png" class="img-fluid" alt="Contribution Notes">
+
             </div>
+            <div class="col-12">
+              <p class="small">(When editing a category's Notes, use <kbd>shift + enter</kbd> or <kbd>shift + return</kbd> to create a new line.)</p>
+            </div>
+
           </div>
         </div>
 
