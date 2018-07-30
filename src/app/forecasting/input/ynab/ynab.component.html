@@ -6,7 +6,7 @@
         <div class="form-group row">
           <label for="netWorth" class="col-sm-12 col-md-5 col-form-label">Net Worth</label>
           <div class="col">
-            <input type="number" class="form-control" id="netWorth" formControlName="netWorth">
+            <input type="number" class="form-control" id="netWorth" formControlName="netWorth" step="1000">
           </div>
         </div>
         <div class="row">
@@ -28,13 +28,13 @@
         <div class="form-group row">
           <label for="monthlyContribution" class="col-sm-12 col-md-5 col-form-label">Monthly Investment Contribution</label>
           <div class="col">
-            <input type="number" class="form-control" id="monthlyContribution" formControlName="monthlyContribution">
+            <input type="number" class="form-control" id="monthlyContribution" formControlName="monthlyContribution" step="100">
           </div>
-          <div class="col-sm-1">
+          <!-- <div class="col-sm-1">
             <button type="button" class="btn btn-link" (click)="displayContributionInfo = !displayContributionInfo">
               <i class="fas fa-info-circle"></i>
             </button>
-          </div>
+          </div> -->
         </div>
         <div class="row" *ngIf="contributionCategories && contributionCategories.length">
           <table class="table col-12">
