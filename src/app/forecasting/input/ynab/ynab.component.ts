@@ -200,7 +200,7 @@ export class YnabComponent implements OnInit {
       return 0;
     });
 
-    return categoryGroups;
+    return categoryGroups.filter(c => !c.hidden);
   }
 
   private mapCategory(category: ynab.Category, monthDetail: ynab.MonthDetail,
