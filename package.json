@@ -23,6 +23,7 @@
     "@angular/router": "6.0.7",
     "@ng-bootstrap/ng-bootstrap": "^2.2.0",
     "@swimlane/ngx-charts": "^8.1.0",
+    "classlist.js": "^1.1.20150312",
     "core-js": "^2.5.7",
     "d3": "^5.5.0",
     "rxjs": "^6.2.1",
