@@ -1,9 +1,15 @@
 <form [formGroup]="budgetForm">
 
-  <ngb-accordion [closeOthers]="false">
-    <ngb-panel id="p-netWorth">
+  <ngb-accordion [closeOthers]="false" (panelChange)="beforePanelChange($event)">
+    <ngb-panel id="pNetWorth">
       <ng-template ngbPanelTitle>
-        <span>Net Worth - {{budgetForm.value.netWorth | number}}</span>
+        <span>Net Worth</span>
+        <span class="accordion-info">{{budgetForm.value.netWorth | number}}
+          <span class="accordion-toggle">
+              <span [ngClass]="{'d-none': accordionPanelActiveStates.pNetWorth !== true}"><i  class="fas fa-caret-square-down"></i></span>
+              <span [ngClass]="{'d-none': accordionPanelActiveStates.pNetWorth === true}"><i  class="fas fa-caret-square-up"></i></span>
+          </span>
+        </span>
       </ng-template>
       <ng-template ngbPanelContent>
         <div class="form-group row">
@@ -26,9 +32,15 @@
         </div>
       </ng-template>
     </ngb-panel>
-    <ngb-panel id="p-contributions">
+    <ngb-panel id="pContributions">
       <ng-template ngbPanelTitle>
-        <span>Contributions - {{budgetForm.value.monthlyContribution | number}}</span>
+        <span>Contributions</span>
+        <span class="accordion-info">{{budgetForm.value.monthlyContribution | number}}
+          <span class="accordion-toggle">
+              <span [ngClass]="{'d-none': accordionPanelActiveStates.pContributions !== true}"><i  class="fas fa-caret-square-down"></i></span>
+              <span [ngClass]="{'d-none': accordionPanelActiveStates.pContributions === true}"><i  class="fas fa-caret-square-up"></i></span>
+          </span>
+        </span>
       </ng-template>
 
       <ng-template ngbPanelContent>
@@ -93,9 +105,15 @@
 
       </ng-template>
     </ngb-panel>
-    <ngb-panel id="p-expenses">
+    <ngb-panel id="pExpenses">
       <ng-template ngbPanelTitle>
-        <span>Expenses - {{expenses.fi.annual | number}}</span>
+        <span>Expenses</span>
+        <span class="accordion-info">{{expenses.fi.annual | number}}
+          <span class="accordion-toggle">
+              <span [ngClass]="{'d-none': accordionPanelActiveStates.pExpenses !== true}"><i  class="fas fa-caret-square-down"></i></span>
+              <span [ngClass]="{'d-none': accordionPanelActiveStates.pExpenses === true}"><i  class="fas fa-caret-square-up"></i></span>
+          </span>
+        </span>
       </ng-template>
       <ng-template ngbPanelContent>
         <div class="row">

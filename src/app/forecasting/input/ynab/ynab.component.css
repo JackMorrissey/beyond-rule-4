@@ -14,3 +14,11 @@
 ngb-accordion .card-header {
   padding: 0; /* Just to make sure the <a> fills the whole card header */
 }
+
+.accordion-info {
+  float: right;
+}
+
+.accordion-toggle {
+  margin-left: 15px;
+}

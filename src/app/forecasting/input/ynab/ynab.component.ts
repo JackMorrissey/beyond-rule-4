@@ -1,5 +1,6 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormArray, FormControl, FormBuilder, Validators } from '@angular/forms';
+import {NgbPanelChangeEvent} from '@ng-bootstrap/ng-bootstrap';
 import { timer } from 'rxjs';
 import { debounce } from 'rxjs/operators';
 import * as ynab from 'ynab';
@@ -46,6 +47,8 @@ export class YnabComponent implements OnInit {
     }
   };
   public contributionCategories: any;
+
+  public accordionPanelActiveStates: any = {};
 
   private hiddenCategoryGroups = [
     'credit card payments',
@@ -147,6 +150,10 @@ export class YnabComponent implements OnInit {
     result.monthlyContribution = this.budgetForm.value.monthlyContribution;
     result.roundAll();
     this.calculateInputChange.emit(result);
+  }
+
+  beforePanelChange($event: NgbPanelChangeEvent) {
+    this.accordionPanelActiveStates[$event.panelId] = $event.nextState;
   }
 
   private getMonthlyExpenses(categoryGroups, budgetPropertyName) {
