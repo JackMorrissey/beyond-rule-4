@@ -1,7 +1,7 @@
 <h3>FI Date</h3>
 <h2 class="text-success font-weight-bold">{{fiDate}} • {{dateDistance}}</h2>
 <p>
-  At a safe withdrawal rate of {{safeWithdrawalRate}}%,
+  At a <a target="fi-read-more" href="http://www.mrmoneymustache.com/2012/05/29/how-much-do-i-need-for-retirement/">safe withdrawal rate of {{safeWithdrawalRate}}% <i class="fas fa-external-link-square-alt fa-sm"></i></a>,
   Financial Independence is reached at a Net Worth of {{safeWithdrawalTimes}} times annual expenses.
 </p>
 <p>
@@ -9,17 +9,12 @@
   we're aiming for a Net Worth of {{fiNumber | number}}.
 </p>
 <p>
-  At 7% returns, that Net Worth is forecasted to be {{fiDate}}; {{dateDistance}} from the first month.
+  At <a target="fi-read-more" href="http://www.mrmoneymustache.com/2011/06/06/dude-wheres-my-7-investment-return/">7% returns <i class="fas fa-external-link-square-alt fa-sm"></i></a>,
+  that Net Worth is forecasted to be {{fiDate}}; {{dateDistance}} from the first month.
   By that point, Net Worth is at {{fiMonthForecast.netWorth | number}}.
   Of that total, contributions account for {{fiMonthForecast.totalContributions | number}} while {{fiMonthForecast.totalInterestGains | number}} is earned interest.
 </p>
 <p>
   <span class="font-weight-bold">Lean FI</span>: {{leanFiDate}} • {{leanFiDateDistance}}
 </p>
-<p><small>Read more:
-  <ul>
-    <li><a target="fi-read-more" href="http://www.mrmoneymustache.com/2012/05/29/how-much-do-i-need-for-retirement/">4% Rule - Mr. Money Mustache <i class="fas fa-external-link-square-alt fa-sm"></i></a></li>
-    <li><a target="fi-read-more" href="http://www.mrmoneymustache.com/2011/06/06/dude-wheres-my-7-investment-return/">7% Returns - Mr. Money Mustache <i class="fas fa-external-link-square-alt fa-sm"></i></a></li>
-  </ul>
-</small></p>
 
