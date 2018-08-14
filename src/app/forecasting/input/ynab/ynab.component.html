@@ -74,7 +74,7 @@
         <div *ngIf="displayContributionInfo">
           <div class="row">
             <div class="col-12" >
-              <h4>Reading Contributions from YNAB</h4>
+              <h4>How we pull these numbers from YNAB</h4>
               <p>The following category groups are automatically counted as contributions: </p>
               <ul>
                 <li>Financial Independence</li>
@@ -183,12 +183,12 @@
         </div>
         <div class="row">
           <div class="col-12">
-            <h4>Reading Budgeted Categories from YNAB</h4>
+            <h4>How we pull these numbers from YNAB</h4>
             <p>The following category groups are automatically budgeted to 0 for Financial Independence: </p>
             <ul>
               <li>Financial Independence - You're already FI, no need to keep saving!</li>
               <li>Debt Payments - For simplicity, lets assume this is all paid off</li>
-              <li>Credit Card Payments - For simplicity, lets assume this is all paid off</li>
+              <li>Credit Card Payments - For simplicity, lets assume you pay this off every month</li>
             </ul>
             <p>In addition, the following category groups are automatically budgeted to 0 for Lean Financial Independence: </p>
             <ul>
@@ -196,7 +196,7 @@
               <li>Quality of Life Goals - Theoretically, these goals aren't required to live a bland but financially independent life</li>
             </ul>
             <p>If you would like to override the FI Budget value add <code>BR4 FI <i>amount</i></code>
-              (e.g. <code>BR4 Fi 500</code>) to the notes of that category. For Lean FI, use <code>BR4 LFI <i>amount</i></code>
+              (e.g. <code>BR4 Fi 500</code>) to the notes of that category. For Lean FI, use <code>BR4 LFI <i>amount</i></code>. See the Contribution sections for screenshots; same idea here, just use the appropriate code.
             </p>
           </div>
       </div>
