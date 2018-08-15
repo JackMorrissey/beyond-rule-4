@@ -116,7 +116,6 @@ export class YnabComponent implements OnInit {
 
     const formChanges = this.budgetForm.valueChanges.pipe(debounce(() => timer(500)));
     formChanges.subscribe(() => {
-      // TODO: lets check what changed here
       this.updateInput();
     });
 
