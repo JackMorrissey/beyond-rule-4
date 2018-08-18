@@ -21,8 +21,8 @@ export class YnabComponent implements OnInit {
   budgetForm: FormGroup;
   displayContributionInfo = true;
 
-  public budgets: ynab.BudgetSummary[];
-  public budget: ynab.BudgetSummary;
+  // public budgets: ynab.BudgetSummary[];
+  // public budget: ynab.BudgetSummary;
   public months;
   public currentMonth: ynab.MonthDetail;
   public accounts: ynab.Account[];
@@ -99,10 +99,11 @@ export class YnabComponent implements OnInit {
   }
 
   async ngOnInit() {
-    this.budgets = await this.ynabService.getBudgets();
-    this.budget = this.budgets[0];
-    const budgetId = this.budget.id;
+    // this.budgets = await this.ynabService.getBudgets();
+    // this.budget = this.budgets[0];
+    // const budgetId = this.budget.id;
     // this.months = await this.ynabService.getMonths(budgetId);
+    const budgetId = 'last-used';
     this.currentMonth = await this.ynabService.getMonth(budgetId, 'current');
     this.accounts = await this.ynabService.getAccounts(budgetId);
 
