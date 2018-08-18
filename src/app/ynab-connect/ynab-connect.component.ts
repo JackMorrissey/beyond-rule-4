@@ -13,6 +13,11 @@ export class YnabConnectComponent implements OnInit {
 
   ngOnInit() {
     if (this.ynabApiService.findYnabToken()) {
+      if (window.gtag) {
+        window.gtag('event', 'authorize', {
+          'event_category': 'YNAB Connect'
+        });
+      }
       this.router.navigate(['/beyond']);
     }
   }
