@@ -15,8 +15,8 @@
       <td>{{ m.milestone.value | number}}</td>
       <td>{{ m.forecastDate }}</td>
       <td>{{ m.distance }}</td>
-      <td>{{ m.forecast.totalContributions | number}}</td>
-      <td>{{ m.forecast.totalInterestGains | number}}</td>
+      <td>{{ m.forecast?.totalContributions | number}}</td>
+      <td>{{ m.forecast?.totalInterestGains | number}}</td>
     </tr>
   </tbody>
 </table>

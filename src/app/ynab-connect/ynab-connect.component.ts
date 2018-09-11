@@ -3,6 +3,8 @@ import { Router } from '@angular/router';
 
 import { YnabApiService } from '../ynab-api/ynab-api.service';
 
+declare var gtag: any;
+
 @Component({
   selector: 'app-ynab-connect',
   templateUrl: 'ynab-connect.component.html'
@@ -13,8 +15,8 @@ export class YnabConnectComponent implements OnInit {
 
   ngOnInit() {
     if (this.ynabApiService.findYnabToken()) {
-      if (window.gtag) {
-        window.gtag('event', 'authorize', {
+      if (gtag) {
+        gtag('event', 'authorize', {
           'event_category': 'YNAB Connect'
         });
       }

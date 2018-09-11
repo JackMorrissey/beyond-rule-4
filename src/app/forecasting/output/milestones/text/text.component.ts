@@ -22,8 +22,6 @@ export class TextComponent implements OnInit, OnChanges {
     this.calculateData();
   }
 
-  // TODO: graph on browser change
-
   ngOnChanges(changes: SimpleChanges): void {
     this.calculateData();
   }
@@ -63,6 +61,10 @@ export class TextComponent implements OnInit, OnChanges {
   }
 
   getDateString(forecastDate: Date) {
+    if (!forecastDate) {
+      return 'N/A';
+    }
+
     const options = { year: 'numeric', month: 'short' };
     return forecastDate.toLocaleDateString('en-US', options);
   }

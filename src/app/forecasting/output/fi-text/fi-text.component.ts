@@ -37,17 +37,34 @@ export class FiTextComponent implements OnInit, OnChanges {
     const safeWithdrawalTimes = 1 / this.calculateInput.annualSafeWithdrawalRate;
     this.safeWithdrawalTimes = round(safeWithdrawalTimes);
     this.safeWithdrawalRate = round(this.calculateInput.annualSafeWithdrawalRate * 100);
-    const fiNumber = round(safeWithdrawalTimes * this.calculateInput.annualExpenses);
+    const fiNumber = Math.max(0, round(safeWithdrawalTimes * this.calculateInput.annualExpenses));
     this.fiNumber = fiNumber;
-    const foundFiForecast = this.forecast.monthlyForecasts.find(f => f.netWorth >= fiNumber);
-    this.fiDate = foundFiForecast.toDateString();
-    this.dateDistance = this.forecast.getDistanceFromFirstMonthText(foundFiForecast.date);
-    this.fiMonthForecast = foundFiForecast;
 
-    const leanFiNumber = round(this.safeWithdrawalTimes * this.calculateInput.leanAnnualExpenses);
+    const leanFiNumber = Math.max(0, round(this.safeWithdrawalTimes * this.calculateInput.leanAnnualExpenses));
     this.leanFiNumber = leanFiNumber;
+
+    if (!this.forecast) {
+      return;
+    }
+
+    const foundFiForecast = this.forecast.monthlyForecasts.find(f => f.netWorth >= fiNumber);
+    if (!foundFiForecast) {
+      this.fiDate = 'Never';
+      this.dateDistance = 'Forever';
+      this.fiMonthForecast = undefined;
+    } else {
+      this.fiDate = foundFiForecast.toDateString();
+      this.dateDistance = this.forecast.getDistanceFromFirstMonthText(foundFiForecast.date) || '0 Months';
+      this.fiMonthForecast = foundFiForecast;
+    }
+
     const foundLeanFiForecast = this.forecast.monthlyForecasts.find(f => f.netWorth >= leanFiNumber);
-    this.leanFiDate = foundLeanFiForecast.toDateString();
-    this.leanFiDateDistance = this.forecast.getDistanceFromFirstMonthText(foundLeanFiForecast.date);
+    if (!foundLeanFiForecast) {
+      this.leanFiDate = 'Never';
+      this.leanFiDateDistance = 'Forever';
+    } else {
+      this.leanFiDate = foundLeanFiForecast.toDateString();
+      this.leanFiDateDistance = this.forecast.getDistanceFromFirstMonthText(foundLeanFiForecast.date) || '0 Months';
+    }
   }
 }
