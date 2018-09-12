@@ -1,3 +1,4 @@
+<div *ngIf="isUsingSampleData">(Using sample data)</div>
 <form [formGroup]="budgetForm">
 
   <ngb-accordion [closeOthers]="false" (panelChange)="beforePanelChange($event)">

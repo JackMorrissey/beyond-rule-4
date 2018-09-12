@@ -69,13 +69,21 @@ export class YnabApiService {
     return !this.useSampleData;
   }
 
+  isUsingSampleData(): boolean {
+    return this.useSampleData;
+  }
+
   async getBudgets(): Promise<ynab.BudgetSummary[]> {
     if (this.useSampleData) {
       return SampleData.Budgets;
     }
 
-    const budgets = await this.ynabApi.budgets.getBudgets();
+    try {
+      const budgets = await this.ynabApi.budgets.getBudgets();
     return budgets.data.budgets;
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   async getMonths(budgetId: string): Promise<ynab.MonthSummary[]> {
@@ -83,8 +91,12 @@ export class YnabApiService {
       return SampleData.Months;
     }
 
-    const months = await this.ynabApi.months.getBudgetMonths(budgetId);
-    return months.data.months;
+    try {
+      const months = await this.ynabApi.months.getBudgetMonths(budgetId);
+      return months.data.months;
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   async getMonth(budgetId: string, budgetMonth: Date | 'current'): Promise<ynab.MonthDetail> {
@@ -92,8 +104,12 @@ export class YnabApiService {
       return SampleData.Month;
     }
 
-    const month = await this.ynabApi.months.getBudgetMonth(budgetId, budgetMonth);
-    return month.data.month;
+    try {
+      const month = await this.ynabApi.months.getBudgetMonth(budgetId, budgetMonth);
+      return month.data.month;
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   async getAccounts(budgetId: string): Promise<ynab.Account[]> {
@@ -101,8 +117,12 @@ export class YnabApiService {
       return SampleData.Accounts;
     }
 
-    const accounts = await this.ynabApi.accounts.getAccounts(budgetId);
-    return accounts.data.accounts;
+    try {
+      const accounts = await this.ynabApi.accounts.getAccounts(budgetId);
+      return accounts.data.accounts;
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   async getCategoryGroupsWithCategories(budgetId: string): Promise<ynab.CategoryGroupWithCategories[]> {
@@ -110,7 +130,11 @@ export class YnabApiService {
       return SampleData.CategoryGroupsWithCategories;
     }
 
-    const categories = await this.ynabApi.categories.getCategories(budgetId);
-    return categories.data.category_groups;
+    try {
+      const categories = await this.ynabApi.categories.getCategories(budgetId);
+      return categories.data.category_groups;
+    } catch (error) {
+      console.error(error);
+    }
   }
 }

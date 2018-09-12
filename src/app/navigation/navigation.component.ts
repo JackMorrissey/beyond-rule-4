@@ -23,5 +23,6 @@ export class NavigationComponent implements OnInit {
 
   logOut() {
     this.ynabApiService.clearToken();
+    window.location.reload(false);
   }
 }

@@ -47,6 +47,7 @@ export class YnabComponent implements OnInit {
     }
   };
   public contributionCategories: any;
+  public isUsingSampleData = false;
 
   public accordionPanelActiveStates: any = {};
 
@@ -103,6 +104,7 @@ export class YnabComponent implements OnInit {
     // this.budget = this.budgets[0];
     // const budgetId = this.budget.id;
     // this.months = await this.ynabService.getMonths(budgetId);
+    this.isUsingSampleData = this.ynabService.isUsingSampleData();
     const budgetId = 'last-used';
     this.currentMonth = await this.ynabService.getMonth(budgetId, 'current');
     this.accounts = await this.ynabService.getAccounts(budgetId);
@@ -110,10 +112,10 @@ export class YnabComponent implements OnInit {
     this.categoryGroupsWithCategories = await this.ynabService.getCategoryGroupsWithCategories(budgetId);
 
     const netWorth = this.getNetWorth(this.accounts);
-    const categoryGroups = this.mapCategoryGroups(this.categoryGroupsWithCategories, this.currentMonth);
-    const monthlyContribution = this.getMonthlyContribution(categoryGroups);
+    const mappedCategoryGroups = this.mapCategoryGroups(this.categoryGroupsWithCategories, this.currentMonth);
+    const monthlyContribution = this.getMonthlyContribution(mappedCategoryGroups);
     this.contributionCategories = monthlyContribution.categories;
-    this.resetForm(netWorth, categoryGroups, monthlyContribution.value);
+    this.resetForm(netWorth, mappedCategoryGroups, monthlyContribution.value);
 
     const formChanges = this.budgetForm.valueChanges.pipe(debounce(() => timer(500)));
     formChanges.subscribe(() => {
@@ -315,17 +317,19 @@ export class YnabComponent implements OnInit {
     let contribution = 0;
     const categories = [];
 
-    categoryGroups.forEach(cg => {
-      cg.categories.forEach(c => {
-        if (c.contributionBudget) {
-          contribution += c.contributionBudget;
-          categories.push({
-            name: c.name,
-            value: c.contributionBudget
-          });
-        }
+    if (categoryGroups) {
+      categoryGroups.forEach(cg => {
+        cg.categories.forEach(c => {
+          if (c.contributionBudget) {
+            contribution += c.contributionBudget;
+            categories.push({
+              name: c.name,
+              value: c.contributionBudget
+            });
+          }
+        });
       });
-    });
+    }
 
     return {
       value: round(contribution),
