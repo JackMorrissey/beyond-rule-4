@@ -1,6 +1,7 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormArray, FormControl, FormBuilder, Validators } from '@angular/forms';
-import {NgbPanelChangeEvent} from '@ng-bootstrap/ng-bootstrap';
+import { Router, ActivatedRoute} from '@angular/router';
+import { NgbPanelChangeEvent} from '@ng-bootstrap/ng-bootstrap';
 import { timer } from 'rxjs';
 import { debounce } from 'rxjs/operators';
 import * as ynab from 'ynab';
@@ -73,7 +74,7 @@ export class YnabComponent implements OnInit {
     ...this.ignoredCategoryGroups
   ];
 
-  constructor(private ynabService: YnabApiService, private formBuilder: FormBuilder) {
+  constructor(private ynabService: YnabApiService, private formBuilder: FormBuilder, private activatedRoute: ActivatedRoute) {
     this.expenses = {
       ynab: {
         monthly: 0,
@@ -107,8 +108,10 @@ export class YnabComponent implements OnInit {
     // this.budget = this.budgets[0];
     // const budgetId = this.budget.id;
     // this.months = await this.ynabService.getMonths(budgetId);
-    const budgetId = 'last-used';
-    this.currentMonth = await this.ynabService.getMonth(budgetId, 'current');
+
+    const budgetId = this.activatedRoute.snapshot.queryParams['budgetId'] || 'last-used';
+    const month = this.activatedRoute.snapshot.queryParams['month'] || 'current';
+    this.currentMonth = await this.ynabService.getMonth(budgetId, month);
     this.accounts = await this.ynabService.getAccounts(budgetId);
 
     this.categoryGroupsWithCategories = await this.ynabService.getCategoryGroupsWithCategories(budgetId);
@@ -203,7 +206,7 @@ export class YnabComponent implements OnInit {
   }
 
   private mapCategoryGroups(categoryGroupsWithCategories: ynab.CategoryGroupWithCategories[], monthDetail: ynab.MonthDetail) {
-    if (!categoryGroupsWithCategories) {
+    if (!categoryGroupsWithCategories || !monthDetail) {
       return [];
     }
     const categoryGroups = categoryGroupsWithCategories.map(c => {
