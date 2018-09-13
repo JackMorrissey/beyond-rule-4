@@ -115,6 +115,7 @@ export class YnabComponent implements OnInit {
     const mappedCategoryGroups = this.mapCategoryGroups(this.categoryGroupsWithCategories, this.currentMonth);
     const monthlyContribution = this.getMonthlyContribution(mappedCategoryGroups);
     this.contributionCategories = monthlyContribution.categories;
+    // TODO 4%
     this.resetForm(netWorth, mappedCategoryGroups, monthlyContribution.value);
 
     const formChanges = this.budgetForm.valueChanges.pipe(debounce(() => timer(500)));
@@ -160,14 +161,17 @@ export class YnabComponent implements OnInit {
 
   private getMonthlyExpenses(categoryGroups, budgetPropertyName) {
     const expenses = categoryGroups.map(categoryGroup => {
+      if (!categoryGroup.categories || !categoryGroup.categories.length) {
+        return 0;
+      }
       return categoryGroup.categories.map(category => {
         return category[budgetPropertyName];
       }).reduce((prev, next) => {
         return prev + next;
-      });
+      }, 0);
     }).reduce((prev, next) => {
       return prev + next;
-    });
+    }, 0);
 
     return round(expenses);
   }
@@ -181,7 +185,7 @@ export class YnabComponent implements OnInit {
       return account.closed ? 0 : account.cleared_balance;
     }).reduce((prev, next) => {
       return prev + next;
-    });
+    }, 0);
     return ynab.utils.convertMilliUnitsToCurrencyAmount(netWorth);
   }
 
