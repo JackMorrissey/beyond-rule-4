@@ -91,7 +91,9 @@ export class YnabComponent implements OnInit {
     this.budgetForm = this.formBuilder.group({
       netWorth: [0, [Validators.required]],
       monthlyContribution: [0, [Validators.required]],
-      categoryGroups: this.formBuilder.array([])
+      categoryGroups: this.formBuilder.array([]),
+      safeWithdrawalRatePercentage: [4.00, [Validators.required, Validators.max(99.99), Validators.max(0.01) ]],
+      expectedAnnualGrowthRate: [7.00, [Validators.required, Validators.max(99.99), Validators.max(0.01) ]],
     });
   }
 
@@ -100,11 +102,11 @@ export class YnabComponent implements OnInit {
   }
 
   async ngOnInit() {
+    this.isUsingSampleData = this.ynabService.isUsingSampleData();
     // this.budgets = await this.ynabService.getBudgets();
     // this.budget = this.budgets[0];
     // const budgetId = this.budget.id;
     // this.months = await this.ynabService.getMonths(budgetId);
-    this.isUsingSampleData = this.ynabService.isUsingSampleData();
     const budgetId = 'last-used';
     this.currentMonth = await this.ynabService.getMonth(budgetId, 'current');
     this.accounts = await this.ynabService.getAccounts(budgetId);
@@ -115,8 +117,9 @@ export class YnabComponent implements OnInit {
     const mappedCategoryGroups = this.mapCategoryGroups(this.categoryGroupsWithCategories, this.currentMonth);
     const monthlyContribution = this.getMonthlyContribution(mappedCategoryGroups);
     this.contributionCategories = monthlyContribution.categories;
-    // TODO 4%
-    this.resetForm(netWorth, mappedCategoryGroups, monthlyContribution.value);
+    const safeWithdrawalRatePercentage = 4.00;
+    const expectedAnnualGrowthRate = 7.00;
+    this.resetForm(netWorth, mappedCategoryGroups, monthlyContribution.value, safeWithdrawalRatePercentage, expectedAnnualGrowthRate);
 
     const formChanges = this.budgetForm.valueChanges.pipe(debounce(() => timer(500)));
     formChanges.subscribe(() => {
@@ -151,6 +154,16 @@ export class YnabComponent implements OnInit {
     result.leanAnnualExpenses = this.expenses.leanFi.annual;
     result.netWorth = this.budgetForm.value.netWorth;
     result.monthlyContribution = this.budgetForm.value.monthlyContribution;
+
+    const safeWithdrawalRatePercentage = Number.parseFloat(this.budgetForm.value.safeWithdrawalRatePercentage);
+    if (!Number.isNaN(safeWithdrawalRatePercentage)) {
+      result.annualSafeWithdrawalRate = Math.max(0, safeWithdrawalRatePercentage / 100);
+    }
+    const expectedAnnualGrowthRate = Number.parseFloat(this.budgetForm.value.expectedAnnualGrowthRate);
+    if (!Number.isNaN(expectedAnnualGrowthRate)) {
+      result.expectedAnnualGrowthRate = Math.max(0, expectedAnnualGrowthRate / 100);
+    }
+
     result.roundAll();
     this.calculateInputChange.emit(result);
   }
@@ -341,10 +354,12 @@ export class YnabComponent implements OnInit {
     };
   }
 
-  private resetForm(netWorth, categoriesDisplay, monthlyContribution) {
+  private resetForm(netWorth, categoriesDisplay, monthlyContribution, safeWithdrawalRatePercentage, expectedAnnualGrowthRate) {
     this.budgetForm.reset({
       netWorth,
       monthlyContribution,
+      safeWithdrawalRatePercentage,
+      expectedAnnualGrowthRate
     });
 
     const categoryGroupFormGroups = categoriesDisplay.map(cg => this.formBuilder.group({

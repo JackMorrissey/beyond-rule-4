@@ -19,7 +19,7 @@ export class Milestones {
       milestones.push(new Milestone('Lean FI', round(leanFiNumber))); // 0.7 * FI)
     }
     if (eclipseNumber) {
-      milestones.push(new Milestone('Contribution/Interest Eclipse', round(eclipseNumber)));
+      milestones.push(new Milestone('Contribution / Interest Eclipse', round(eclipseNumber)));
     }
     return milestones;
   }

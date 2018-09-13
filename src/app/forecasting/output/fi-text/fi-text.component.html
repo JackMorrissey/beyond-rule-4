@@ -1,7 +1,7 @@
 <h3>FI Date</h3>
 <h2 class="text-success font-weight-bold">{{fiDate}} • {{dateDistance}}</h2>
 <p>
-  At a <a target="fi-read-more" href="http://www.mrmoneymustache.com/2012/05/29/how-much-do-i-need-for-retirement/">safe withdrawal rate of {{safeWithdrawalRate}}% <i class="fas fa-external-link-square-alt fa-sm"></i></a>,
+  At a safe withdrawal rate of {{safeWithdrawalRate}}%,
   Financial Independence is reached at a Net Worth of {{safeWithdrawalTimes}} times annual expenses.
 </p>
 <p>
@@ -9,7 +9,7 @@
   we're aiming for a Net Worth of {{fiNumber | number}}.
 </p>
 <p>
-  At <a target="fi-read-more" href="http://www.mrmoneymustache.com/2011/06/06/dude-wheres-my-7-investment-return/">7% returns <i class="fas fa-external-link-square-alt fa-sm"></i></a>,
+  At {{expectedAnnualGrowthRate}}% returns,
   that Net Worth is forecasted to be {{fiDate}}; {{dateDistance}} from the first month.
   <span *ngIf="fiMonthForecast">
     By that point, Net Worth is at {{fiMonthForecast.netWorth | number}}.

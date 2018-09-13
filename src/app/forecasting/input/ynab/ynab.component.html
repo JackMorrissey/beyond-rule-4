@@ -216,5 +216,72 @@
         </div>
       </ng-template>
     </ngb-panel>
+    <ngb-panel id="pAssumptions">
+      <ng-template ngbPanelTitle>
+        <span class="float-left">Assumptions</span>
+        <span class="accordion-info">
+          <span class="accordion-toggle">
+              <span [ngClass]="{'d-none': accordionPanelActiveStates.pAssumptions !== true}"><i  class="fas fa-caret-square-down"></i></span>
+              <span [ngClass]="{'d-none': accordionPanelActiveStates.pAssumptions === true}"><i  class="fas fa-caret-square-up"></i></span>
+          </span>
+        </span>
+      </ng-template>
+      <ng-template ngbPanelContent>
+        <div class="form-group">
+          <div class="row">
+            <label for="safeWithdrawalRatePercentage" class="col-sm-12 col-md-5 col-form-label">Safe Withdrawal Rate</label>
+            <div class="col">
+                <div class="input-group">
+                  <input type="number" class="form-control" id="safeWithdrawalRatePercentage" formControlName="safeWithdrawalRatePercentage" step="0.01">
+                  <div class="input-group-append">
+                    <div class="input-group-text">%</div>
+                  </div>
+                </div>
+              </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <small>"The rate that you can withdraw from your portfolio every year that ensures you have a high probability of never running out of money." -
+              <a target="fi-read-more" href="https://www.madfientist.com/safe-withdrawal-rate/">Mad Fientist
+                <i class="fas fa-external-link-square-alt fa-sm"></i>
+              </a>
+              </small>
+              <div>
+                <small>
+                  <a target="fi-read-more" href="http://www.mrmoneymustache.com/2012/05/29/how-much-do-i-need-for-retirement/">4% - Mr. Money Mustache
+                    <i class="fas fa-external-link-square-alt fa-sm"></i>
+                  </a> |
+                  <a target="fi-read-more" href="http://media.morningstar.com/uk/MEDIA/Comprehensive_update_on_the_Safe_Withdrawal_Rate.pdf">SWR in the UK - Morningstar
+                    <i class="fas fa-external-link-square-alt fa-sm"></i>
+                  </a>
+                </small>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="row">
+            <label for="expectedAnnualGrowthRate" class="col-sm-12 col-md-5 col-form-label">Expected Annual Investment Return</label>
+            <div class="col">
+              <div class="input-group">
+                <input type="number" class="form-control" id="expectedAnnualGrowthRate" formControlName="expectedAnnualGrowthRate" step="0.01" aria-describedby="expectedAnnualGrowthRateHelp">
+                <div class="input-group-append">
+                  <div class="input-group-text">%</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <small>
+                <a target="fi-read-more" href="http://www.mrmoneymustache.com/2011/06/06/dude-wheres-my-7-investment-return/">7% - Mr. Money Mustache
+                  <i class="fas fa-external-link-square-alt fa-sm"></i>
+                </a>
+              </small>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+    </ngb-panel>
   </ngb-accordion>
 </form>

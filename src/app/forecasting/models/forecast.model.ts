@@ -45,7 +45,7 @@ export class Forecast {
 
   private computeForecast(calculateInput: CalculateInput) {
     const fiNumber = 1 / calculateInput.annualSafeWithdrawalRate * calculateInput.annualExpenses;
-    const stopForecastingAmount = fiNumber * 1.3; // default to a bit more than Fat Fi.
+    const stopForecastingAmount = fiNumber * 1.4; // default to a bit more than Fat Fi.
 
     const annualExpenses = calculateInput.annualExpenses;
     const monthlyAverageGrowth = 1 + calculateInput.expectedAnnualGrowthRate / 12;
