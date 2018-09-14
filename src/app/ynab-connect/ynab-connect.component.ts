@@ -20,7 +20,7 @@ export class YnabConnectComponent implements OnInit {
           'event_category': 'YNAB Connect'
         });
       }
-      this.router.navigate(['/beyond']);
+      this.router.navigate(['/forecasting']);
     }
   }
 
