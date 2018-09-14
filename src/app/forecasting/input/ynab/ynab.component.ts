@@ -198,7 +198,7 @@ export class YnabComponent implements OnInit {
     }
 
     const netWorth = allAccounts.map(account => {
-      return account.closed ? 0 : account.cleared_balance;
+      return account.closed ? 0 : account.balance;
     }).reduce((prev, next) => {
       return prev + next;
     }, 0);
