@@ -1,4 +1,12 @@
-# YNAB FIRE
+# Beyond Rule 4
+
+[Live Site](https://beyondrule4.jmmorrissey.com)
+
+This project is a Financial Independence forecasting tool built with the intent of using the YNAB API.
+
+It ended up getting an [honorable mention](https://www.youneedabudget.com/announcing-the-ynab-api-contest-winners/). Not too shabby. 
+
+# Dev Instructions
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.7.3.
 
