@@ -6,7 +6,7 @@ import { Cookie } from 'ng2-cookies';
 import * as ynab from 'ynab';
 import { environment } from '../../environments/environment';
 
-import { SampleData } from './sample-data.secret';
+import { SampleData } from './sample-data.values';
 
 const tokenName = 'ynab_access_token';
 
