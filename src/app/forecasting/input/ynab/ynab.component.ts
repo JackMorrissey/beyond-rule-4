@@ -234,9 +234,16 @@ export class YnabComponent implements OnInit {
 
   private mapCategory(category: ynab.Category, monthDetail: ynab.MonthDetail,
     childrenIgnore: boolean, leanFiIgnore: boolean, isContribution: boolean) {
-    const ignore = childrenIgnore || category.hidden;
+    let ignore = childrenIgnore || category.hidden;
     const found = monthDetail.categories.find(c => category.id === c.id);
     const retrievedBudgeted = !found ? 0 : ynab.utils.convertMilliUnitsToCurrencyAmount(found.budgeted);
+
+    if (retrievedBudgeted < 0) {
+      // Do not know how to handle negative contributions or budgeting
+      // This typically happens if you're moving money around in your budget for the month
+      // Default it to 0 but allow overrides
+      ignore = true;
+    }
 
     const overrides = this.getNoteOverrides(found.note);
 

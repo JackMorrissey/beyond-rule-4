@@ -5,6 +5,6 @@
 
 export const environment = {
   production: false,
-  clientId: 'e9755d570a9a471868f54697e4d989fc3d5785b067c7e4b556b85ed6be3606c0',
+  clientId: '7aec43a65f3a487eaf02d9781954537dde8c8f6929d8573935eb359742f9fc6d',
   redirectUri: 'https://tolocalhost.com/connect'
 };
