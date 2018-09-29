@@ -61,7 +61,7 @@ export class Forecast {
       interestGains: 0,
       timesAnnualExpenses: round(startingNetWorth / annualExpenses),
       totalContributions: totalContributions,
-      totalInterestGains: 0
+      totalReturns: 0
     })];
     while (currentNetWorth < stopForecastingAmount && month < 1000) {
       const contribution = calculateInput.monthlyContribution;
@@ -70,7 +70,7 @@ export class Forecast {
       const timesAnnualExpenses = round(newNetWorth / annualExpenses);
       month++;
       totalContributions += contribution;
-      const totalInterestGains = round(newNetWorth - totalContributions);
+      const totalReturns = round(newNetWorth - totalContributions);
       monthlyForecasts.push(new MonthlyForecast({
         monthIndex: month,
         netWorth: newNetWorth,
@@ -79,7 +79,7 @@ export class Forecast {
         interestGains: interestGain,
         timesAnnualExpenses: timesAnnualExpenses,
         totalContributions: totalContributions,
-        totalInterestGains: totalInterestGains
+        totalReturns: totalReturns
       }));
       currentNetWorth = newNetWorth;
     }
@@ -106,7 +106,7 @@ export class MonthlyForecast {
   interestGains: number;
   timesAnnualExpenses: number;
   totalContributions: number;
-  totalInterestGains: number;
+  totalReturns: number;
 
   public constructor(init?: Partial<MonthlyForecast>) {
     Object.assign(this, init);

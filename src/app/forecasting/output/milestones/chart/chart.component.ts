@@ -127,7 +127,7 @@ export class ChartComponent implements OnInit, AfterContentInit, OnChanges {
     const interest = this.forecast.monthlyForecasts.map((monthForecast) => {
       return {
         name: monthForecast.date,
-        value: monthForecast.totalInterestGains
+        value: monthForecast.totalReturns
       };
     });
 
