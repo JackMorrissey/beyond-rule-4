@@ -6,7 +6,7 @@
       <th>Forecast Date</th>
       <th>Distance</th>
       <th>Contributions</th>
-      <th>Interest Gains</th>
+      <th>Returns</th>
     </tr>
   </thead>
   <tbody>
@@ -16,7 +16,7 @@
       <td>{{ m.forecastDate }}</td>
       <td>{{ m.distance }}</td>
       <td>{{ m.forecast?.totalContributions | number}}</td>
-      <td>{{ m.forecast?.totalInterestGains | number}}</td>
+      <td>{{ m.forecast?.totalReturns | number}}</td>
     </tr>
   </tbody>
 </table>
