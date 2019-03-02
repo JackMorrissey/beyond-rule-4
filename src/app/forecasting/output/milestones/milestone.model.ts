@@ -14,6 +14,7 @@ export class Milestones {
       new Milestone('FI', round(fiNumber)), // 25x
       new Milestone('Flex FI', round(fiNumber * 0.8)), // 20x
       new Milestone('Fat FI', round(fiNumber * 1.2)), // 30x
+      new Milestone('1.5x FI', round(fiNumber * 1.5)),
     ];
     if (fiNumber !== leanFiNumber) {
       milestones.push(new Milestone('Lean FI', round(leanFiNumber))); // 0.7 * FI)

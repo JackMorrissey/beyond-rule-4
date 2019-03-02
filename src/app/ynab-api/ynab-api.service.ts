@@ -89,14 +89,14 @@ export class YnabApiService {
     }
   }
 
-  async getMonths(budgetId: string): Promise<ynab.MonthSummary[]> {
+  async getBudgetById(budgetId: string): Promise<ynab.BudgetDetail> {
     if (this.useSampleData) {
-      return SampleData.Months;
+      return SampleData.Budget;
     }
 
     try {
-      const months = await this.ynabApi.months.getBudgetMonths(budgetId);
-      return months.data.months;
+      const budget = await this.ynabApi.budgets.getBudgetById(budgetId);
+    return budget.data.budget;
     } catch (error) {
       console.error(error);
     }
@@ -110,19 +110,6 @@ export class YnabApiService {
     try {
       const month = await this.ynabApi.months.getBudgetMonth(budgetId, budgetMonth);
       return month.data.month;
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  async getAccounts(budgetId: string): Promise<ynab.Account[]> {
-    if (this.useSampleData) {
-      return SampleData.Accounts;
-    }
-
-    try {
-      const accounts = await this.ynabApi.accounts.getAccounts(budgetId);
-      return accounts.data.accounts;
     } catch (error) {
       console.error(error);
     }
