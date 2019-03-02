@@ -4,7 +4,7 @@ import { YnabSampleData } from './sample-data.model';
 const sampleBudgets: ynab.BudgetSummary[] = [
   {
     "id": "2fa4e8e8-93cd-4651-9fac-cf2c5110efd9",
-    "name": "Sample Budget",
+    "name": "Sample Budget"
   }
 ];
 
@@ -106,105 +106,6 @@ const sampleAccounts: ynab.Account[] = [
       "deleted": false
   }
 ]
-
-const sampleMonths: ynab.MonthSummary[] = [
-  {
-    "month": "2017-04-01",
-    "note": null,
-    "to_be_budgeted": 14883780,
-    "age_of_money": 65
-  },
-  {
-    "month": "2017-05-01",
-    "note": null,
-    "to_be_budgeted": 16866090,
-    "age_of_money": 64
-  },
-  {
-    "month": "2017-06-01",
-    "note": null,
-    "to_be_budgeted": 20180210,
-    "age_of_money": 86
-  },
-  {
-    "month": "2017-07-01",
-    "note": null,
-    "to_be_budgeted": 22379100,
-    "age_of_money": 89
-  },
-  {
-    "month": "2017-08-01",
-    "note": null,
-    "to_be_budgeted": 15270930,
-    "age_of_money": 110
-  },
-  {
-    "month": "2017-09-01",
-    "note": null,
-    "to_be_budgeted": 21319230,
-    "age_of_money": 111
-  },
-  {
-    "month": "2017-10-01",
-    "note": "Happy Octover",
-    "to_be_budgeted": 12295470,
-    "age_of_money": 100
-  },
-  {
-    "month": "2017-11-01",
-    "note": null,
-    "to_be_budgeted": 8650140,
-    "age_of_money": 108
-  },
-  {
-    "month": "2017-12-01",
-    "note": null,
-    "to_be_budgeted": 10501350,
-    "age_of_money": 96
-  },
-  {
-    "month": "2018-01-01",
-    "note": null,
-    "to_be_budgeted": 15021220,
-    "age_of_money": 112
-  },
-  {
-    "month": "2018-02-01",
-    "note": null,
-    "to_be_budgeted": 11721360,
-    "age_of_money": 113
-  },
-  {
-    "month": "2018-03-01",
-    "note": null,
-    "to_be_budgeted": 13781460,
-    "age_of_money": 50
-  },
-  {
-    "month": "2018-04-01",
-    "note": null,
-    "to_be_budgeted": 6944570,
-    "age_of_money": 58
-  },
-  {
-    "month": "2018-05-01",
-    "note": null,
-    "to_be_budgeted": 236350,
-    "age_of_money": 58
-  },
-  {
-    "month": "2018-06-01",
-    "note": null,
-    "to_be_budgeted": 236350,
-    "age_of_money": 58
-  },
-  {
-    "month": "2018-07-01",
-    "note": null,
-    "to_be_budgeted": null,
-    "age_of_money": null
-  }
-];
 
 const sampleMonth: ynab.MonthDetail = {
   "month": "2018-06-01",
@@ -666,6 +567,15 @@ const sampleMonth: ynab.MonthDetail = {
   ]
 }
 
+const sampleMonths: ynab.MonthSummary[] = [
+  Object.assign({
+    "month": "2018-06-01",
+    "note": null,
+    "to_be_budgeted": 236350,
+    "age_of_money": 58
+  }, sampleMonth)
+];
+
 const sampleCategoryGroupsWithCategories: ynab.CategoryGroupWithCategories[] = [
   {
       "id": "2fa4e030-a44e-464d-ba99-bc5953c2584d",
@@ -1124,9 +1034,17 @@ const sampleCategoryGroupsWithCategories: ynab.CategoryGroupWithCategories[] = [
           }
       ]
   }
-]
+];
+
+const sampleBudget: ynab.BudgetDetail = {
+  "id": "2fa4e8e8-93cd-4651-9fac-cf2c5110efd9",
+  "name": "Sample Budget",
+  accounts: sampleAccounts,
+  months: sampleMonths
+};
 
 export const SampleData: YnabSampleData = {
+  Budget: sampleBudget,
   Budgets: sampleBudgets,
   Accounts: sampleAccounts,
   Months: sampleMonths,

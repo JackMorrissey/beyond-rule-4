@@ -25,9 +25,10 @@ export class YnabComponent implements OnInit {
   public expectedAnnualGrowthRate = 7.00;
 
   public budgets: ynab.BudgetSummary[];
-  public budget: ynab.BudgetSummary;
+  public budget: ynab.BudgetDetail;
   public months;
   public currentMonth: ynab.MonthDetail;
+  public selectedMonth: ynab.MonthDetail;
   public accounts: ynab.Account[];
   public categoryGroupsWithCategories: ynab.CategoryGroupWithCategories[];
 
@@ -93,6 +94,7 @@ export class YnabComponent implements OnInit {
     };
     this.budgetForm = this.formBuilder.group({
       selectedBudget: ['', [Validators.required]],
+      selectedMonth: ['', [Validators.required]],
       netWorth: [0, [Validators.required]],
       monthlyContribution: [0, [Validators.required]],
       categoryGroups: this.formBuilder.array([]),
@@ -139,19 +141,22 @@ export class YnabComponent implements OnInit {
 
   async selectBudget(budgetId: string) {
     this.budget = await this.ynabService.getBudgetById(budgetId);
-
     window.localStorage.setItem('br4-selected-budget', this.budget.id);
 
-    this.months = await this.ynabService.getMonths(budgetId);
-    const month = this.activatedRoute.snapshot.queryParams['month'] || 'current';
+    this.months = this.budget.months;
+    this.accounts = this.budget.accounts;
+    this.currentMonth = await this.ynabService.getMonth(budgetId, 'current');
 
-    this.currentMonth = await this.ynabService.getMonth(budgetId, month);
-    this.accounts = await this.ynabService.getAccounts(budgetId);
+    await this.selectMonth(this.currentMonth.month);
+  }
 
-    this.categoryGroupsWithCategories = await this.ynabService.getCategoryGroupsWithCategories(budgetId);
+  async selectMonth(month: string) {
+    this.selectedMonth = this.months.find(m => m.month === month);
+
+    this.categoryGroupsWithCategories = await this.ynabService.getCategoryGroupsWithCategories(this.budget.id);
     const netWorth = this.getNetWorth(this.accounts);
 
-    const mappedCategoryGroups = this.mapCategoryGroups(this.categoryGroupsWithCategories, this.currentMonth);
+    const mappedCategoryGroups = this.mapCategoryGroups(this.categoryGroupsWithCategories, this.selectedMonth);
     const monthlyContribution = this.getMonthlyContribution(mappedCategoryGroups);
     this.contributionCategories = monthlyContribution.categories;
 
@@ -166,6 +171,13 @@ export class YnabComponent implements OnInit {
       this.selectBudget(selectedBudget);
       return;
     }
+
+    const selectedMonth = this.budgetForm.value.selectedMonth;
+    if (this.selectedMonth.month !== selectedMonth) {
+      this.selectMonth(selectedMonth);
+      return;
+    }
+
     const fiMonthlyExpenses = this.getMonthlyExpenses(this.budgetForm.value.categoryGroups, 'fiBudget');
     const leanMonthlyExpenses = this.getMonthlyExpenses(this.budgetForm.value.categoryGroups, 'leanFiBudget');
     const retrievedBudgetedMonthlyExpenses = this.getMonthlyExpenses(this.budgetForm.value.categoryGroups, 'retrievedBudgeted');
@@ -193,10 +205,12 @@ export class YnabComponent implements OnInit {
 
     const safeWithdrawalRatePercentage = Number.parseFloat(this.budgetForm.value.safeWithdrawalRatePercentage);
     if (!Number.isNaN(safeWithdrawalRatePercentage)) {
+      this.safeWithdrawalRatePercentage = safeWithdrawalRatePercentage;
       result.annualSafeWithdrawalRate = Math.max(0, safeWithdrawalRatePercentage / 100);
     }
     const expectedAnnualGrowthRate = Number.parseFloat(this.budgetForm.value.expectedAnnualGrowthRate);
     if (!Number.isNaN(expectedAnnualGrowthRate)) {
+      this.expectedAnnualGrowthRate = expectedAnnualGrowthRate;
       result.expectedAnnualGrowthRate = Math.max(0, expectedAnnualGrowthRate / 100);
     }
 
@@ -400,6 +414,7 @@ export class YnabComponent implements OnInit {
   private resetForm(netWorth, categoriesDisplay, monthlyContribution) {
     this.budgetForm.reset({
       selectedBudget: this.budget.id,
+      selectedMonth: this.selectedMonth.month,
       netWorth,
       monthlyContribution,
       expectedAnnualGrowthRate: this.expectedAnnualGrowthRate,

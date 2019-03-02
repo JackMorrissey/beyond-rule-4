@@ -30,6 +30,28 @@
         </div>
         <div class="form-group">
           <div class="row">
+            <label for="selectedBudget" class="col-sm-12 col-md-5 col-form-label">Month</label>
+            <div class="col">
+              <div class="input-group">
+                <select class="form-control" id="selectedMonth" formControlName="selectedMonth">
+                  <option *ngFor="let month of months"
+                    [value]="month.month">
+                      {{month.month}}
+                  </option>
+                </select>
+              </div>
+            </div>
+
+          </div>
+          <div class="row">
+            <div class="col">
+              <small>The month to use for contributions and expenses
+              </small>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="row">
             <label for="safeWithdrawalRatePercentage" class="col-sm-12 col-md-5 col-form-label">Safe Withdrawal Rate</label>
             <div class="col">
               <div class="input-group">
@@ -110,7 +132,7 @@
         </div>
         <div class="row">
           <div class="col">
-            Calculated as the sum of all Budget and Tracking accounts.
+            Calculated as the sum of all Budget and Tracking accounts
             <div>
               <small>
                 <a target="fi-read-more" href="http://www.mrmoneymustache.com/2015/01/26/calculating-net-worth/">Calculating
