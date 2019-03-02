@@ -89,6 +89,19 @@ export class YnabApiService {
     }
   }
 
+  async getBudgetById(budgetId: string): Promise<any> {
+    if (this.useSampleData) {
+      return SampleData.Budgets[0];
+    }
+
+    try {
+      const budget = await this.ynabApi.budgets.getBudgetById(budgetId);
+    return budget.data.budget;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   async getMonths(budgetId: string): Promise<ynab.MonthSummary[]> {
     if (this.useSampleData) {
       return SampleData.Months;

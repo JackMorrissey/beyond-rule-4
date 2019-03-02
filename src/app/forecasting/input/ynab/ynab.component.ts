@@ -21,9 +21,11 @@ export class YnabComponent implements OnInit {
 
   budgetForm: FormGroup;
   displayContributionInfo = true;
+  public safeWithdrawalRatePercentage = 4.00;
+  public expectedAnnualGrowthRate = 7.00;
 
-  // public budgets: ynab.BudgetSummary[];
-  // public budget: ynab.BudgetSummary;
+  public budgets: ynab.BudgetSummary[];
+  public budget: ynab.BudgetSummary;
   public months;
   public currentMonth: ynab.MonthDetail;
   public accounts: ynab.Account[];
@@ -90,11 +92,14 @@ export class YnabComponent implements OnInit {
       }
     };
     this.budgetForm = this.formBuilder.group({
+      selectedBudget: ['', [Validators.required]],
       netWorth: [0, [Validators.required]],
       monthlyContribution: [0, [Validators.required]],
       categoryGroups: this.formBuilder.array([]),
-      safeWithdrawalRatePercentage: [4.00, [Validators.required, Validators.max(99.99), Validators.max(0.01) ]],
-      expectedAnnualGrowthRate: [7.00, [Validators.required, Validators.max(99.99), Validators.max(0.01) ]],
+      safeWithdrawalRatePercentage: [this.safeWithdrawalRatePercentage,
+        [Validators.required, Validators.max(99.99), Validators.max(0.01) ]],
+      expectedAnnualGrowthRate: [this.expectedAnnualGrowthRate,
+        [Validators.required, Validators.max(99.99), Validators.max(0.01) ]],
     });
   }
 
@@ -104,35 +109,63 @@ export class YnabComponent implements OnInit {
 
   async ngOnInit() {
     this.isUsingSampleData = this.ynabService.isUsingSampleData();
-    // this.budgets = await this.ynabService.getBudgets();
-    // this.budget = this.budgets[0];
-    // const budgetId = this.budget.id;
-    // this.months = await this.ynabService.getMonths(budgetId);
-
-    const budgetId = this.activatedRoute.snapshot.queryParams['budgetId'] || 'last-used';
-    const month = this.activatedRoute.snapshot.queryParams['month'] || 'current';
-    this.currentMonth = await this.ynabService.getMonth(budgetId, month);
-    this.accounts = await this.ynabService.getAccounts(budgetId);
-
-    this.categoryGroupsWithCategories = await this.ynabService.getCategoryGroupsWithCategories(budgetId);
-
-    const netWorth = this.getNetWorth(this.accounts);
-    const mappedCategoryGroups = this.mapCategoryGroups(this.categoryGroupsWithCategories, this.currentMonth);
-    const monthlyContribution = this.getMonthlyContribution(mappedCategoryGroups);
-    this.contributionCategories = monthlyContribution.categories;
-    const safeWithdrawalRatePercentage = 4.00;
-    const expectedAnnualGrowthRate = 7.00;
-    this.resetForm(netWorth, mappedCategoryGroups, monthlyContribution.value, safeWithdrawalRatePercentage, expectedAnnualGrowthRate);
 
     const formChanges = this.budgetForm.valueChanges.pipe(debounce(() => timer(500)));
     formChanges.subscribe(() => {
       this.updateInput();
     });
 
+    this.budgets = await this.ynabService.getBudgets();
+
+    const budgetId = await this.setInitialSelectedBudget();
+    await this.selectBudget(budgetId);
+  }
+
+  async setInitialSelectedBudget() {
+    let selectedBudget = 'last-used';
+
+    const storageBudget = window.localStorage.getItem('br4-selected-budget');
+    if (storageBudget && this.budgets.some(b => b.id === storageBudget)) {
+      selectedBudget = storageBudget;
+    }
+
+    const queryBudget = this.activatedRoute.snapshot.queryParams['budgetId'];
+    if (queryBudget && this.budgets.some(b => b.id === queryBudget)) {
+      selectedBudget = queryBudget;
+    }
+
+    return selectedBudget;
+  }
+
+  async selectBudget(budgetId: string) {
+    this.budget = await this.ynabService.getBudgetById(budgetId);
+
+    window.localStorage.setItem('br4-selected-budget', this.budget.id);
+
+    this.months = await this.ynabService.getMonths(budgetId);
+    const month = this.activatedRoute.snapshot.queryParams['month'] || 'current';
+
+    this.currentMonth = await this.ynabService.getMonth(budgetId, month);
+    this.accounts = await this.ynabService.getAccounts(budgetId);
+
+    this.categoryGroupsWithCategories = await this.ynabService.getCategoryGroupsWithCategories(budgetId);
+    const netWorth = this.getNetWorth(this.accounts);
+
+    const mappedCategoryGroups = this.mapCategoryGroups(this.categoryGroupsWithCategories, this.currentMonth);
+    const monthlyContribution = this.getMonthlyContribution(mappedCategoryGroups);
+    this.contributionCategories = monthlyContribution.categories;
+
+    this.resetForm(netWorth, mappedCategoryGroups, monthlyContribution.value);
+
     this.updateInput();
   }
 
   updateInput() {
+    const selectedBudget = this.budgetForm.value.selectedBudget;
+    if (this.budget.id !== selectedBudget) {
+      this.selectBudget(selectedBudget);
+      return;
+    }
     const fiMonthlyExpenses = this.getMonthlyExpenses(this.budgetForm.value.categoryGroups, 'fiBudget');
     const leanMonthlyExpenses = this.getMonthlyExpenses(this.budgetForm.value.categoryGroups, 'leanFiBudget');
     const retrievedBudgetedMonthlyExpenses = this.getMonthlyExpenses(this.budgetForm.value.categoryGroups, 'retrievedBudgeted');
@@ -364,12 +397,13 @@ export class YnabComponent implements OnInit {
     };
   }
 
-  private resetForm(netWorth, categoriesDisplay, monthlyContribution, safeWithdrawalRatePercentage, expectedAnnualGrowthRate) {
+  private resetForm(netWorth, categoriesDisplay, monthlyContribution) {
     this.budgetForm.reset({
+      selectedBudget: this.budget.id,
       netWorth,
       monthlyContribution,
-      safeWithdrawalRatePercentage,
-      expectedAnnualGrowthRate
+      expectedAnnualGrowthRate: this.expectedAnnualGrowthRate,
+      safeWithdrawalRatePercentage: this.safeWithdrawalRatePercentage
     });
 
     const categoryGroupFormGroups = categoriesDisplay.map(cg => this.formBuilder.group({

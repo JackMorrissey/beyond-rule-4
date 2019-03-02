@@ -2,13 +2,102 @@
 <form [formGroup]="budgetForm">
 
   <ngb-accordion [closeOthers]="false" (panelChange)="beforePanelChange($event)">
+    <ngb-panel id="pSettings">
+      <ng-template ngbPanelTitle>
+        <span class="float-left">Settings</span>
+        <span class="accordion-info">
+          <span class="accordion-toggle">
+            <span [ngClass]="{'d-none': accordionPanelActiveStates.pSettings !== true}"><i class="fas fa-caret-square-down"></i></span>
+            <span [ngClass]="{'d-none': accordionPanelActiveStates.pSettings === true}"><i class="fas fa-caret-square-up"></i></span>
+          </span>
+        </span>
+      </ng-template>
+      <ng-template ngbPanelContent>
+        <div class="form-group">
+          <div class="row">
+            <label for="selectedBudget" class="col-sm-12 col-md-5 col-form-label">Budget</label>
+            <div class="col">
+              <div class="input-group">
+                <select class="form-control" id="selectedBudget" formControlName="selectedBudget">
+                  <option *ngFor="let budget of budgets"
+                    [value]="budget.id">
+                      {{budget.name}}
+                  </option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="row">
+            <label for="safeWithdrawalRatePercentage" class="col-sm-12 col-md-5 col-form-label">Safe Withdrawal Rate</label>
+            <div class="col">
+              <div class="input-group">
+                <input type="number" class="form-control" id="safeWithdrawalRatePercentage" formControlName="safeWithdrawalRatePercentage"
+                  step="0.01">
+                <div class="input-group-append">
+                  <div class="input-group-text">%</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <small>"The rate that you can withdraw from your portfolio every year that ensures you have a high
+                probability of never running out of money." -
+                <a target="fi-read-more" href="https://www.madfientist.com/safe-withdrawal-rate/">Mad Fientist
+                  <i class="fas fa-external-link-square-alt fa-sm"></i>
+                </a>
+              </small>
+              <div>
+                <small>
+                  <a target="fi-read-more" href="http://www.mrmoneymustache.com/2012/05/29/how-much-do-i-need-for-retirement/">4%
+                    - Mr. Money Mustache
+                    <i class="fas fa-external-link-square-alt fa-sm"></i>
+                  </a> |
+                  <a target="fi-read-more" href="http://media.morningstar.com/uk/MEDIA/Comprehensive_update_on_the_Safe_Withdrawal_Rate.pdf">SWR
+                    in the UK - Morningstar
+                    <i class="fas fa-external-link-square-alt fa-sm"></i>
+                  </a>
+                </small>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="row">
+            <label for="expectedAnnualGrowthRate" class="col-sm-12 col-md-5 col-form-label">Expected Annual Investment
+              Return</label>
+            <div class="col">
+              <div class="input-group">
+                <input type="number" class="form-control" id="expectedAnnualGrowthRate" formControlName="expectedAnnualGrowthRate"
+                  step="0.01" aria-describedby="expectedAnnualGrowthRateHelp">
+                <div class="input-group-append">
+                  <div class="input-group-text">%</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <small>
+                <a target="fi-read-more" href="http://www.mrmoneymustache.com/2011/06/06/dude-wheres-my-7-investment-return/">7%
+                  - Mr. Money Mustache
+                  <i class="fas fa-external-link-square-alt fa-sm"></i>
+                </a>
+              </small>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+    </ngb-panel>
     <ngb-panel id="pNetWorth">
       <ng-template ngbPanelTitle>
         <span class="float-left">Net Worth</span>
         <span class="accordion-info">{{budgetForm.value.netWorth | number}}
           <span class="accordion-toggle">
-              <span [ngClass]="{'d-none': accordionPanelActiveStates.pNetWorth !== true}"><i  class="fas fa-caret-square-down"></i></span>
-              <span [ngClass]="{'d-none': accordionPanelActiveStates.pNetWorth === true}"><i  class="fas fa-caret-square-up"></i></span>
+            <span [ngClass]="{'d-none': accordionPanelActiveStates.pNetWorth !== true}"><i class="fas fa-caret-square-down"></i></span>
+            <span [ngClass]="{'d-none': accordionPanelActiveStates.pNetWorth === true}"><i class="fas fa-caret-square-up"></i></span>
           </span>
         </span>
       </ng-template>
@@ -24,7 +113,8 @@
             Calculated as the sum of all Budget and Tracking accounts.
             <div>
               <small>
-                <a target="fi-read-more" href="http://www.mrmoneymustache.com/2015/01/26/calculating-net-worth/">Calculating Net Worth - Mr. Money Mustache
+                <a target="fi-read-more" href="http://www.mrmoneymustache.com/2015/01/26/calculating-net-worth/">Calculating
+                  Net Worth - Mr. Money Mustache
                   <i class="fas fa-external-link-square-alt fa-sm"></i>
                 </a>
               </small>
@@ -38,8 +128,8 @@
         <span class="float-left">Contributions</span>
         <span class="accordion-info">{{budgetForm.value.monthlyContribution | number}}
           <span class="accordion-toggle">
-              <span [ngClass]="{'d-none': accordionPanelActiveStates.pContributions !== true}"><i  class="fas fa-caret-square-down"></i></span>
-              <span [ngClass]="{'d-none': accordionPanelActiveStates.pContributions === true}"><i  class="fas fa-caret-square-up"></i></span>
+            <span [ngClass]="{'d-none': accordionPanelActiveStates.pContributions !== true}"><i class="fas fa-caret-square-down"></i></span>
+            <span [ngClass]="{'d-none': accordionPanelActiveStates.pContributions === true}"><i class="fas fa-caret-square-up"></i></span>
           </span>
         </span>
       </ng-template>
@@ -48,7 +138,8 @@
         <div class="form-group row">
           <label for="monthlyContribution" class="col-sm-12 col-md-5 col-form-label">Monthly Investment Contribution</label>
           <div class="col">
-            <input type="number" class="form-control" id="monthlyContribution" formControlName="monthlyContribution" step="100">
+            <input type="number" class="form-control" id="monthlyContribution" formControlName="monthlyContribution"
+              step="100">
           </div>
           <!-- <div class="col-sm-1">
             <button type="button" class="btn btn-link" (click)="displayContributionInfo = !displayContributionInfo">
@@ -74,7 +165,7 @@
         </div>
         <div *ngIf="displayContributionInfo">
           <div class="row">
-            <div class="col-12" >
+            <div class="col-12">
               <h4>How we pull these numbers from YNAB</h4>
               <p>The following category groups are automatically counted as contributions: </p>
               <ul>
@@ -84,7 +175,8 @@
                 <li>FIRE</li>
               </ul>
               <p><span>If you would like to override the budgeted amount add <code>BR4 + <i>amount</i></code></span>
-                (e.g. <code>BR4 + 1000</code>) to the notes of that category. This is useful for including contributions to employer accounts that aren't budgeted.</p>
+                (e.g. <code>BR4 + 1000</code>) to the notes of that category. This is useful for including
+                contributions to employer accounts that aren't budgeted.</p>
 
 
             </div>
@@ -98,7 +190,8 @@
 
             </div>
             <div class="col-12">
-              <p class="small">(When editing a category's Notes, use <kbd>shift + enter</kbd> or <kbd>shift + return</kbd> to create a new line.)</p>
+              <p class="small">(When editing a category's Notes, use <kbd>shift + enter</kbd> or <kbd>shift + return</kbd>
+                to create a new line.)</p>
             </div>
 
           </div>
@@ -111,8 +204,8 @@
         <span class="float-left">Expenses</span>
         <span class="accordion-info">{{expenses.fi.annual | number}}
           <span class="accordion-toggle">
-              <span [ngClass]="{'d-none': accordionPanelActiveStates.pExpenses !== true}"><i  class="fas fa-caret-square-down"></i></span>
-              <span [ngClass]="{'d-none': accordionPanelActiveStates.pExpenses === true}"><i  class="fas fa-caret-square-up"></i></span>
+            <span [ngClass]="{'d-none': accordionPanelActiveStates.pExpenses !== true}"><i class="fas fa-caret-square-down"></i></span>
+            <span [ngClass]="{'d-none': accordionPanelActiveStates.pExpenses === true}"><i class="fas fa-caret-square-up"></i></span>
           </span>
         </span>
       </ng-template>
@@ -125,17 +218,19 @@
                 <th>YNAB</th>
                 <th>FI
                   <span>
-                    <button type="button" class="btn btn-light fa-lg" placement="bottom-left" triggers="click:blur hover" ngbTooltip="FI budget includes all expenses to maintain your current lifestyle.">
-                      <i class="fas fa-info-circle" ></i>
+                    <button type="button" class="btn btn-light fa-lg" placement="bottom-left" triggers="click:blur hover"
+                      ngbTooltip="FI budget includes all expenses to maintain your current lifestyle.">
+                      <i class="fas fa-info-circle"></i>
                     </button>
                   </span>
                 </th>
                 <th>Lean FI
-                    <span>
-                      <button type="button" class="btn btn-light fa-lg" placement="bottom-right" triggers="click:blur hover" ngbTooltip="Lean FI budget includes all expenses to just get by. Think FI but without any fun.">
-                        <i class="fas fa-info-circle" ></i>
-                      </button>
-                    </span>
+                  <span>
+                    <button type="button" class="btn btn-light fa-lg" placement="bottom-right" triggers="click:blur hover"
+                      ngbTooltip="Lean FI budget includes all expenses to just get by. Think FI but without any fun.">
+                      <i class="fas fa-info-circle"></i>
+                    </button>
+                  </span>
                 </th>
               </tr>
             </thead>
@@ -191,10 +286,12 @@
               <li>Debt Payments - For simplicity, lets assume this is all paid off</li>
               <li>Credit Card Payments - For simplicity, lets assume you pay this off every month</li>
             </ul>
-            <p>In addition, the following category groups are automatically budgeted to 0 for Lean Financial Independence: </p>
+            <p>In addition, the following category groups are automatically budgeted to 0 for Lean Financial
+              Independence: </p>
             <ul>
               <li>Just For Fun - Lean FI is all about saying you could just make it by</li>
-              <li>Quality of Life Goals - Theoretically, these goals aren't required to live a bland but financially independent life</li>
+              <li>Quality of Life Goals - Theoretically, these goals aren't required to live a bland but financially
+                independent life</li>
             </ul>
             <p>If you would like to override the FI Budget value add <code>BR4 FI <i>amount</i></code>
               (e.g. <code>BR4 FI 1100</code>) to the notes of that category.
@@ -211,74 +308,8 @@
             <img src="assets/images/HousingNotes.png" class="img-fluid" alt="Editing the notes for the Mortgage category">
           </div>
           <div class="col-12">
-            <p class="small">(When editing a category's Notes, use <kbd>shift + enter</kbd> or <kbd>shift + return</kbd> to create a new line.)</p>
-          </div>
-        </div>
-      </ng-template>
-    </ngb-panel>
-    <ngb-panel id="pAssumptions">
-      <ng-template ngbPanelTitle>
-        <span class="float-left">Assumptions</span>
-        <span class="accordion-info">
-          <span class="accordion-toggle">
-              <span [ngClass]="{'d-none': accordionPanelActiveStates.pAssumptions !== true}"><i  class="fas fa-caret-square-down"></i></span>
-              <span [ngClass]="{'d-none': accordionPanelActiveStates.pAssumptions === true}"><i  class="fas fa-caret-square-up"></i></span>
-          </span>
-        </span>
-      </ng-template>
-      <ng-template ngbPanelContent>
-        <div class="form-group">
-          <div class="row">
-            <label for="safeWithdrawalRatePercentage" class="col-sm-12 col-md-5 col-form-label">Safe Withdrawal Rate</label>
-            <div class="col">
-                <div class="input-group">
-                  <input type="number" class="form-control" id="safeWithdrawalRatePercentage" formControlName="safeWithdrawalRatePercentage" step="0.01">
-                  <div class="input-group-append">
-                    <div class="input-group-text">%</div>
-                  </div>
-                </div>
-              </div>
-          </div>
-          <div class="row">
-            <div class="col">
-              <small>"The rate that you can withdraw from your portfolio every year that ensures you have a high probability of never running out of money." -
-              <a target="fi-read-more" href="https://www.madfientist.com/safe-withdrawal-rate/">Mad Fientist
-                <i class="fas fa-external-link-square-alt fa-sm"></i>
-              </a>
-              </small>
-              <div>
-                <small>
-                  <a target="fi-read-more" href="http://www.mrmoneymustache.com/2012/05/29/how-much-do-i-need-for-retirement/">4% - Mr. Money Mustache
-                    <i class="fas fa-external-link-square-alt fa-sm"></i>
-                  </a> |
-                  <a target="fi-read-more" href="http://media.morningstar.com/uk/MEDIA/Comprehensive_update_on_the_Safe_Withdrawal_Rate.pdf">SWR in the UK - Morningstar
-                    <i class="fas fa-external-link-square-alt fa-sm"></i>
-                  </a>
-                </small>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="form-group">
-          <div class="row">
-            <label for="expectedAnnualGrowthRate" class="col-sm-12 col-md-5 col-form-label">Expected Annual Investment Return</label>
-            <div class="col">
-              <div class="input-group">
-                <input type="number" class="form-control" id="expectedAnnualGrowthRate" formControlName="expectedAnnualGrowthRate" step="0.01" aria-describedby="expectedAnnualGrowthRateHelp">
-                <div class="input-group-append">
-                  <div class="input-group-text">%</div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col">
-              <small>
-                <a target="fi-read-more" href="http://www.mrmoneymustache.com/2011/06/06/dude-wheres-my-7-investment-return/">7% - Mr. Money Mustache
-                  <i class="fas fa-external-link-square-alt fa-sm"></i>
-                </a>
-              </small>
-            </div>
+            <p class="small">(When editing a category's Notes, use <kbd>shift + enter</kbd> or <kbd>shift + return</kbd>
+              to create a new line.)</p>
           </div>
         </div>
       </ng-template>
