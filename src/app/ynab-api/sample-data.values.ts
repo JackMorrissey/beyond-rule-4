@@ -1040,7 +1040,7 @@ const sampleBudget: ynab.BudgetDetail = {
   "id": "2fa4e8e8-93cd-4651-9fac-cf2c5110efd9",
   "name": "Sample Budget",
   accounts: sampleAccounts,
-  months: sampleMonths
+  months: sampleMonths as ynab.MonthDetail[]
 };
 
 export const SampleData: YnabSampleData = {
