@@ -115,8 +115,8 @@
     </ngb-panel>
     <ngb-panel id="pNetWorth">
       <ng-template ngbPanelTitle>
-        <span class="float-left">Net Worth</span>
-        <span class="accordion-info">{{budgetForm.value.netWorth | number}}
+        <span class="float-left">Starting Balance</span>
+        <span class="accordion-info">{{netWorth | number}}
           <span class="accordion-toggle">
             <span [ngClass]="{'d-none': accordionPanelActiveStates.pNetWorth !== true}"><i class="fas fa-caret-square-down"></i></span>
             <span [ngClass]="{'d-none': accordionPanelActiveStates.pNetWorth === true}"><i class="fas fa-caret-square-up"></i></span>
@@ -124,25 +124,44 @@
         </span>
       </ng-template>
       <ng-template ngbPanelContent>
-        <div class="form-group row">
-          <label for="netWorth" class="col-sm-12 col-md-5 col-form-label">Net Worth</label>
-          <div class="col">
-            <input type="number" class="form-control" id="netWorth" formControlName="netWorth" step="1000">
-          </div>
+        <div class="row">
+          <table class="table col-12">
+            <thead class="thead-sum">
+              <tr>
+                <th>Starting Balance</th>
+                <td>{{ynabNetWorth | number}}</td>
+                <td>{{netWorth | number}}</td>
+              </tr>
+            </thead>
+            <thead class="thead-light">
+              <tr>
+                <th>Account</th>
+                <th>YNAB Balance</th>
+                <th>Balance</th>
+              </tr>
+            </thead>
+            <tbody formArrayName="accounts">
+              <tr *ngFor="let account of accounts.controls; let i=index" [formGroupName]="i">
+                <td>{{account.value.name}}</td>
+                <td>{{account.value.ynabBalance | number}}</td>
+                <td>
+                  <input class="form-control" formControlName="balance" type="number" />
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
         <div class="row">
-          <div class="col">
-            Calculated as the sum of all Budget and Tracking accounts
-            <div>
-              <small>
-                <a target="_blank" href="http://www.mrmoneymustache.com/2015/01/26/calculating-net-worth/">Calculating
-                  Net Worth - Mr. Money Mustache
-                  <i class="fas fa-external-link-square-alt fa-sm"></i>
-                </a>
-              </small>
-            </div>
+          <div class="col-12">
+            <h4>How we pull these numbers from YNAB</h4>
+            <p>By default, all Asset (e.g. Investment) accounts are summed.</p>
+            <p>To override the balance add <code>BR4 + <i>amount</i></code>
+              (e.g. <code>BR4 + 1000</code>) to the Account Notes of that account.
+            </p>
+            <p>Or, add <code>BR4 +</code> without an amount to use the YNAB balance regardless of the account type.</p>
           </div>
         </div>
+
       </ng-template>
     </ngb-panel>
     <ngb-panel id="pContributions">
@@ -199,6 +218,7 @@
               <p><span>If you would like to override the budgeted amount add <code>BR4 + <i>amount</i></code></span>
                 (e.g. <code>BR4 + 1000</code>) to the notes of that category. This is useful for including
                 contributions to employer accounts that aren't budgeted.</p>
+              <p>Add <code>BR4 +</code> without an amount to use the YNAB balance as a contribution regardless of the category group name.</p>
 
 
             </div>
