@@ -133,7 +133,7 @@ export class ChartComponent implements OnInit, AfterContentInit, OnChanges {
 
     this.data = [
       {
-        name: 'Net Worth',
+        name: 'Portfolio',
         series: netWorth
       },
       {

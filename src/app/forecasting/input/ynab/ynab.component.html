@@ -88,8 +88,7 @@
         </div>
         <div class="form-group">
           <div class="row">
-            <label for="expectedAnnualGrowthRate" class="col-sm-12 col-md-5 col-form-label">Expected Annual Investment
-              Return</label>
+            <label for="expectedAnnualGrowthRate" class="col-sm-12 col-md-5 col-form-label">Expected Annual Rate of Return</label>
             <div class="col">
               <div class="input-group">
                 <input type="number" class="form-control" id="expectedAnnualGrowthRate" formControlName="expectedAnnualGrowthRate"
@@ -115,7 +114,7 @@
     </ngb-panel>
     <ngb-panel id="pNetWorth">
       <ng-template ngbPanelTitle>
-        <span class="float-left">Starting Balance</span>
+        <span class="float-left">Starting Portfolio</span>
         <span class="accordion-info">{{netWorth | number}}
           <span class="accordion-toggle">
             <span [ngClass]="{'d-none': accordionPanelActiveStates.pNetWorth !== true}"><i class="fas fa-caret-square-down"></i></span>
@@ -131,6 +130,11 @@
                 <th>Starting Balance</th>
                 <td>{{ynabNetWorth | number}}</td>
                 <td>{{netWorth | number}}</td>
+              </tr>
+              <tr>
+                <td colspan="3">
+                  <small>The initial amount to compound with the expected annual rate of return</small>
+                </td>
               </tr>
             </thead>
             <thead class="thead-light">
