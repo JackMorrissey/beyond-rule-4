@@ -22,3 +22,7 @@ ngb-accordion .card-header {
 .accordion-toggle {
   margin-left: 15px;
 }
+
+.thead-sum th, .thead-sum td {
+  border: none;
+}

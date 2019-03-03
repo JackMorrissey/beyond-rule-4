@@ -124,7 +124,7 @@ export class ChartComponent implements OnInit, AfterContentInit, OnChanges {
       };
     });
 
-    const interest = this.forecast.monthlyForecasts.map((monthForecast) => {
+    const returns = this.forecast.monthlyForecasts.map((monthForecast) => {
       return {
         name: monthForecast.date,
         value: monthForecast.totalReturns
@@ -141,8 +141,8 @@ export class ChartComponent implements OnInit, AfterContentInit, OnChanges {
         series: contributions
       },
       {
-        name: 'Interest',
-        series: interest
+        name: 'Returns',
+        series: returns
       }
     ];
     this.referenceLines = milestones;

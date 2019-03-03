@@ -65,7 +65,7 @@ export class YnabApiService {
         return key === '' ? value : decodeURIComponent(value);
       });
       token = params.access_token;
-      Cookie.set(tokenName, token, 0.833); // 2 hrs (7200) comes back
+      Cookie.set(tokenName, token, 0.08); // 2 hrs (7200) comes back
       window.location.hash = '';
     }
     this.setApiAccess();

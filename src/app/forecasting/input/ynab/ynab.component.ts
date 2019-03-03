@@ -29,9 +29,9 @@ export class YnabComponent implements OnInit {
   public months;
   public currentMonth: ynab.MonthDetail;
   public selectedMonth: ynab.MonthDetail;
-  public accounts: ynab.Account[];
   public categoryGroupsWithCategories: ynab.CategoryGroupWithCategories[];
 
+  public ynabNetWorth: number;
   public netWorth: number;
   public categoriesDisplay: any;
   public monthlyExpenses: number;
@@ -95,9 +95,9 @@ export class YnabComponent implements OnInit {
     this.budgetForm = this.formBuilder.group({
       selectedBudget: ['', [Validators.required]],
       selectedMonth: ['', [Validators.required]],
-      netWorth: [0, [Validators.required]],
       monthlyContribution: [0, [Validators.required]],
       categoryGroups: this.formBuilder.array([]),
+      accounts: this.formBuilder.array([]),
       safeWithdrawalRatePercentage: [this.safeWithdrawalRatePercentage,
         [Validators.required, Validators.max(99.99), Validators.max(0.01) ]],
       expectedAnnualGrowthRate: [this.expectedAnnualGrowthRate,
@@ -107,6 +107,10 @@ export class YnabComponent implements OnInit {
 
   get categoryGroups(): FormArray {
     return this.budgetForm.get('categoryGroups') as FormArray;
+  }
+
+  get accounts(): FormArray {
+    return this.budgetForm.get('accounts') as FormArray;
   }
 
   async ngOnInit() {
@@ -123,7 +127,7 @@ export class YnabComponent implements OnInit {
     await this.selectBudget(budgetId);
   }
 
-  async setInitialSelectedBudget() {
+  private setInitialSelectedBudget(): string {
     let selectedBudget = 'last-used';
 
     const storageBudget = window.localStorage.getItem('br4-selected-budget');
@@ -144,7 +148,6 @@ export class YnabComponent implements OnInit {
     window.localStorage.setItem('br4-selected-budget', this.budget.id);
 
     this.months = this.budget.months;
-    this.accounts = this.budget.accounts;
     this.currentMonth = await this.ynabService.getMonth(budgetId, 'current');
 
     await this.selectMonth(this.currentMonth.month);
@@ -154,13 +157,14 @@ export class YnabComponent implements OnInit {
     this.selectedMonth = this.months.find(m => m.month === month);
 
     this.categoryGroupsWithCategories = await this.ynabService.getCategoryGroupsWithCategories(this.budget.id);
-    const netWorth = this.getNetWorth(this.accounts);
+
+    const mappedAccounts = this.mapAccounts(this.budget.accounts);
 
     const mappedCategoryGroups = this.mapCategoryGroups(this.categoryGroupsWithCategories, this.selectedMonth);
     const monthlyContribution = this.getMonthlyContribution(mappedCategoryGroups);
     this.contributionCategories = monthlyContribution.categories;
 
-    this.resetForm(netWorth, mappedCategoryGroups, monthlyContribution.value);
+    this.resetForm(mappedCategoryGroups, monthlyContribution.value, mappedAccounts);
 
     this.updateInput();
   }
@@ -182,6 +186,8 @@ export class YnabComponent implements OnInit {
     const leanMonthlyExpenses = this.getMonthlyExpenses(this.budgetForm.value.categoryGroups, 'leanFiBudget');
     const retrievedBudgetedMonthlyExpenses = this.getMonthlyExpenses(this.budgetForm.value.categoryGroups, 'retrievedBudgeted');
 
+    this.setNetWorth();
+
     this.expenses = {
       ynab: {
         monthly: retrievedBudgetedMonthlyExpenses,
@@ -200,7 +206,7 @@ export class YnabComponent implements OnInit {
     const result = new CalculateInput();
     result.annualExpenses = this.expenses.fi.annual;
     result.leanAnnualExpenses = this.expenses.leanFi.annual;
-    result.netWorth = this.budgetForm.value.netWorth;
+    result.netWorth = this.netWorth;
     result.monthlyContribution = this.budgetForm.value.monthlyContribution;
 
     const safeWithdrawalRatePercentage = Number.parseFloat(this.budgetForm.value.safeWithdrawalRatePercentage);
@@ -239,17 +245,22 @@ export class YnabComponent implements OnInit {
     return round(expenses);
   }
 
-  private getNetWorth(allAccounts: ynab.Account[]) {
-    if (!allAccounts || !allAccounts.length) {
-      return 0;
-    }
+  private setNetWorth() {
+    let ynabNetWorth = 0;
+    let netWorth = 0;
+    this.accounts.controls.forEach(a => {
+      const ynabBalance = Number.parseFloat(a.value.ynabBalance);
+      if (!Number.isNaN(ynabBalance)) {
+        ynabNetWorth += ynabBalance;
+      }
+      const balance = Number.parseFloat(a.value.balance);
+      if (!Number.isNaN(balance)) {
+        netWorth += balance;
+      }
+    });
 
-    const netWorth = allAccounts.map(account => {
-      return account.closed ? 0 : account.balance;
-    }).reduce((prev, next) => {
-      return prev + next;
-    }, 0);
-    return ynab.utils.convertMilliUnitsToCurrencyAmount(netWorth);
+    this.ynabNetWorth = ynabNetWorth;
+    this.netWorth = netWorth;
   }
 
   private mapCategoryGroups(categoryGroupsWithCategories: ynab.CategoryGroupWithCategories[], monthDetail: ynab.MonthDetail) {
@@ -292,7 +303,7 @@ export class YnabComponent implements OnInit {
       ignore = true;
     }
 
-    const overrides = this.getNoteOverrides(found.note);
+    const overrides = this.getNoteOverrides(found.note, retrievedBudgeted);
 
     let computedFiBudget = ignore ? 0 : retrievedBudgeted;
     if (overrides.computedFiBudget !== undefined) {
@@ -321,7 +332,31 @@ export class YnabComponent implements OnInit {
     }, );
   }
 
-  private getNoteOverrides(note: string) {
+  private mapAccounts(accounts: ynab.Account[]) {
+    const mapped = accounts.filter(a => !(a.closed || a.deleted))
+    .map(a => this.formBuilder.group(Object.assign({}, a, {
+      balance: this.getAccountBalance(a),
+      ynabBalance: ynab.utils.convertMilliUnitsToCurrencyAmount(a.balance)
+    })));
+    return mapped;
+  }
+
+  private getAccountBalance(account: ynab.Account) {
+    const balance = ynab.utils.convertMilliUnitsToCurrencyAmount(account.balance);
+    const overrides = this.getNoteOverrides(account.note, balance);
+
+    if (overrides.contributionBudget !== undefined) {
+      return overrides.contributionBudget;
+    }
+
+    if (account.type === ynab.Account.TypeEnum.InvestmentAccount || account.type === ynab.Account.TypeEnum.OtherAsset) {
+      return balance;
+    }
+
+    return 0;
+  }
+
+  private getNoteOverrides(note: string, originalValue: number) {
     const override = {
       contributionBudget: undefined,
       computedLeanFiBudget: undefined,
@@ -332,7 +367,7 @@ export class YnabComponent implements OnInit {
       return override;
     }
 
-    const commands = this.getCommands(note);
+    const commands = this.getCommands(note, originalValue);
 
     commands.forEach(c => {
       switch (c.key) {
@@ -358,7 +393,7 @@ export class YnabComponent implements OnInit {
     return override;
   }
 
-  private getCommands(originalNote: string) {
+  private getCommands(originalNote: string, originValue: number) {
     const note = originalNote.toLowerCase();
     const commandPrefix = 'br4';
     if (note.indexOf(commandPrefix) === -1) {
@@ -375,7 +410,10 @@ export class YnabComponent implements OnInit {
       const numRegex = /[+-]?\d+(?:\.\d+)?/g;
       const match = numRegex.exec(cleaned);
       if (!match || !match.length) {
-        return {};
+        return {
+          key: cleaned,
+          value: originValue
+        };
       }
       const foundValue = match[0];
       const key = cleaned.substr(0, cleaned.indexOf(foundValue)).trim();
@@ -411,11 +449,10 @@ export class YnabComponent implements OnInit {
     };
   }
 
-  private resetForm(netWorth, categoriesDisplay, monthlyContribution) {
+  private resetForm(categoriesDisplay, monthlyContribution, mappedAccounts) {
     this.budgetForm.reset({
       selectedBudget: this.budget.id,
       selectedMonth: this.selectedMonth.month,
-      netWorth,
       monthlyContribution,
       expectedAnnualGrowthRate: this.expectedAnnualGrowthRate,
       safeWithdrawalRatePercentage: this.safeWithdrawalRatePercentage
@@ -435,8 +472,9 @@ export class YnabComponent implements OnInit {
         ignore: c.ignore
       })))
     }));
-    const categoryGroups = this.formBuilder.array(categoryGroupFormGroups);
-    this.budgetForm.setControl('categoryGroups', categoryGroups);
+
+    this.budgetForm.setControl('categoryGroups', this.formBuilder.array(categoryGroupFormGroups));
+    this.budgetForm.setControl('accounts', this.formBuilder.array(mappedAccounts));
   }
 
 }
