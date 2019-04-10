@@ -30,10 +30,24 @@
         </div>
         <div class="form-group">
           <div class="row">
-            <label for="selectedBudget" class="col-sm-12 col-md-5 col-form-label">Month</label>
+            <label for="selectedBudget" class="col-sm-12 col-md-5 col-form-label">Month Start</label>
             <div class="col">
               <div class="input-group">
-                <select class="form-control" id="selectedMonth" formControlName="selectedMonth">
+                <select class="form-control" id="selectedMonthA" formControlName="selectedMonthA">
+                  <option *ngFor="let month of months"
+                    [value]="month.month">
+                      {{month.month}}
+                  </option>
+                </select>
+              </div>
+            </div>
+
+          </div>
+          <div class="row">
+            <label for="selectedBudget" class="col-sm-12 col-md-5 col-form-label">Month End</label>
+            <div class="col">
+              <div class="input-group">
+                <select class="form-control" id="selectedMonthB" formControlName="selectedMonthB">
                   <option *ngFor="let month of months"
                     [value]="month.month">
                       {{month.month}}
@@ -45,7 +59,7 @@
           </div>
           <div class="row">
             <div class="col">
-              <small>The month to use for contributions and expenses
+              <small>The month range to use for average contributions and expenses
               </small>
             </div>
           </div>

@@ -9,6 +9,7 @@ import * as ynab from 'ynab';
 import { YnabApiService } from '../../../ynab-api/ynab-api.service';
 import { CalculateInput } from '../../models/calculate-input.model';
 import { round } from '../../utilities/number-utility';
+import { CategoryBudgetInfo } from './category-budget-info';
 
 @Component({
   selector: 'app-ynab',
@@ -26,9 +27,10 @@ export class YnabComponent implements OnInit {
 
   public budgets: ynab.BudgetSummary[];
   public budget: ynab.BudgetDetail;
-  public months;
+  public months: ynab.MonthDetail[];
   public currentMonth: ynab.MonthDetail;
-  public selectedMonth: ynab.MonthDetail;
+  public selectedMonthA: ynab.MonthDetail;
+  public selectedMonthB: ynab.MonthDetail;
   public categoryGroupsWithCategories: ynab.CategoryGroupWithCategories[];
 
   public ynabNetWorth: number;
@@ -94,7 +96,8 @@ export class YnabComponent implements OnInit {
     };
     this.budgetForm = this.formBuilder.group({
       selectedBudget: ['', [Validators.required]],
-      selectedMonth: ['', [Validators.required]],
+      selectedMonthA: ['', [Validators.required]],
+      selectedMonthB: ['', [Validators.required]],
       monthlyContribution: [0, [Validators.required]],
       categoryGroups: this.formBuilder.array([]),
       accounts: this.formBuilder.array([]),
@@ -149,24 +152,50 @@ export class YnabComponent implements OnInit {
 
     this.months = this.budget.months;
     this.currentMonth = await this.ynabService.getMonth(budgetId, 'current');
+    this.categoryGroupsWithCategories = await this.ynabService.getCategoryGroupsWithCategories(this.budget.id);
 
-    await this.selectMonth(this.currentMonth.month);
+    await this.selectMonths(this.currentMonth.month, this.currentMonth.month);
   }
 
-  async selectMonth(month: string) {
-    this.selectedMonth = this.months.find(m => m.month === month);
-
-    this.categoryGroupsWithCategories = await this.ynabService.getCategoryGroupsWithCategories(this.budget.id);
+  async selectMonths(monthA: string, monthB: string) {
+    const months = this.setMonths(monthA, monthB);
 
     const mappedAccounts = this.mapAccounts(this.budget.accounts);
 
-    const mappedCategoryGroups = this.mapCategoryGroups(this.categoryGroupsWithCategories, this.selectedMonth);
+    const mappedCategoryGroups = this.mapCategoryGroups(this.categoryGroupsWithCategories, months);
     const monthlyContribution = this.getMonthlyContribution(mappedCategoryGroups);
     this.contributionCategories = monthlyContribution.categories;
 
     this.resetForm(mappedCategoryGroups, monthlyContribution.value, mappedAccounts);
 
     this.updateInput();
+  }
+
+  private setMonths(monthA: string, monthB: string): ynab.MonthDetail[] {
+    const result = new Array<ynab.MonthDetail>();
+    let inRange = false;
+    for (let i = 0; i < this.months.length; i++) {
+      const month = this.months[i];
+      if (month.month === monthA || month.month === monthB) {
+        if (inRange) {
+          this.selectedMonthA = month;
+          result.push(month);
+          break;
+        }
+
+        this.selectedMonthB = month;
+        if (monthA === monthB) {
+          this.selectedMonthA = month;
+          result.push(month);
+          break;
+        }
+        inRange = true;
+      }
+      if (inRange) {
+        result.push(month);
+      }
+    }
+    return result;
   }
 
   updateInput() {
@@ -176,9 +205,9 @@ export class YnabComponent implements OnInit {
       return;
     }
 
-    const selectedMonth = this.budgetForm.value.selectedMonth;
-    if (this.selectedMonth.month !== selectedMonth) {
-      this.selectMonth(selectedMonth);
+    if (this.selectedMonthA.month !== this.budgetForm.value.selectedMonthA ||
+        this.selectedMonthB.month !== this.budgetForm.value.selectedMonthB) {
+      this.selectMonths(this.budgetForm.value.selectedMonthA, this.budgetForm.value.selectedMonthB);
       return;
     }
 
@@ -263,15 +292,16 @@ export class YnabComponent implements OnInit {
     this.netWorth = netWorth;
   }
 
-  private mapCategoryGroups(categoryGroupsWithCategories: ynab.CategoryGroupWithCategories[], monthDetail: ynab.MonthDetail) {
-    if (!categoryGroupsWithCategories || !monthDetail) {
+  private mapCategoryGroups(categoryGroupsWithCategories: ynab.CategoryGroupWithCategories[], monthDetails: ynab.MonthDetail[]) {
+    if (!categoryGroupsWithCategories || !monthDetails) {
       return [];
     }
     const categoryGroups = categoryGroupsWithCategories.map(c => {
       const categoryGroupIgnore = c.hidden || this.ignoredCategoryGroups.includes(c.name.toLowerCase());
       const leanFiIgnore = categoryGroupIgnore || this.leanFiIgnoredCategoryGroups.includes(c.name.toLowerCase());
       const isContribution = this.contributionCategoryGroups.includes(c.name.toLowerCase());
-      const mappedCategories = c.categories.map(ca => this.mapCategory(ca, monthDetail, categoryGroupIgnore, leanFiIgnore, isContribution));
+      const mappedCategories =
+        c.categories.map(ca => this.mapCategory(ca, monthDetails, categoryGroupIgnore, leanFiIgnore, isContribution));
       const hidden = c.hidden || this.hiddenCategoryGroups.includes(c.name.toLowerCase()) || mappedCategories.every(mc => mc.hidden);
       return {
         name: c.name,
@@ -290,11 +320,11 @@ export class YnabComponent implements OnInit {
     return categoryGroups.filter(c => !c.hidden);
   }
 
-  private mapCategory(category: ynab.Category, monthDetail: ynab.MonthDetail,
+  private mapCategory(category: ynab.Category, monthDetails: ynab.MonthDetail[],
     childrenIgnore: boolean, leanFiIgnore: boolean, isContribution: boolean) {
     let ignore = childrenIgnore || category.hidden;
-    const found = monthDetail.categories.find(c => category.id === c.id);
-    const retrievedBudgeted = !found ? 0 : ynab.utils.convertMilliUnitsToCurrencyAmount(found.budgeted);
+    const categoryBudgetInfo = new CategoryBudgetInfo(category, monthDetails);
+    const retrievedBudgeted = categoryBudgetInfo.average;
 
     if (retrievedBudgeted < 0) {
       // Do not know how to handle negative contributions or budgeting
@@ -303,7 +333,7 @@ export class YnabComponent implements OnInit {
       ignore = true;
     }
 
-    const overrides = this.getNoteOverrides(found.note, retrievedBudgeted);
+    const overrides = this.getNoteOverrides(categoryBudgetInfo.categoryNote, retrievedBudgeted);
 
     let computedFiBudget = ignore ? 0 : retrievedBudgeted;
     if (overrides.computedFiBudget !== undefined) {
@@ -452,7 +482,8 @@ export class YnabComponent implements OnInit {
   private resetForm(categoriesDisplay, monthlyContribution, mappedAccounts) {
     this.budgetForm.reset({
       selectedBudget: this.budget.id,
-      selectedMonth: this.selectedMonth.month,
+      selectedMonthA: this.selectedMonthA.month,
+      selectedMonthB: this.selectedMonthB.month,
       monthlyContribution,
       expectedAnnualGrowthRate: this.expectedAnnualGrowthRate,
       safeWithdrawalRatePercentage: this.safeWithdrawalRatePercentage
