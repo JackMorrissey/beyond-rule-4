@@ -324,7 +324,7 @@ export class YnabComponent implements OnInit {
     childrenIgnore: boolean, leanFiIgnore: boolean, isContribution: boolean) {
     let ignore = childrenIgnore || category.hidden;
     const categoryBudgetInfo = new CategoryBudgetInfo(category, monthDetails);
-    const retrievedBudgeted = categoryBudgetInfo.average;
+    const retrievedBudgeted = categoryBudgetInfo.mean;
 
     if (retrievedBudgeted < 0) {
       // Do not know how to handle negative contributions or budgeting
@@ -358,7 +358,8 @@ export class YnabComponent implements OnInit {
       retrievedBudgeted,
       computedFiBudget,
       computedLeanFiBudget,
-      contributionBudget
+      contributionBudget,
+      info: categoryBudgetInfo
     }, );
   }
 
@@ -466,7 +467,8 @@ export class YnabComponent implements OnInit {
             contribution += c.contributionBudget;
             categories.push({
               name: c.name,
-              value: c.contributionBudget
+              value: c.contributionBudget,
+              info: c.info
             });
           }
         });
@@ -500,6 +502,7 @@ export class YnabComponent implements OnInit {
         computedLeanFiBudget: c.computedLeanFiBudget,
         fiBudget: c.computedFiBudget,
         leanFiBudget: c.computedLeanFiBudget,
+        info: c.info,
         ignore: c.ignore
       })))
     }));

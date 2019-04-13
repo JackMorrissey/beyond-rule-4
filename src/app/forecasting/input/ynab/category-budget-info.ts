@@ -3,9 +3,9 @@ import * as ynab from 'ynab';
 export class CategoryBudgetInfo {
   category: ynab.Category;
   monthBalances: {} = {};
-  average = 0;
-  max = 0;
-  min: number;
+  mean = 0;
+  max = { month: '', value: undefined};
+  min = { month: '', value: undefined};
   categoryNote: string;
 
   constructor(category: ynab.Category, monthDetails: ynab.MonthDetail[]) {
@@ -34,19 +34,30 @@ export class CategoryBudgetInfo {
     for (const month in this.monthBalances) {
       if (this.monthBalances.hasOwnProperty(month)) {
         const budgeted = this.monthBalances[month];
+        if (!budgeted && budgeted !== 0) {
+          continue;
+        }
         monthCount++;
         sum += budgeted;
-        if (budgeted > this.max) {
-          this.max = ynab.utils.convertMilliUnitsToCurrencyAmount(budgeted);
+        if (this.max.value === undefined || budgeted > this.max.value) {
+          this.max = {
+            month: month,
+            value: budgeted
+          };
         }
-        if (this.min === undefined || budgeted < this.min) {
-          this.min = ynab.utils.convertMilliUnitsToCurrencyAmount(budgeted);
+        if (this.min.value === undefined || budgeted < this.min.value) {
+          this.min = {
+            month: month,
+            value: budgeted
+          };
         }
       }
     }
     if (monthCount === 0) {
       return;
     }
-    this.average = ynab.utils.convertMilliUnitsToCurrencyAmount(sum / monthCount);
+    this.min.value = this.min.value ? ynab.utils.convertMilliUnitsToCurrencyAmount(this.min.value) : 0;
+    this.max.value = this.max.value ? ynab.utils.convertMilliUnitsToCurrencyAmount(this.max.value) : 0;
+    this.mean = ynab.utils.convertMilliUnitsToCurrencyAmount(sum / monthCount);
   }
 }
