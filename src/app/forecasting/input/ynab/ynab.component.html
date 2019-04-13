@@ -30,10 +30,24 @@
         </div>
         <div class="form-group">
           <div class="row">
-            <label for="selectedBudget" class="col-sm-12 col-md-5 col-form-label">Month</label>
+            <label for="selectedBudget" class="col-sm-12 col-md-5 col-form-label">Month Start</label>
             <div class="col">
               <div class="input-group">
-                <select class="form-control" id="selectedMonth" formControlName="selectedMonth">
+                <select class="form-control" id="selectedMonthA" formControlName="selectedMonthA">
+                  <option *ngFor="let month of months"
+                    [value]="month.month">
+                      {{month.month}}
+                  </option>
+                </select>
+              </div>
+            </div>
+
+          </div>
+          <div class="row">
+            <label for="selectedBudget" class="col-sm-12 col-md-5 col-form-label">Month End</label>
+            <div class="col">
+              <div class="input-group">
+                <select class="form-control" id="selectedMonthB" formControlName="selectedMonthB">
                   <option *ngFor="let month of months"
                     [value]="month.month">
                       {{month.month}}
@@ -45,7 +59,7 @@
           </div>
           <div class="row">
             <div class="col">
-              <small>The month to use for contributions and expenses
+              <small>The month range to use for average contributions and expenses
               </small>
             </div>
           </div>
@@ -203,7 +217,11 @@
             <tbody>
               <tr *ngFor="let category of contributionCategories">
                 <td>{{category.name}}</td>
-                <td>{{category.value | number}}</td>
+                <td>
+                  <span ngbPopover="Min:  {{category.info.min.value | number}} Max:  {{category.info.max.value | number}} Mean: {{category.info.mean | number}} " triggers="mouseenter:mouseleave">
+                    {{category.value | number}}
+                  </span>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -308,7 +326,11 @@
                 <ng-container formArrayName="categories">
                   <tr *ngFor="let category of categoryGroup.get('categories').controls; let j=index" [formGroupName]="j">
                     <td>{{category.value.name}}</td>
-                    <td>{{category.value.retrievedBudgeted | number}}</td>
+                    <td>
+                      <span ngbPopover="Min:  {{category.value.info.min.value | number}} Max:  {{category.value.info.max.value | number}} Mean: {{category.value.info.mean | number}} " triggers="mouseenter:mouseleave">
+                        {{category.value.retrievedBudgeted | number}}
+                      </span>
+                    </td>
                     <td>
                       <input class="form-control" formControlName="fiBudget" type="number" />
                     </td>
