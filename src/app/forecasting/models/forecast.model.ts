@@ -4,10 +4,14 @@ import { round } from '../utilities/number-utility';
 export class Forecast {
   monthlyForecasts: MonthlyForecast[];
   month0Date: Date;
+  birthdate: Date;
 
   public constructor(calculateInput: CalculateInput, month0Date?: Date) {
     if (!this.month0Date) {
       this.month0Date = new Date();
+    }
+    if (calculateInput.birthdate) {
+      this.birthdate = calculateInput.birthdate;
     }
     this.month0Date.setDate(1); // make it the first of the month
     this.computeForecast(calculateInput);
@@ -31,6 +35,14 @@ export class Forecast {
     const difference = this.getTimeString(years, 'year') + this.getTimeString(months, 'month');
     const suffix = inPast ? 'ago' : '';
     return difference + suffix;
+  }
+
+  public getAgeAtDistanceText(forecastDate: Date, birthdate: Date): string {
+    const now = Date.now();
+    const currentAge = now - birthdate.getTime();
+    const msDifference = forecastDate.getTime() - now;
+    const ageAtGoal = Math.floor((currentAge + msDifference) / (1000 * 3600 * 24) / 365.25);
+    return `(age ${ageAtGoal})`;
   }
 
   private getTimeString(timeDifference: number, unit: string): string {
@@ -113,6 +125,6 @@ export class MonthlyForecast {
   }
 
   public toDateString() {
-    return this.date.toLocaleString('en-us', {month: 'long', year: 'numeric'});
+    return this.date.toLocaleString('en-us', { month: 'long', year: 'numeric' });
   }
 }

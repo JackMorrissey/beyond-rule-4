@@ -1,7 +1,6 @@
 import { Component, OnInit, Input, OnChanges, SimpleChanges,  } from '@angular/core';
 
-import { CalculateInput } from '../../../models/calculate-input.model';
-import { Forecast, MonthlyForecast } from '../../../models/forecast.model';
+import { Forecast } from '../../../models/forecast.model';
 import { Milestones } from '../milestone.model';
 
 @Component({
@@ -50,7 +49,7 @@ export class TextComponent implements OnInit, OnChanges {
       }
       const forecast = forecastSearch[foundIndex];
       const forecastDate = this.getDateString(forecast.date);
-      const distance = this.getDistanceText(forecast.date);
+      const distance = this.getDistanceText(forecast.date, this.forecast.birthdate);
       return {
         milestone,
         forecast,
@@ -69,10 +68,13 @@ export class TextComponent implements OnInit, OnChanges {
     return forecastDate.toLocaleDateString('en-US', options);
   }
 
-  getDistanceText(forecastDate: Date) {
-    const text = this.forecast.getDistanceFromFirstMonthText(forecastDate);
+  getDistanceText(forecastDate: Date, birthdate: Date) {
+    let text = this.forecast.getDistanceFromFirstMonthText(forecastDate);
     if (!text) {
       return 'Achieved!';
+    }
+    if (birthdate) {
+      text += this.forecast.getAgeAtDistanceText(forecastDate, birthdate);
     }
     return text;
   }

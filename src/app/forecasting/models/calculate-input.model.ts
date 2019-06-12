@@ -8,12 +8,13 @@ export class CalculateInput {
   expectedAnnualGrowthRate = 0;
   monthlyContribution = 0;
   leanFiPercentage = 0;
+  public birthdate: Date = null;
 
   public constructor(init?: Partial<CalculateInput>) {
     Object.assign(this, {
       annualSafeWithdrawalRate: 0.04,
       leanFiPercentage: 0.7,
-      expectedAnnualGrowthRate: 0.07,
+      expectedAnnualGrowthRate: 0.07
     }, init);
     this.roundAll();
   }

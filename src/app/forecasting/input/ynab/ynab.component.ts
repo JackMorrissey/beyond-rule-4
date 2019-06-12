@@ -1,6 +1,6 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { FormGroup, FormArray, FormControl, FormBuilder, Validators } from '@angular/forms';
-import { Router, ActivatedRoute} from '@angular/router';
+import { FormGroup, FormArray, FormBuilder, Validators } from '@angular/forms';
+import { ActivatedRoute} from '@angular/router';
 import { NgbPanelChangeEvent} from '@ng-bootstrap/ng-bootstrap';
 import { timer } from 'rxjs';
 import { debounce } from 'rxjs/operators';
@@ -24,6 +24,7 @@ export class YnabComponent implements OnInit {
   displayContributionInfo = true;
   public safeWithdrawalRatePercentage = 4.00;
   public expectedAnnualGrowthRate = 7.00;
+  public birthdate: Date;
 
   public budgets: ynab.BudgetSummary[];
   public budget: ynab.BudgetDetail;
@@ -105,6 +106,8 @@ export class YnabComponent implements OnInit {
         [Validators.required, Validators.max(99.99), Validators.max(0.01) ]],
       expectedAnnualGrowthRate: [this.expectedAnnualGrowthRate,
         [Validators.required, Validators.max(99.99), Validators.max(0.01) ]],
+      birthdate: [this.birthdate,
+        [Validators.max(150), Validators.min(0) ]]
     });
   }
 
@@ -247,6 +250,11 @@ export class YnabComponent implements OnInit {
     if (!Number.isNaN(expectedAnnualGrowthRate)) {
       this.expectedAnnualGrowthRate = expectedAnnualGrowthRate;
       result.expectedAnnualGrowthRate = Math.max(0, expectedAnnualGrowthRate / 100);
+    }
+
+    if (this.budgetForm.value.birthdate) {
+      this.birthdate = new Date(this.budgetForm.value.birthdate);
+      result.birthdate = this.birthdate;
     }
 
     result.roundAll();
@@ -488,7 +496,8 @@ export class YnabComponent implements OnInit {
       selectedMonthB: this.selectedMonthB.month,
       monthlyContribution,
       expectedAnnualGrowthRate: this.expectedAnnualGrowthRate,
-      safeWithdrawalRatePercentage: this.safeWithdrawalRatePercentage
+      safeWithdrawalRatePercentage: this.safeWithdrawalRatePercentage,
+      birthdate: this.birthdate
     });
 
     const categoryGroupFormGroups = categoriesDisplay.map(cg => this.formBuilder.group({
