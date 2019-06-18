@@ -49,7 +49,7 @@ export class TextComponent implements OnInit, OnChanges {
       }
       const forecast = forecastSearch[foundIndex];
       const forecastDate = this.getDateString(forecast.date);
-      const distance = this.getDistanceText(forecast.date, this.forecast.birthdate);
+      const distance = this.getDistanceText(forecast.date, this.forecast.birthDate);
       return {
         milestone,
         forecast,
@@ -68,13 +68,13 @@ export class TextComponent implements OnInit, OnChanges {
     return forecastDate.toLocaleDateString('en-US', options);
   }
 
-  getDistanceText(forecastDate: Date, birthdate: Date) {
+  getDistanceText(forecastDate: Date, birthDate: Date) {
     let text = this.forecast.getDistanceFromFirstMonthText(forecastDate);
     if (!text) {
       return 'Achieved!';
     }
-    if (birthdate) {
-      text += this.forecast.getAgeAtDistanceText(forecastDate, birthdate);
+    if (birthDate) {
+      text += this.forecast.getAgeAtDistanceText(forecastDate, birthDate);
     }
     return text;
   }

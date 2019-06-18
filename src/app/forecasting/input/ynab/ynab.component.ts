@@ -10,6 +10,7 @@ import { YnabApiService } from '../../../ynab-api/ynab-api.service';
 import { CalculateInput } from '../../models/calculate-input.model';
 import { round } from '../../utilities/number-utility';
 import { CategoryBudgetInfo } from './category-budget-info';
+import { NgbDate } from '@ng-bootstrap/ng-bootstrap/datepicker/ngb-date';
 
 @Component({
   selector: 'app-ynab',
@@ -24,7 +25,8 @@ export class YnabComponent implements OnInit {
   displayContributionInfo = true;
   public safeWithdrawalRatePercentage = 4.00;
   public expectedAnnualGrowthRate = 7.00;
-  public birthdate: Date;
+  public birthDate: Date;
+  public ngBirthDate: any;
 
   public budgets: ynab.BudgetSummary[];
   public budget: ynab.BudgetDetail;
@@ -106,8 +108,7 @@ export class YnabComponent implements OnInit {
         [Validators.required, Validators.max(99.99), Validators.max(0.01) ]],
       expectedAnnualGrowthRate: [this.expectedAnnualGrowthRate,
         [Validators.required, Validators.max(99.99), Validators.max(0.01) ]],
-      birthdate: [this.birthdate,
-        [Validators.max(150), Validators.min(0) ]]
+      ngBirthDate: [this.ngBirthDate]
     });
   }
 
@@ -252,9 +253,10 @@ export class YnabComponent implements OnInit {
       result.expectedAnnualGrowthRate = Math.max(0, expectedAnnualGrowthRate / 100);
     }
 
-    if (this.budgetForm.value.birthdate) {
-      this.birthdate = new Date(this.budgetForm.value.birthdate);
-      result.birthdate = this.birthdate;
+    if (this.budgetForm.value.ngBirthDate) {
+      this.birthDate = new Date(`${this.budgetForm.value.ngBirthDate.year}-${this.budgetForm.value.ngBirthDate.month}-
+      ${this.budgetForm.value.ngBirthDate.day}`);
+      result.birthDate = this.birthDate;
     }
 
     result.roundAll();
@@ -497,7 +499,7 @@ export class YnabComponent implements OnInit {
       monthlyContribution,
       expectedAnnualGrowthRate: this.expectedAnnualGrowthRate,
       safeWithdrawalRatePercentage: this.safeWithdrawalRatePercentage,
-      birthdate: this.birthdate
+      birthDate: this.birthDate
     });
 
     const categoryGroupFormGroups = categoriesDisplay.map(cg => this.formBuilder.group({

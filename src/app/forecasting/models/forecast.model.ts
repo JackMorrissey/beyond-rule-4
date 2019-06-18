@@ -4,14 +4,14 @@ import { round } from '../utilities/number-utility';
 export class Forecast {
   monthlyForecasts: MonthlyForecast[];
   month0Date: Date;
-  birthdate: Date;
+  birthDate: Date;
 
   public constructor(calculateInput: CalculateInput, month0Date?: Date) {
     if (!this.month0Date) {
       this.month0Date = new Date();
     }
-    if (calculateInput.birthdate) {
-      this.birthdate = calculateInput.birthdate;
+    if (calculateInput.birthDate) {
+      this.birthDate = calculateInput.birthDate;
     }
     this.month0Date.setDate(1); // make it the first of the month
     this.computeForecast(calculateInput);
@@ -37,9 +37,9 @@ export class Forecast {
     return difference + suffix;
   }
 
-  public getAgeAtDistanceText(forecastDate: Date, birthdate: Date): string {
+  public getAgeAtDistanceText(forecastDate: Date, birthDate: Date): string {
     const now = Date.now();
-    const currentAge = now - birthdate.getTime();
+    const currentAge = now - birthDate.getTime();
     const msDifference = forecastDate.getTime() - now;
     const ageAtGoal = Math.floor((currentAge + msDifference) / (1000 * 3600 * 24) / 365.25);
     return `(age ${ageAtGoal})`;

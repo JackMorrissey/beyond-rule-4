@@ -19,8 +19,8 @@
               <div class="input-group">
                 <select class="form-control" id="selectedBudget" formControlName="selectedBudget">
                   <option *ngFor="let budget of budgets"
-                  [value]="budget.id">
-                    {{budget.name}}
+                    [value]="budget.id">
+                      {{budget.name}}
                   </option>
                 </select>
               </div>
@@ -34,8 +34,8 @@
               <div class="input-group">
                 <select class="form-control" id="selectedMonthA" formControlName="selectedMonthA">
                   <option *ngFor="let month of months"
-                  [value]="month.month">
-                    {{month.month}}
+                    [value]="month.month">
+                      {{month.month}}
                   </option>
                 </select>
               </div>
@@ -47,13 +47,12 @@
               <div class="input-group">
                 <select class="form-control" id="selectedMonthB" formControlName="selectedMonthB">
                   <option *ngFor="let month of months"
-                  [value]="month.month">
-                    {{month.month}}
+                    [value]="month.month">
+                      {{month.month}}
                   </option>
                 </select>
               </div>
             </div>
-
           </div>
           <div class="row">
             <div class="col">
@@ -124,12 +123,16 @@
         </div>
         <div class="form-group">
           <div class="row">
-            <label for="birthdate" class="col-sm-12 col-md-5 col-form-label">Birth date</label>
+              <label for="ngBirthDate" class="col-sm-12 col-md-5 col-form-label">Birthdate</label>
             <div class="col">
               <div class="input-group">
-                <input type="date" class="form-control" id="birthdate" formControlName="birthdate" step="1"
-                  aria-describedby="birthdateHelp" placeholder="Birthdate">
-              </div>
+                <input type="date" class="form-control" id="ngBirthDate" formControlName="ngBirthDate"
+                  ngbDatepicker #d="ngbDatepicker" [minDate]="{year: 1900, month: 1, date: 1}" placeholder="yyyy-mm-dd" [readonly]="true">
+                <div class="input-group-append">
+                  <button class="btn btn-outline-secondary calendar"
+                  (click)="d.toggle()" type="button"></button>
+                </div>
+              </div>      
             </div>
           </div>
         </div>
@@ -260,7 +263,6 @@
 
           </div>
         </div>
-
       </ng-template>
     </ngb-panel>
     <ngb-panel id="pExpenses">
