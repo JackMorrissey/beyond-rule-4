@@ -1,39 +1,62 @@
 <div class="container">
-  <h2>Winning YNAB</h2>
+  <div class="row">
+    <div class="col-12 col-lg-9">
+      <div class="mb-5">
+        <h2>Winning YNAB</h2>
 
-  <p><a href="https://www.youneedabudget.com/method/">Rule check!</a> How are you doing?</p>
-  <ul>
+        <p><a href="https://www.youneedabudget.com/method/">Rule check!</a> How are you doing?</p>
+        <ul class="list-unstyled pl-3">
 
-    <li><i class="far fa-check-square"></i> Every dollar has a job.</li>
-    <li><i class="far fa-check-square"></i> You've embraced your true expenses.</li>
-    <li><i class="far fa-check-square"></i> You're rolling with the punches.</li>
-    <li><i class="far fa-check-square"></i> Your money has aged 30 days.</li>
-  </ul>
+          <li><i class="far fa-check-square"></i> Every dollar has a job.</li>
+          <li><i class="far fa-check-square"></i> You've embraced your true expenses.</li>
+          <li><i class="far fa-check-square"></i> You're rolling with the punches.</li>
+          <li><i class="far fa-check-square"></i> Your money has aged 30 days.</li>
+        </ul>
 
-  <p>Congratulations! You've conquered the four rules. You are well on your way to financial peace. Now what?</p>
-
-  <h2>Beyond Rule 4</h2>
-
-  <p>Once you've mastered the 4 rules you may be left yearning for additional milestones. What would you like to conquer next?</p>
-
-  <h5>Financial Independence</h5>
-
-  <p>Financial Independence is the idea that if you can save up enough money, eventually the earnings on those investments can cover your expenses and "work" becomes optional. <a href="https://www.youneedabudget.com/is-the-fire-movement-for-you/">Is the FIRE movement for you?</a> How far are you in your journey to financial freedom?</p>
-
-  <!-- <p>Authorize with YNAB and lets see if we can find some additional goals you'd like to conquer.</p> -->
-
-  <div *ngIf="isAuthorized" class="mb-2">
-    <p class="text-success">Successfully authorized with YNAB! What's next?</p>
-    <div class="mb-2"><a routerLink="/beyond" class="btn btn-success">Go Beyond</a></div>
-  </div>
-  <div *ngIf="!isAuthorized" class="mb-3">
-      <p>Authorize with YNAB and let's find out!</p>
-      <div class=""><button (click)="authorize()" class="btn btn-primary btn-lg">Authorize with YNAB</button></div>
-      <div class="text-small mb-4">We do not track or collect personal information. <a routerLink="/about">Privacy Policy</a></div>
-
-      <div>
-        <p>Just browsing? No worries!</p>
-        <div class="mb-2"><a routerLink="/beyond" class="btn btn-secondary">Continue With Example Data</a></div>
+        <p>Congratulations! You've conquered the four rules. You are well on your way to financial peace. Now what?</p>
       </div>
+
+      <div class="mb-5">
+        <h2><em><strong>Beyond</strong></em> Rule 4</h2>
+
+        <p>Once you've mastered the 4 rules you may be left yearning for additional milestones. What would you like to
+          conquer
+          next?</p>
+
+        <h4><em>Financial Independence</em></h4>
+
+        <p>Financial Independence is the idea that if you can save up enough money, eventually the earnings on those
+          investments can cover your expenses and "work" becomes optional. <a
+            href="https://www.youneedabudget.com/is-the-fire-movement-for-you/">Is the FIRE movement for you?</a> How
+          far
+          are
+          you in your journey to financial freedom?</p>
+
+        <!-- <p>Authorize with YNAB and lets see if we can find some additional goals you'd like to conquer.</p> -->
+
+        <div *ngIf="isAuthorized" class="mb-2">
+          <p class="text-success">Successfully authorized with YNAB! What's next?</p>
+          <div class="mb-2"><a routerLink="/beyond" class="btn btn-success">Go Beyond <i class="fas fa-forward"></i></a>
+          </div>
+        </div>
+        <div *ngIf="!isAuthorized" class="mb-3">
+          <p>Authorize with YNAB and let's find out!</p>
+          <div class=""><button (click)="authorize()" class="btn btn-primary btn-lg"><i class="fas fa-key"></i>
+              Authorize with YNAB</button></div>
+          <div class="text-small mb-4 text-muted">We do not track or collect personal information. <a
+              routerLink="/about">Privacy
+              Policy</a></div>
+
+          <div>
+            <p>Just browsing? No worries!</p>
+            <div class="mb-2"><a routerLink="/beyond" class="btn btn-secondary">Continue With Example Data <i
+                  class="fas fa-forward"></i></a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3 text-center d-none d-lg-block">
+      <i class="fas fa-rocket giant-icon mt-5"></i>
+    </div>
   </div>
 </div>
