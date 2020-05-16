@@ -1,22 +1,38 @@
-<h3>FI Date</h3>
-<h2 class="text-success font-weight-bold">{{fiDate}} • {{dateDistance}}</h2>
-<p>
-  At a safe withdrawal rate of {{safeWithdrawalRate}}%,
-  Financial Independence is reached at a Net Worth of {{safeWithdrawalTimes}} times annual expenses.
-</p>
-<p>
-  With annual expenses of {{calculateInput.annualExpenses | number}},
-  we're aiming for a Net Worth of {{fiNumber | number}}.
-</p>
-<p>
-  At {{expectedAnnualGrowthRate}}% returns,
-  that Net Worth is forecasted to be {{fiDate}}; {{dateDistance}} from the first month.
-  <span *ngIf="fiMonthForecast">
-    By that point, Net Worth is at {{fiMonthForecast.netWorth | number}}.
-    Of that total, contributions account for {{fiMonthForecast.totalContributions | number}} while {{fiMonthForecast.totalReturns | number}} is earned returns.
-  </span>
-</p>
-<p>
-  <span class="font-weight-bold">Lean FI</span>: {{leanFiDate}} • {{leanFiDateDistance}}
-</p>
+<div class="mb-3">
+  <div class="mb-3 alert alert-success">
+    <h4 class="font-weight-bold"><strong>FI Date</strong></h4>
+    <h2><strong>{{fiDate}}</strong> • {{dateDistance}}</h2>
+    <hr>
+    <ul class="list-inline">
+      <li class="list-inline-item">
+        <h5 class="font-weight-bold">Lean FI</h5>
+      </li>
+      <li class="list-inline-item"></li>
+      <li class="list-inline-item">
+        <h4>
+          {{leanFiDate}} • {{leanFiDateDistance}}
+        </h4>
+      </li>
+    </ul>
+  </div>
+  <div class="pb-1">
+    <p>
+      At a safe withdrawal rate of <strong>{{safeWithdrawalRate}}%</strong>,
+      Financial Independence is reached at a Net Worth of {{safeWithdrawalTimes}} times annual expenses.
+    </p>
+    <p>
+      With annual expenses of <strong>${{calculateInput.annualExpenses | number}}</strong>,
+      we're aiming for a Net Worth of <strong>${{fiNumber | number}}</strong>.
+    </p>
+    <p>
+      At <strong>{{expectedAnnualGrowthRate}}%</strong> returns,
+      that Net Worth is forecasted to be <strong>{{fiDate}}</strong>; {{dateDistance}} from the first month.
+      <span *ngIf="fiMonthForecast">
+        By that point, Net Worth is at <strong>${{fiMonthForecast.netWorth | number}}</strong>.
+        Of that total, contributions account for <strong>${{fiMonthForecast.totalContributions | number}}</strong> while
+        <strong>${{fiMonthForecast.totalReturns | number}}</strong> is earned returns.
+      </span>
+    </p>
+  </div>
 
+</div>
