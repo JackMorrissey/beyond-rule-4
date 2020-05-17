@@ -1,4 +1,4 @@
-<div class="alert alert-primary font-weight-bold" *ngIf="isUsingSampleData">
+<div class="alert alert-dark font-weight-bold" *ngIf="isUsingSampleData">
   <i class="fas fa-info-circle"></i>
   Using Sample Data
 </div>
@@ -295,27 +295,27 @@
       <ng-template ngbPanelContent>
         <div class="row">
           <table class="table table-sm col-12">
-            <thead class="thead-light">
+            <thead class="thead-dark">
               <tr>
                 <th>Calculated</th>
                 <th>YNAB</th>
-                <th>FI
-                  <span>
-                    <button type="button" class="btn btn-light fa-lg" placement="bottom-left"
-                      triggers="click:blur hover"
-                      ngbTooltip="FI budget includes all expenses to maintain your current lifestyle.">
-                      <i class="fas fa-info-circle"></i>
-                    </button>
-                  </span>
+                <th>
+                  <div placement="top-center" triggers="click:blur hover"
+                    ngbTooltip="FI budget includes all expenses to maintain your current lifestyle.">
+                    FI
+                    &nbsp;
+                    <i class="fas fa-info-circle"></i>
+                  </div>
+
                 </th>
-                <th>Lean FI
-                  <span>
-                    <button type="button" class="btn btn-light fa-lg" placement="bottom-right"
-                      triggers="click:blur hover"
-                      ngbTooltip="Lean FI budget includes all expenses to just get by. Think FI but without any fun.">
-                      <i class="fas fa-info-circle"></i>
-                    </button>
-                  </span>
+                <th>
+                  <div placement="top-center" triggers="click:blur hover"
+                    ngbTooltip="Lean FI budget includes all expenses to just get by. Think FI but without any fun.">
+                    Lean FI
+                    &nbsp;
+                    <i class="fas fa-info-circle"></i>
+                  </div>
+
                 </th>
               </tr>
             </thead>
@@ -333,7 +333,7 @@
                 <td>{{expenses.leanFi.annual | number}}</td>
               </tr>
             </tbody>
-            <thead class="thead-light">
+            <thead class="thead-dark">
               <tr>
                 <th>Category</th>
                 <th>YNAB Budget</th>
