@@ -294,7 +294,7 @@
       </ng-template>
       <ng-template ngbPanelContent>
         <div class="row">
-          <table class="table col-12">
+          <table class="table table-sm col-12">
             <thead class="thead-light">
               <tr>
                 <th>Calculated</th>
@@ -343,8 +343,8 @@
             </thead>
             <tbody formArrayName="categoryGroups">
               <ng-container *ngFor="let categoryGroup of categoryGroups.controls; let i=index" [formGroupName]="i">
-                <tr>
-                  <th colspan="4">{{categoryGroup.value.name}}</th>
+                <tr class="table-secondary">
+                  <th colspan="4" class="">{{categoryGroup.value.name}}</th>
                 </tr>
                 <ng-container formArrayName="categories">
                   <tr *ngFor="let category of categoryGroup.get('categories').controls; let j=index"
@@ -358,10 +358,10 @@
                       </span>
                     </td>
                     <td>
-                      <input class="form-control" formControlName="fiBudget" type="number" />
+                      <input class="form-control form-control-sm" formControlName="fiBudget" type="number" />
                     </td>
                     <td>
-                      <input class="form-control" formControlName="leanFiBudget" type="number" />
+                      <input class="form-control form-control-sm" formControlName="leanFiBudget" type="number" />
                     </td>
                   </tr>
                 </ng-container>
