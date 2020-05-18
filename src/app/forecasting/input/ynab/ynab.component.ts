@@ -239,7 +239,7 @@ export class YnabComponent implements OnInit {
     result.leanAnnualExpenses = this.expenses.leanFi.annual;
     result.netWorth = this.netWorth;
     result.monthlyContribution = this.budgetForm.value.monthlyContribution;
-    result.currencyFormat = this.currencyIsoCode;
+    result.currencyIsoCode = this.currencyIsoCode;
 
     const safeWithdrawalRatePercentage = Number.parseFloat(this.budgetForm.value.safeWithdrawalRatePercentage);
     if (!Number.isNaN(safeWithdrawalRatePercentage)) {
