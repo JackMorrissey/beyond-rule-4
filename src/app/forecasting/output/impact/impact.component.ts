@@ -72,6 +72,10 @@ export class ImpactComponent implements OnInit, OnChanges {
     }
 
     private getImpactDateText(currentDate: Date, newDate: Date): string {
+        if (newDate > currentDate) {
+            return "<1 day";
+        }
+
         var diffDate = new Date(currentDate.getTime() - newDate.getTime())
 
         var years = "";
