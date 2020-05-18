@@ -5,7 +5,8 @@
     Milestones of FI - FI180 <i class="fas fa-external-link-square-alt fa-sm"></i></a></div>
 
 <div class="row">
-  <app-milestones-chart class="milestones-chart col-sm" [forecast]="forecast" [milestones]="milestones">
+  <app-milestones-chart class="milestones-chart col-sm" [forecast]="forecast" [milestones]="milestones"
+    [currencyIsoCode]="calculateInput.currencyIsoCode">
   </app-milestones-chart>
 </div>
 
