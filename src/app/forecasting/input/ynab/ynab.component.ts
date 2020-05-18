@@ -1,7 +1,7 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormArray, FormControl, FormBuilder, Validators } from '@angular/forms';
-import { Router, ActivatedRoute} from '@angular/router';
-import { NgbPanelChangeEvent} from '@ng-bootstrap/ng-bootstrap';
+import { Router, ActivatedRoute } from '@angular/router';
+import { NgbPanelChangeEvent } from '@ng-bootstrap/ng-bootstrap';
 import { timer } from 'rxjs';
 import { debounce } from 'rxjs/operators';
 import * as ynab from 'ynab';
@@ -102,9 +102,9 @@ export class YnabComponent implements OnInit {
       categoryGroups: this.formBuilder.array([]),
       accounts: this.formBuilder.array([]),
       safeWithdrawalRatePercentage: [this.safeWithdrawalRatePercentage,
-        [Validators.required, Validators.max(99.99), Validators.max(0.01) ]],
+      [Validators.required, Validators.max(99.99), Validators.max(0.01)]],
       expectedAnnualGrowthRate: [this.expectedAnnualGrowthRate,
-        [Validators.required, Validators.max(99.99), Validators.max(0.01) ]],
+      [Validators.required, Validators.max(99.99), Validators.max(0.01)]],
     });
   }
 
@@ -206,7 +206,7 @@ export class YnabComponent implements OnInit {
     }
 
     if (this.selectedMonthA.month !== this.budgetForm.value.selectedMonthA ||
-        this.selectedMonthB.month !== this.budgetForm.value.selectedMonthB) {
+      this.selectedMonthB.month !== this.budgetForm.value.selectedMonthB) {
       this.selectMonths(this.budgetForm.value.selectedMonthA, this.budgetForm.value.selectedMonthB);
       return;
     }
@@ -237,6 +237,7 @@ export class YnabComponent implements OnInit {
     result.leanAnnualExpenses = this.expenses.leanFi.annual;
     result.netWorth = this.netWorth;
     result.monthlyContribution = this.budgetForm.value.monthlyContribution;
+    result.budgetCategoryGroups = this.budgetForm.value.categoryGroups;
 
     const safeWithdrawalRatePercentage = Number.parseFloat(this.budgetForm.value.safeWithdrawalRatePercentage);
     if (!Number.isNaN(safeWithdrawalRatePercentage)) {
@@ -360,15 +361,15 @@ export class YnabComponent implements OnInit {
       computedLeanFiBudget,
       contributionBudget,
       info: categoryBudgetInfo
-    }, );
+    });
   }
 
   private mapAccounts(accounts: ynab.Account[]) {
     const mapped = accounts.filter(a => !(a.closed || a.deleted))
-    .map(a => this.formBuilder.group(Object.assign({}, a, {
-      balance: this.getAccountBalance(a),
-      ynabBalance: ynab.utils.convertMilliUnitsToCurrencyAmount(a.balance)
-    })));
+      .map(a => this.formBuilder.group(Object.assign({}, a, {
+        balance: this.getAccountBalance(a),
+        ynabBalance: ynab.utils.convertMilliUnitsToCurrencyAmount(a.balance)
+      })));
     return mapped;
   }
 

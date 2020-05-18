@@ -113,6 +113,6 @@ export class MonthlyForecast {
   }
 
   public toDateString() {
-    return this.date.toLocaleString('en-us', {month: 'long', year: 'numeric'});
+    return this.date.toLocaleString('en-us', { month: 'long', year: 'numeric' });
   }
 }

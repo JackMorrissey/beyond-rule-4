@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnChanges, SimpleChanges,  } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, SimpleChanges, } from '@angular/core';
 
 import { CalculateInput } from '../../../models/calculate-input.model';
 import { Forecast, MonthlyForecast } from '../../../models/forecast.model';

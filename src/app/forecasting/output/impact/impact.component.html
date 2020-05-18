@@ -1,0 +1,17 @@
+<h1>Expense Impact on FI Date</h1>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Spending Category</th>
+            <th>FI Budget</th>
+            <th>Impact on FI Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let c of spendingCategoriesWithImpact">
+            <td>{{ c.category.name }}</td>
+            <td>{{ c.category.fiBudget | currency }}</td>
+            <td>{{ c.impactDate }}</td>
+        </tr>
+    </tbody>
+</table>
