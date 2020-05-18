@@ -1,18 +1,22 @@
-<div class="row" *ngIf="calculateInput">
+<div class="row" *ngIf="calculateInput else loading">
   <div class="col">
     <div class="row">
-        <app-fi-text
-          class="col"
-          [calculateInput]="calculateInput"
-          [forecast]="forecast">
-        </app-fi-text>
+      <app-fi-text class="col" [calculateInput]="calculateInput" [forecast]="forecast">
+      </app-fi-text>
     </div>
     <div class="row">
-      <app-milestones
-        class="col"
-        [calculateInput]="calculateInput"
-        [forecast]="forecast">
+      <app-milestones class="col" [calculateInput]="calculateInput" [forecast]="forecast">
       </app-milestones>
     </div>
   </div>
 </div>
+
+<ng-template #loading>
+  <div>
+    <h4>
+      <i class="fas fa-sync fa-spin"></i>
+      Getting Budget from YNAB...
+    </h4>
+
+  </div>
+</ng-template>

@@ -6,6 +6,8 @@ export class Forecast {
   month0Date: Date;
 
   public constructor(calculateInput: CalculateInput, month0Date?: Date) {
+    if (!calculateInput)
+      return;
     if (!this.month0Date) {
       this.month0Date = new Date();
     }
@@ -113,6 +115,6 @@ export class MonthlyForecast {
   }
 
   public toDateString() {
-    return this.date.toLocaleString('en-us', {month: 'long', year: 'numeric'});
+    return this.date.toLocaleString('en-us', { month: 'long', year: 'numeric' });
   }
 }
