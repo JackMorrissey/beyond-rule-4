@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnChanges, SimpleChanges,  } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, SimpleChanges, } from '@angular/core';
 
 import { CalculateInput } from '../../../models/calculate-input.model';
 import { Forecast, MonthlyForecast } from '../../../models/forecast.model';
@@ -15,6 +15,7 @@ export class TextComponent implements OnInit, OnChanges {
 
   milestonesWithForecast;
 
+  private completeText = "Achieved!";
 
   constructor() { }
 
@@ -51,11 +52,13 @@ export class TextComponent implements OnInit, OnChanges {
       const forecast = forecastSearch[foundIndex];
       const forecastDate = this.getDateString(forecast.date);
       const distance = this.getDistanceText(forecast.date);
+      const completed = distance === this.completeText;
       return {
         milestone,
         forecast,
         forecastDate,
-        distance
+        distance,
+        completed
       };
     });
   }
@@ -72,7 +75,7 @@ export class TextComponent implements OnInit, OnChanges {
   getDistanceText(forecastDate: Date) {
     const text = this.forecast.getDistanceFromFirstMonthText(forecastDate);
     if (!text) {
-      return 'Achieved!';
+      return this.completeText;
     }
     return text;
   }
