@@ -8,6 +8,7 @@ export class CalculateInput {
   expectedAnnualGrowthRate = 0;
   monthlyContribution = 0;
   leanFiPercentage = 0;
+  currencyIsoCode = "USD";
 
   public constructor(init?: Partial<CalculateInput>) {
     Object.assign(this, {

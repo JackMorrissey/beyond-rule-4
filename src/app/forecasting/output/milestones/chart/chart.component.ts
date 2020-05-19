@@ -1,9 +1,9 @@
 import {
   Component, OnInit, ViewEncapsulation, Input, OnChanges, SimpleChanges,
-  AfterContentInit, ElementRef, ViewChild, HostListener
+  AfterContentInit, ElementRef, ViewChild, HostListener, Inject, LOCALE_ID
 } from '@angular/core';
-import { CalculateInput } from '../../../models/calculate-input.model';
-import { Forecast, MonthlyForecast } from '../../../models/forecast.model';
+
+import { Forecast } from '../../../models/forecast.model';
 import { Milestones } from '../milestone.model';
 
 declare let d3: any;
@@ -18,6 +18,8 @@ declare let d3: any;
 })
 export class ChartComponent implements OnInit, AfterContentInit, OnChanges {
   @ViewChild('chartContainer') elementView: ElementRef;
+
+  constructor(@Inject(LOCALE_ID) private locale: string) { }
 
   data: any[];
 
@@ -34,6 +36,7 @@ export class ChartComponent implements OnInit, AfterContentInit, OnChanges {
   showYAxisLabel = true;
   yAxisLabel = 'Net Worth';
   referenceLines: any[];
+  public yAxisTickFormattingFn = this.yAxisTickFormatting.bind(this);
 
   colorScheme = {
     domain: ['#5AA454', '#A10A28', '#C7B42C', '#AAAAAA']
@@ -44,6 +47,7 @@ export class ChartComponent implements OnInit, AfterContentInit, OnChanges {
 
   @Input() forecast: Forecast;
   @Input() milestones: Milestones;
+  @Input() currencyIsoCode: string;
 
   private dateNow: Date;
 
@@ -57,7 +61,7 @@ export class ChartComponent implements OnInit, AfterContentInit, OnChanges {
     this.setViewDimensions();
   }
 
-  ngAfterContentInit () {
+  ngAfterContentInit() {
     this.setViewDimensions();
   }
 
@@ -69,14 +73,14 @@ export class ChartComponent implements OnInit, AfterContentInit, OnChanges {
 
   }
 
-  setViewDimensions () {
+  setViewDimensions() {
     this.view = [this.elementView.nativeElement.offsetWidth, this.elementView.nativeElement.offsetHeight];
   }
 
   getToolTipDate(tooltipItem: any) {
     const forecastDate: Date = tooltipItem.name;
     const options = { year: 'numeric', month: 'short' };
-    const date = forecastDate.toLocaleDateString('en-US', options);
+    const date = forecastDate.toLocaleDateString(this.locale, options);
     const distance = this.forecast.getDistanceFromFirstMonthText(forecastDate);
     if (!distance) {
       return date;
@@ -93,9 +97,13 @@ export class ChartComponent implements OnInit, AfterContentInit, OnChanges {
     }
     result += ': ';
     if (tooltipItem.value !== undefined) {
-      result += tooltipItem.value.toLocaleString();
+      result += this.formatCurrency(tooltipItem.value);
     }
     return result;
+  }
+
+  yAxisTickFormatting(val: number): string {
+    return this.formatCurrency(val);
   }
 
   private calculateData() {
@@ -146,6 +154,10 @@ export class ChartComponent implements OnInit, AfterContentInit, OnChanges {
       }
     ];
     this.referenceLines = milestones;
+  }
+
+  private formatCurrency(val: number): string {
+    return Intl.NumberFormat(this.locale, { style: "currency", currency: this.currencyIsoCode }).format(val);
   }
 
 }
