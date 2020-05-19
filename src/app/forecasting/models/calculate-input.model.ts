@@ -9,6 +9,7 @@ export class CalculateInput {
   monthlyContribution = 0;
   leanFiPercentage = 0;
   budgetCategoryGroups = [];
+  currencyIsoCode = "USD";
 
   public constructor(init?: Partial<CalculateInput>) {
     Object.assign(this, {

@@ -22,6 +22,7 @@ export class YnabComponent implements OnInit {
 
   budgetForm: FormGroup;
   displayContributionInfo = true;
+  currencyIsoCode = "USD";
   public safeWithdrawalRatePercentage = 4.00;
   public expectedAnnualGrowthRate = 7.00;
 
@@ -153,6 +154,7 @@ export class YnabComponent implements OnInit {
     this.months = this.budget.months;
     this.currentMonth = await this.ynabService.getMonth(budgetId, 'current');
     this.categoryGroupsWithCategories = await this.ynabService.getCategoryGroupsWithCategories(this.budget.id);
+    this.currencyIsoCode = this.budget.currency_format ? this.budget.currency_format.iso_code : "USD";
 
     await this.selectMonths(this.currentMonth.month, this.currentMonth.month);
   }
@@ -238,6 +240,7 @@ export class YnabComponent implements OnInit {
     result.netWorth = this.netWorth;
     result.monthlyContribution = this.budgetForm.value.monthlyContribution;
     result.budgetCategoryGroups = this.budgetForm.value.categoryGroups;
+    result.currencyIsoCode = this.currencyIsoCode;
 
     const safeWithdrawalRatePercentage = Number.parseFloat(this.budgetForm.value.safeWithdrawalRatePercentage);
     if (!Number.isNaN(safeWithdrawalRatePercentage)) {

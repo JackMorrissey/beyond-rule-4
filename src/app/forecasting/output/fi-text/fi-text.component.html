@@ -5,18 +5,19 @@
   Financial Independence is reached at a Net Worth of {{safeWithdrawalTimes}} times annual expenses.
 </p>
 <p>
-  With annual expenses of {{calculateInput.annualExpenses | number}},
-  we're aiming for a Net Worth of {{fiNumber | number}}.
+  With annual expenses of {{calculateInput.annualExpenses | currency:calculateInput.currencyIsoCode}},
+  we're aiming for a Net Worth of {{fiNumber | currency:calculateInput.currencyIsoCode}}.
 </p>
 <p>
   At {{expectedAnnualGrowthRate}}% returns,
   that Net Worth is forecasted to be {{fiDate}}; {{dateDistance}} from the first month.
   <span *ngIf="fiMonthForecast">
-    By that point, Net Worth is at {{fiMonthForecast.netWorth | number}}.
-    Of that total, contributions account for {{fiMonthForecast.totalContributions | number}} while {{fiMonthForecast.totalReturns | number}} is earned returns.
+    By that point, Net Worth is at {{fiMonthForecast.netWorth | currency:calculateInput.currencyIsoCode}}.
+    Of that total, contributions account for
+    {{fiMonthForecast.totalContributions | currency:calculateInput.currencyIsoCode}} while
+    {{fiMonthForecast.totalReturns | currency:calculateInput.currencyIsoCode}} is earned returns.
   </span>
 </p>
 <p>
   <span class="font-weight-bold">Lean FI</span>: {{leanFiDate}} • {{leanFiDateDistance}}
 </p>
-
