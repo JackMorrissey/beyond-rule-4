@@ -42,7 +42,6 @@ export class ImpactComponent implements OnInit, OnChanges {
             const modifiedCalcInput = this.getModifiedCalculateInput(category.fiBudget);
             const modifiedForecast = new Forecast(modifiedCalcInput);
             const modifiedFiForecast = this.getFiForecast(modifiedForecast, modifiedCalcInput.fiNumber);
-
             const impactDate = this.getImpactDateText(currentFiForecast.date, modifiedFiForecast.date);
 
             return {
@@ -52,13 +51,13 @@ export class ImpactComponent implements OnInit, OnChanges {
         });
     }
 
-    private getModifiedCalculateInput(spendingReductionPerMonth: number): CalculateInput {
+    private getModifiedCalculateInput(fiSpendingReductionPerMonth: number): CalculateInput {
         const calcInput = new CalculateInput();
-        calcInput.annualExpenses = this.calculateInput.annualExpenses - spendingReductionPerMonth * 12;
+        calcInput.annualExpenses = this.calculateInput.annualExpenses - fiSpendingReductionPerMonth * 12;
         calcInput.annualSafeWithdrawalRate = this.calculateInput.annualSafeWithdrawalRate;
         calcInput.expectedAnnualGrowthRate = this.calculateInput.expectedAnnualGrowthRate;
         calcInput.netWorth = this.calculateInput.netWorth;
-        calcInput.monthlyContribution = this.calculateInput.monthlyContribution + spendingReductionPerMonth;
+        calcInput.monthlyContribution = this.calculateInput.monthlyContribution + fiSpendingReductionPerMonth;
         return calcInput;
     }
 
