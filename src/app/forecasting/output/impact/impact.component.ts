@@ -42,6 +42,7 @@ export class ImpactComponent implements OnInit, OnChanges {
             const modifiedCalcInput = this.getModifiedCalculateInput(category.fiBudget);
             const modifiedForecast = new Forecast(modifiedCalcInput);
             const modifiedFiForecast = this.getFiForecast(modifiedForecast, modifiedCalcInput.fiNumber);
+
             const impactDate = this.getImpactDateText(currentFiForecast.date, modifiedFiForecast.date);
 
             return {
@@ -66,28 +67,29 @@ export class ImpactComponent implements OnInit, OnChanges {
     }
 
     private getImpactDateText(currentDate: Date, newDate: Date): string {
-        if (newDate > currentDate) {
-            return "<1 day";
+        let monthDifference =
+            ((currentDate.getFullYear() - newDate.getFullYear()) * 12)
+            + (currentDate.getMonth() - newDate.getMonth());
+
+        if (monthDifference === 0) {
+            return "<1 month";
         }
 
-        let diffDate = new Date(currentDate.getTime() - newDate.getTime())
+        monthDifference = Math.abs(monthDifference);
 
-        let years = "";
-        let months = "";
-        let days = "";
+        const months = monthDifference % 12;
+        const years = (monthDifference - months) / 12;
+        const difference = this.getTimeString(years, 'year') + this.getTimeString(months, 'month');
+        return difference;
+    }
 
-        if (diffDate.getUTCFullYear() - 1970 > 0) {
-            years = diffDate.getUTCFullYear() - 1970 + " years ";
+    private getTimeString(timeDifference: number, unit: string): string {
+        if (timeDifference === 0) {
+            return '';
         }
-
-        if (diffDate.getUTCMonth() > 0) {
-            months = diffDate.getUTCMonth() + " months ";
+        if (timeDifference === 1) {
+            return `1 ${unit} `;
         }
-
-        if (!years && !months) {
-            days = diffDate.getUTCDay() + " days ";
-        }
-
-        return years + months + days;
+        return `${timeDifference} ${unit}s `;
     }
 }
