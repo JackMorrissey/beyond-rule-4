@@ -29,21 +29,18 @@ export class ImpactComponent implements OnInit, OnChanges {
 
         const currentFiForecast = this.getFiForecast(this.forecast, this.calculateInput.fiNumber);
 
-        const flattenCategories = [].concat(...this.calculateInput.budgetCategoryGroups.map((group) => {
+        const categories = [].concat(...this.calculateInput.budgetCategoryGroups.map((group) => {
             return group.categories;
         }));
-        const categoriesWithSpending = flattenCategories.filter((category) => {
+        const categoriesWithSpending = categories.filter((category) => {
             return category.fiBudget > 0;
         }).sort((a, b) => {
             return b.fiBudget - a.fiBudget;
         });
 
         this.spendingCategoriesWithImpact = categoriesWithSpending.map((category) => {
-
             const modifiedCalcInput = this.getModifiedCalculateInput(category.fiBudget);
-
             const modifiedForecast = new Forecast(modifiedCalcInput);
-
             const modifiedFiForecast = this.getFiForecast(modifiedForecast, modifiedCalcInput.fiNumber);
 
             const impactDate = this.getImpactDateText(currentFiForecast.date, modifiedFiForecast.date);
@@ -56,10 +53,8 @@ export class ImpactComponent implements OnInit, OnChanges {
     }
 
     private getModifiedCalculateInput(spendingReductionPerMonth: number): CalculateInput {
-        const yearlySpendingReduction = spendingReductionPerMonth * 12;
-
         const calcInput = new CalculateInput();
-        calcInput.annualExpenses = this.calculateInput.annualExpenses - yearlySpendingReduction;
+        calcInput.annualExpenses = this.calculateInput.annualExpenses - spendingReductionPerMonth * 12;
         calcInput.annualSafeWithdrawalRate = this.calculateInput.annualSafeWithdrawalRate;
         calcInput.expectedAnnualGrowthRate = this.calculateInput.expectedAnnualGrowthRate;
         calcInput.netWorth = this.calculateInput.netWorth;
