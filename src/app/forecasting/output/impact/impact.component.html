@@ -13,7 +13,15 @@
             <tr *ngFor="let c of spendingCategoriesWithImpact">
                 <td>{{ c.category.name }}</td>
                 <td>{{ c.category.fiBudget | currency:calculateInput.currencyIsoCode }}</td>
-                <td><i class="fas fa-plus-circle"></i> {{ c.impactDate }}</td>
+                <td>
+                    <span [ngClass]="{'d-none': c.isFi === true}">
+                        <i class="fas fa-plus-circle"></i>
+                    </span>
+                    <span [ngClass]="{'d-none': c.isFi !== true}">
+                        <i class="fas fa-check-circle"></i>
+                    </span>
+                    {{ c.impactDate }}
+                </td>
             </tr>
         </tbody>
     </table>
