@@ -1,20 +1,19 @@
 <h1>Expense Impact on FI Date</h1>
-<p>Spending in each category increases the total time to FI. Reducing or eliminating spending in a category not only
-    decreases the total nest egg required, but this spending can be diverted into savings instead.</p>
+
 <div class="table-responsive">
     <table class="table table-striped">
         <thead>
             <tr>
                 <th>Category</th>
                 <th>FI Budget</th>
-                <th>Impact on FI Date<br><small>Assumes spending diverted from contributions</small></th>
+                <th>Impact on FI Date</th>
             </tr>
         </thead>
         <tbody>
             <tr *ngFor="let c of spendingCategoriesWithImpact">
                 <td>{{ c.category.name }}</td>
-                <td>{{ c.category.fiBudget | number }}</td>
-                <td>{{ c.impactDate }}</td>
+                <td>{{ c.category.fiBudget | currency:calculateInput.currencyIsoCode }}</td>
+                <td><i class="fas fa-plus-circle"></i> {{ c.impactDate }}</td>
             </tr>
         </tbody>
     </table>
