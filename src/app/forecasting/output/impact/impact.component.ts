@@ -70,18 +70,20 @@ export class ImpactComponent implements OnInit, OnChanges {
             return "<1 day";
         }
 
-        var diffDate = new Date(currentDate.getTime() - newDate.getTime())
+        let diffDate = new Date(currentDate.getTime() - newDate.getTime())
 
-        var years = "";
+        let years = "";
+        let months = "";
+        let days = "";
+
         if (diffDate.getUTCFullYear() - 1970 > 0) {
             years = diffDate.getUTCFullYear() - 1970 + " years ";
         }
 
-        var months = "";
         if (diffDate.getUTCMonth() > 0) {
             months = diffDate.getUTCMonth() + " months ";
         }
-        var days = "";
+
         if (!years && !months) {
             days = diffDate.getUTCDay() + " days ";
         }
