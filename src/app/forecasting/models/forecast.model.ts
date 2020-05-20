@@ -44,8 +44,7 @@ export class Forecast {
   }
 
   private computeForecast(calculateInput: CalculateInput) {
-    const fiNumber = 1 / calculateInput.annualSafeWithdrawalRate * calculateInput.annualExpenses;
-    const stopForecastingAmount = fiNumber * 1.6; // default to a bit more than Fat FI.
+    const stopForecastingAmount = calculateInput.fiNumber * 1.6; // default to a bit more than Fat FI.
 
     const annualExpenses = calculateInput.annualExpenses;
     const monthlyAverageGrowth = 1 + calculateInput.expectedAnnualGrowthRate / 12;
@@ -113,6 +112,6 @@ export class MonthlyForecast {
   }
 
   public toDateString() {
-    return this.date.toLocaleString('en-us', {month: 'long', year: 'numeric'});
+    return this.date.toLocaleString('en-us', { month: 'long', year: 'numeric' });
   }
 }
