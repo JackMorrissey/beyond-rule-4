@@ -35,16 +35,15 @@ export class FiTextComponent implements OnInit, OnChanges {
   }
 
   calculate() {
-    const safeWithdrawalTimes = 1 / this.calculateInput.annualSafeWithdrawalRate;
-    this.safeWithdrawalTimes = round(safeWithdrawalTimes);
+    this.safeWithdrawalTimes = round(this.calculateInput.safeWidthdrawlTimes);
     this.safeWithdrawalRate = round(this.calculateInput.annualSafeWithdrawalRate * 100);
 
     this.expectedAnnualGrowthRate = round(this.calculateInput.expectedAnnualGrowthRate * 100);
 
-    const fiNumber = Math.max(0, round(safeWithdrawalTimes * this.calculateInput.annualExpenses));
+    const fiNumber = Math.max(0, round(this.calculateInput.fiNumber));
     this.fiNumber = fiNumber;
 
-    const leanFiNumber = Math.max(0, round(this.safeWithdrawalTimes * this.calculateInput.leanAnnualExpenses));
+    const leanFiNumber = Math.max(0, round(this.calculateInput.leanFiNumber));
     this.leanFiNumber = leanFiNumber;
 
     if (!this.forecast) {

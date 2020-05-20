@@ -8,6 +8,8 @@ export class CalculateInput {
   expectedAnnualGrowthRate = 0;
   monthlyContribution = 0;
   leanFiPercentage = 0;
+  budgetCategoryGroups = [];
+  currencyIsoCode = "USD";
 
   public constructor(init?: Partial<CalculateInput>) {
     Object.assign(this, {
@@ -26,5 +28,21 @@ export class CalculateInput {
     this.monthlyContribution = round(this.monthlyContribution);
     this.leanFiPercentage = round(this.leanFiPercentage);
     this.leanAnnualExpenses = round(this.leanAnnualExpenses);
+  }
+
+  get safeWidthdrawlTimes() {
+    return 1 / this.annualSafeWithdrawalRate;
+  }
+
+  get fiNumber() {
+    return this.safeWidthdrawlTimes * this.annualExpenses;
+  }
+
+  get leanFiNumber() {
+    let leanFiNumber = this.fiNumber * this.leanFiPercentage;
+    if (this.leanAnnualExpenses) {
+      leanFiNumber = this.safeWidthdrawlTimes * this.leanAnnualExpenses;
+    }
+    return leanFiNumber;
   }
 }

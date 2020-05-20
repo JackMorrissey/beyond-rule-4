@@ -7,8 +7,10 @@
         <span class="float-left">Settings</span>
         <span class="accordion-info">
           <span class="accordion-toggle">
-            <span [ngClass]="{'d-none': accordionPanelActiveStates.pSettings !== true}"><i class="fas fa-caret-square-down"></i></span>
-            <span [ngClass]="{'d-none': accordionPanelActiveStates.pSettings === true}"><i class="fas fa-caret-square-up"></i></span>
+            <span [ngClass]="{'d-none': accordionPanelActiveStates.pSettings !== true}"><i
+                class="fas fa-caret-square-down"></i></span>
+            <span [ngClass]="{'d-none': accordionPanelActiveStates.pSettings === true}"><i
+                class="fas fa-caret-square-up"></i></span>
           </span>
         </span>
       </ng-template>
@@ -19,9 +21,8 @@
             <div class="col">
               <div class="input-group">
                 <select class="form-control" id="selectedBudget" formControlName="selectedBudget">
-                  <option *ngFor="let budget of budgets"
-                    [value]="budget.id">
-                      {{budget.name}}
+                  <option *ngFor="let budget of budgets" [value]="budget.id">
+                    {{budget.name}}
                   </option>
                 </select>
               </div>
@@ -34,9 +35,8 @@
             <div class="col">
               <div class="input-group">
                 <select class="form-control" id="selectedMonthA" formControlName="selectedMonthA">
-                  <option *ngFor="let month of months"
-                    [value]="month.month">
-                      {{month.month}}
+                  <option *ngFor="let month of months" [value]="month.month">
+                    {{month.month}}
                   </option>
                 </select>
               </div>
@@ -48,9 +48,8 @@
             <div class="col">
               <div class="input-group">
                 <select class="form-control" id="selectedMonthB" formControlName="selectedMonthB">
-                  <option *ngFor="let month of months"
-                    [value]="month.month">
-                      {{month.month}}
+                  <option *ngFor="let month of months" [value]="month.month">
+                    {{month.month}}
                   </option>
                 </select>
               </div>
@@ -66,11 +65,12 @@
         </div>
         <div class="form-group">
           <div class="row">
-            <label for="safeWithdrawalRatePercentage" class="col-sm-12 col-md-5 col-form-label">Safe Withdrawal Rate</label>
+            <label for="safeWithdrawalRatePercentage" class="col-sm-12 col-md-5 col-form-label">Safe Withdrawal
+              Rate</label>
             <div class="col">
               <div class="input-group">
-                <input type="number" class="form-control" id="safeWithdrawalRatePercentage" formControlName="safeWithdrawalRatePercentage"
-                  step="0.01">
+                <input type="number" class="form-control" id="safeWithdrawalRatePercentage"
+                  formControlName="safeWithdrawalRatePercentage" step="0.01">
                 <div class="input-group-append">
                   <div class="input-group-text">%</div>
                 </div>
@@ -87,11 +87,13 @@
               </small>
               <div>
                 <small>
-                  <a target="_blank" href="http://www.mrmoneymustache.com/2012/05/29/how-much-do-i-need-for-retirement/">4%
+                  <a target="_blank"
+                    href="http://www.mrmoneymustache.com/2012/05/29/how-much-do-i-need-for-retirement/">4%
                     - Mr. Money Mustache
                     <i class="fas fa-external-link-square-alt fa-sm"></i>
                   </a> |
-                  <a target="_blank" href="http://media.morningstar.com/uk/MEDIA/Comprehensive_update_on_the_Safe_Withdrawal_Rate.pdf">SWR
+                  <a target="_blank"
+                    href="http://media.morningstar.com/uk/MEDIA/Comprehensive_update_on_the_Safe_Withdrawal_Rate.pdf">SWR
                     in the UK - Morningstar
                     <i class="fas fa-external-link-square-alt fa-sm"></i>
                   </a>
@@ -102,11 +104,13 @@
         </div>
         <div class="form-group">
           <div class="row">
-            <label for="expectedAnnualGrowthRate" class="col-sm-12 col-md-5 col-form-label">Expected Annual Rate of Return</label>
+            <label for="expectedAnnualGrowthRate" class="col-sm-12 col-md-5 col-form-label">Expected Annual Rate of
+              Return</label>
             <div class="col">
               <div class="input-group">
-                <input type="number" class="form-control" id="expectedAnnualGrowthRate" formControlName="expectedAnnualGrowthRate"
-                  step="0.01" aria-describedby="expectedAnnualGrowthRateHelp">
+                <input type="number" class="form-control" id="expectedAnnualGrowthRate"
+                  formControlName="expectedAnnualGrowthRate" step="0.01"
+                  aria-describedby="expectedAnnualGrowthRateHelp">
                 <div class="input-group-append">
                   <div class="input-group-text">%</div>
                 </div>
@@ -116,7 +120,8 @@
           <div class="row">
             <div class="col">
               <small>
-                <a target="_blank" href="http://www.mrmoneymustache.com/2011/06/06/dude-wheres-my-7-investment-return/">7%
+                <a target="_blank"
+                  href="http://www.mrmoneymustache.com/2011/06/06/dude-wheres-my-7-investment-return/">7%
                   - Mr. Money Mustache
                   <i class="fas fa-external-link-square-alt fa-sm"></i>
                 </a>
@@ -129,10 +134,13 @@
     <ngb-panel id="pNetWorth">
       <ng-template ngbPanelTitle>
         <span class="float-left">Starting Portfolio</span>
-        <span class="accordion-info">{{netWorth | number}}
+        <span class="accordion-info">
+          {{ netWorth | currency:currencyIsoCode}}
           <span class="accordion-toggle">
-            <span [ngClass]="{'d-none': accordionPanelActiveStates.pNetWorth !== true}"><i class="fas fa-caret-square-down"></i></span>
-            <span [ngClass]="{'d-none': accordionPanelActiveStates.pNetWorth === true}"><i class="fas fa-caret-square-up"></i></span>
+            <span [ngClass]="{'d-none': accordionPanelActiveStates.pNetWorth !== true}"><i
+                class="fas fa-caret-square-down"></i></span>
+            <span [ngClass]="{'d-none': accordionPanelActiveStates.pNetWorth === true}"><i
+                class="fas fa-caret-square-up"></i></span>
           </span>
         </span>
       </ng-template>
@@ -142,8 +150,8 @@
             <thead class="thead-sum">
               <tr>
                 <th>Starting Balance</th>
-                <td>{{ynabNetWorth | number}}</td>
-                <td>{{netWorth | number}}</td>
+                <td>{{ynabNetWorth | currency:currencyIsoCode}}</td>
+                <td>{{netWorth | currency:currencyIsoCode}}</td>
               </tr>
               <tr>
                 <td colspan="3">
@@ -161,7 +169,7 @@
             <tbody formArrayName="accounts">
               <tr *ngFor="let account of accounts.controls; let i=index" [formGroupName]="i">
                 <td>{{account.value.name}}</td>
-                <td>{{account.value.ynabBalance | number}}</td>
+                <td>{{account.value.ynabBalance | currency:currencyIsoCode}}</td>
                 <td>
                   <input class="form-control" formControlName="balance" type="number" />
                 </td>
@@ -176,7 +184,8 @@
             <p>To override the balance add <code>BR4 + <i>amount</i></code>
               (e.g. <code>BR4 + 1000</code>) to the Account Notes of that account.
             </p>
-            <p>Or, add <code>BR4 +</code> without an amount to override with the YNAB balance regardless of the account type.</p>
+            <p>Or, add <code>BR4 +</code> without an amount to override with the YNAB balance regardless of the account
+              type.</p>
           </div>
         </div>
 
@@ -185,17 +194,20 @@
     <ngb-panel id="pContributions">
       <ng-template ngbPanelTitle>
         <span class="float-left">Contributions</span>
-        <span class="accordion-info">{{budgetForm.value.monthlyContribution | number}}
+        <span class="accordion-info">{{budgetForm.value.monthlyContribution | currency:currencyIsoCode}}
           <span class="accordion-toggle">
-            <span [ngClass]="{'d-none': accordionPanelActiveStates.pContributions !== true}"><i class="fas fa-caret-square-down"></i></span>
-            <span [ngClass]="{'d-none': accordionPanelActiveStates.pContributions === true}"><i class="fas fa-caret-square-up"></i></span>
+            <span [ngClass]="{'d-none': accordionPanelActiveStates.pContributions !== true}"><i
+                class="fas fa-caret-square-down"></i></span>
+            <span [ngClass]="{'d-none': accordionPanelActiveStates.pContributions === true}"><i
+                class="fas fa-caret-square-up"></i></span>
           </span>
         </span>
       </ng-template>
 
       <ng-template ngbPanelContent>
         <div class="form-group row">
-          <label for="monthlyContribution" class="col-sm-12 col-md-5 col-form-label">Monthly Investment Contribution</label>
+          <label for="monthlyContribution" class="col-sm-12 col-md-5 col-form-label">Monthly Investment
+            Contribution</label>
           <div class="col">
             <input type="number" class="form-control" id="monthlyContribution" formControlName="monthlyContribution"
               step="100">
@@ -218,8 +230,10 @@
               <tr *ngFor="let category of contributionCategories">
                 <td>{{category.name}}</td>
                 <td>
-                  <span ngbPopover="Min:  {{category.info.min.value | number}} Max:  {{category.info.max.value | number}} Mean: {{category.info.mean | number}} " triggers="mouseenter:mouseleave">
-                    {{category.value | number}}
+                  <span
+                    ngbPopover="Min:  {{category.info.min.value | currency:currencyIsoCode}} Max:  {{category.info.max.value | currency:currencyIsoCode}} Mean: {{category.info.mean | currency:currencyIsoCode}} "
+                    triggers="mouseenter:mouseleave">
+                    {{category.value | currency:currencyIsoCode}}
                   </span>
                 </td>
               </tr>
@@ -240,7 +254,8 @@
               <p><span>If you would like to override the budgeted amount add <code>BR4 + <i>amount</i></code></span>
                 (e.g. <code>BR4 + 1000</code>) to the notes of that category. This is useful for including
                 contributions to employer accounts that aren't budgeted.</p>
-              <p>Add <code>BR4 +</code> without an amount to override with the YNAB balance as a contribution regardless of the category group name.</p>
+              <p>Add <code>BR4 +</code> without an amount to override with the YNAB balance as a contribution regardless
+                of the category group name.</p>
             </div>
           </div>
           <div class="row">
@@ -252,7 +267,8 @@
 
             </div>
             <div class="col-12">
-              <p class="small">(When editing a category's Notes, use <kbd>shift + enter</kbd> or <kbd>shift + return</kbd>
+              <p class="small">(When editing a category's Notes, use <kbd>shift + enter</kbd> or <kbd>shift +
+                  return</kbd>
                 to create a new line.)</p>
             </div>
 
@@ -264,10 +280,12 @@
     <ngb-panel id="pExpenses">
       <ng-template ngbPanelTitle>
         <span class="float-left">Expenses</span>
-        <span class="accordion-info">{{expenses.fi.annual | number}}
+        <span class="accordion-info">{{expenses.fi.annual | currency:currencyIsoCode}}
           <span class="accordion-toggle">
-            <span [ngClass]="{'d-none': accordionPanelActiveStates.pExpenses !== true}"><i class="fas fa-caret-square-down"></i></span>
-            <span [ngClass]="{'d-none': accordionPanelActiveStates.pExpenses === true}"><i class="fas fa-caret-square-up"></i></span>
+            <span [ngClass]="{'d-none': accordionPanelActiveStates.pExpenses !== true}"><i
+                class="fas fa-caret-square-down"></i></span>
+            <span [ngClass]="{'d-none': accordionPanelActiveStates.pExpenses === true}"><i
+                class="fas fa-caret-square-up"></i></span>
           </span>
         </span>
       </ng-template>
@@ -280,7 +298,8 @@
                 <th>YNAB</th>
                 <th>FI
                   <span>
-                    <button type="button" class="btn btn-light fa-lg" placement="bottom-left" triggers="click:blur hover"
+                    <button type="button" class="btn btn-light fa-lg" placement="bottom-left"
+                      triggers="click:blur hover"
                       ngbTooltip="FI budget includes all expenses to maintain your current lifestyle.">
                       <i class="fas fa-info-circle"></i>
                     </button>
@@ -288,7 +307,8 @@
                 </th>
                 <th>Lean FI
                   <span>
-                    <button type="button" class="btn btn-light fa-lg" placement="bottom-right" triggers="click:blur hover"
+                    <button type="button" class="btn btn-light fa-lg" placement="bottom-right"
+                      triggers="click:blur hover"
                       ngbTooltip="Lean FI budget includes all expenses to just get by. Think FI but without any fun.">
                       <i class="fas fa-info-circle"></i>
                     </button>
@@ -299,15 +319,15 @@
             <tbody>
               <tr>
                 <th>Monthly Expenses</th>
-                <td>{{expenses.ynab.monthly | number}}</td>
-                <td>{{expenses.fi.monthly | number}}</td>
-                <td>{{expenses.leanFi.monthly | number}}</td>
+                <td>{{expenses.ynab.monthly | currency:currencyIsoCode}}</td>
+                <td>{{expenses.fi.monthly | currency:currencyIsoCode}}</td>
+                <td>{{expenses.leanFi.monthly | currency:currencyIsoCode}}</td>
               </tr>
               <tr>
                 <th>Estimated Annual Expenses</th>
-                <td>{{expenses.ynab.annual | number}}</td>
-                <td>{{expenses.fi.annual | number}}</td>
-                <td>{{expenses.leanFi.annual | number}}</td>
+                <td>{{expenses.ynab.annual | currency:currencyIsoCode}}</td>
+                <td>{{expenses.fi.annual | currency:currencyIsoCode}}</td>
+                <td>{{expenses.leanFi.annual | currency:currencyIsoCode}}</td>
               </tr>
             </tbody>
             <thead class="thead-light">
@@ -324,11 +344,14 @@
                   <th colspan="4">{{categoryGroup.value.name}}</th>
                 </tr>
                 <ng-container formArrayName="categories">
-                  <tr *ngFor="let category of categoryGroup.get('categories').controls; let j=index" [formGroupName]="j">
+                  <tr *ngFor="let category of categoryGroup.get('categories').controls; let j=index"
+                    [formGroupName]="j">
                     <td>{{category.value.name}}</td>
                     <td>
-                      <span ngbPopover="Min:  {{category.value.info.min.value | number}} Max:  {{category.value.info.max.value | number}} Mean: {{category.value.info.mean | number}} " triggers="mouseenter:mouseleave">
-                        {{category.value.retrievedBudgeted | number}}
+                      <span
+                        ngbPopover="Min:  {{category.value.info.min.value | currency:currencyIsoCode}} Max:  {{category.value.info.max.value | currency:currencyIsoCode}} Mean: {{category.value.info.mean | currency:currencyIsoCode}} "
+                        triggers="mouseenter:mouseleave">
+                        {{category.value.retrievedBudgeted | currency:currencyIsoCode}}
                       </span>
                     </td>
                     <td>
@@ -362,9 +385,11 @@
             <p>If you would like to override the FI Budget value add <code>BR4 FI <i>amount</i></code>
               (e.g. <code>BR4 FI 1100</code>) to the notes of that category.
             </p>
-            <p>To further override the Lean FI value, use <code>BR4 LFI <i>amount</i></code> (e.g. <code>BR4 LFI 400</code>)
+            <p>To further override the Lean FI value, use <code>BR4 LFI <i>amount</i></code> (e.g.
+              <code>BR4 LFI 400</code>)
             </p>
-            <p>Add <code>BR4 FI</code> or <code>BR4 LFI</code> without an amount to override with the YNAB balance regardless of the category group name.</p>
+            <p>Add <code>BR4 FI</code> or <code>BR4 LFI</code> without an amount to override with the YNAB balance
+              regardless of the category group name.</p>
           </div>
         </div>
         <div class="row">
@@ -372,7 +397,8 @@
             <img src="assets/images/HousingCategory.png" class="img-fluid" alt="Housing Category Image">
           </div>
           <div class="col-12">
-            <img src="assets/images/HousingNotes.png" class="img-fluid" alt="Editing the notes for the Mortgage category">
+            <img src="assets/images/HousingNotes.png" class="img-fluid"
+              alt="Editing the notes for the Mortgage category">
           </div>
           <div class="col-12">
             <p class="small">(When editing a category's Notes, use <kbd>shift + enter</kbd> or <kbd>shift + return</kbd>

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnChanges, SimpleChanges,  } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, SimpleChanges, } from '@angular/core';
 
 import { CalculateInput } from '../../../models/calculate-input.model';
 import { Forecast, MonthlyForecast } from '../../../models/forecast.model';
@@ -12,6 +12,7 @@ import { Milestones } from '../milestone.model';
 export class TextComponent implements OnInit, OnChanges {
   @Input() forecast: Forecast;
   @Input() milestones: Milestones;
+  @Input() currencyIsoCode: string;
 
   milestonesWithForecast;
 
