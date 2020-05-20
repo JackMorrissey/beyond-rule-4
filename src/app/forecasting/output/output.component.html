@@ -1,18 +1,16 @@
 <div class="row" *ngIf="calculateInput">
   <div class="col">
     <div class="row">
-        <app-fi-text
-          class="col"
-          [calculateInput]="calculateInput"
-          [forecast]="forecast">
-        </app-fi-text>
+      <app-fi-text class="col" [calculateInput]="calculateInput" [forecast]="forecast">
+      </app-fi-text>
     </div>
     <div class="row">
-      <app-milestones
-        class="col"
-        [calculateInput]="calculateInput"
-        [forecast]="forecast">
+      <app-milestones class="col" [calculateInput]="calculateInput" [forecast]="forecast">
       </app-milestones>
+    </div>
+    <div class="row mt-4">
+      <app-expense-impact class="col" [calculateInput]="calculateInput" [forecast]="forecast">
+      </app-expense-impact>
     </div>
   </div>
 </div>
