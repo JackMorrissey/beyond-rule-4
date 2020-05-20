@@ -138,7 +138,8 @@
     <ngb-panel id="pNetWorth">
       <ng-template ngbPanelTitle>
         <span class="float-left">Starting Portfolio</span>
-        <span class="accordion-info">{{netWorth | number}}
+        <span class="accordion-info">
+          {{ netWorth | currency:currencyIsoCode}}
           <span class="accordion-toggle">
             <span [ngClass]="{'d-none': accordionPanelActiveStates.pNetWorth !== true}"><i
                 class="fas fa-caret-square-down"></i></span>
@@ -153,8 +154,8 @@
             <thead class="thead-sum">
               <tr>
                 <th>Starting Balance</th>
-                <td>{{ynabNetWorth | number}}</td>
-                <td>{{netWorth | number}}</td>
+                <td>{{ynabNetWorth | currency:currencyIsoCode}}</td>
+                <td>{{netWorth | currency:currencyIsoCode}}</td>
               </tr>
               <tr>
                 <td colspan="3">
@@ -172,7 +173,7 @@
             <tbody formArrayName="accounts">
               <tr *ngFor="let account of accounts.controls; let i=index" [formGroupName]="i">
                 <td>{{account.value.name}}</td>
-                <td>{{account.value.ynabBalance | number}}</td>
+                <td>{{account.value.ynabBalance | currency:currencyIsoCode}}</td>
                 <td>
                   <input class="form-control" formControlName="balance" type="number" />
                 </td>
@@ -197,7 +198,7 @@
     <ngb-panel id="pContributions">
       <ng-template ngbPanelTitle>
         <span class="float-left">Contributions</span>
-        <span class="accordion-info">{{budgetForm.value.monthlyContribution | number}}
+        <span class="accordion-info">{{budgetForm.value.monthlyContribution | currency:currencyIsoCode}}
           <span class="accordion-toggle">
             <span [ngClass]="{'d-none': accordionPanelActiveStates.pContributions !== true}"><i
                 class="fas fa-caret-square-down"></i></span>
@@ -234,9 +235,9 @@
                 <td>{{category.name}}</td>
                 <td>
                   <span
-                    ngbPopover="Min:  {{category.info.min.value | number}} Max:  {{category.info.max.value | number}} Mean: {{category.info.mean | number}} "
+                    ngbPopover="Min:  {{category.info.min.value | currency:currencyIsoCode}} Max:  {{category.info.max.value | currency:currencyIsoCode}} Mean: {{category.info.mean | currency:currencyIsoCode}} "
                     triggers="mouseenter:mouseleave">
-                    {{category.value | number}}
+                    {{category.value | currency:currencyIsoCode}}
                   </span>
                 </td>
               </tr>
@@ -283,7 +284,7 @@
     <ngb-panel id="pExpenses">
       <ng-template ngbPanelTitle>
         <span class="float-left">Expenses</span>
-        <span class="accordion-info">{{expenses.fi.annual | number}}
+        <span class="accordion-info">{{expenses.fi.annual | currency:currencyIsoCode}}
           <span class="accordion-toggle">
             <span [ngClass]="{'d-none': accordionPanelActiveStates.pExpenses !== true}"><i
                 class="fas fa-caret-square-down"></i></span>
@@ -322,15 +323,15 @@
             <tbody>
               <tr>
                 <th>Monthly Expenses</th>
-                <td>{{expenses.ynab.monthly | number}}</td>
-                <td>{{expenses.fi.monthly | number}}</td>
-                <td>{{expenses.leanFi.monthly | number}}</td>
+                <td>{{expenses.ynab.monthly | currency:currencyIsoCode}}</td>
+                <td>{{expenses.fi.monthly | currency:currencyIsoCode}}</td>
+                <td>{{expenses.leanFi.monthly | currency:currencyIsoCode}}</td>
               </tr>
               <tr>
                 <th>Estimated Annual Expenses</th>
-                <td>{{expenses.ynab.annual | number}}</td>
-                <td>{{expenses.fi.annual | number}}</td>
-                <td>{{expenses.leanFi.annual | number}}</td>
+                <td>{{expenses.ynab.annual | currency:currencyIsoCode}}</td>
+                <td>{{expenses.fi.annual | currency:currencyIsoCode}}</td>
+                <td>{{expenses.leanFi.annual | currency:currencyIsoCode}}</td>
               </tr>
             </tbody>
             <thead class="thead-dark">
@@ -352,9 +353,9 @@
                     <td>{{category.value.name}}</td>
                     <td>
                       <span
-                        ngbPopover="Min:  {{category.value.info.min.value | number}} Max:  {{category.value.info.max.value | number}} Mean: {{category.value.info.mean | number}} "
+                        ngbPopover="Min:  {{category.value.info.min.value | currency:currencyIsoCode}} Max:  {{category.value.info.max.value | currency:currencyIsoCode}} Mean: {{category.value.info.mean | currency:currencyIsoCode}} "
                         triggers="mouseenter:mouseleave">
-                        {{category.value.retrievedBudgeted | number}}
+                        {{category.value.retrievedBudgeted | currency:currencyIsoCode}}
                       </span>
                     </td>
                     <td>

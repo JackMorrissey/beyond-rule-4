@@ -21,16 +21,19 @@
       Financial Independence is reached at a Net Worth of {{safeWithdrawalTimes}} times annual expenses.
     </p>
     <p>
-      With annual expenses of <strong>{{calculateInput.annualExpenses | number}}</strong>,
-      we're aiming for a Net Worth of <strong>{{fiNumber | number}}</strong>.
+      With annual expenses of
+      <strong>{{calculateInput.annualExpenses | currency:calculateInput.currencyIsoCode}}</strong>,
+      we're aiming for a Net Worth of <strong>{{fiNumber | currency:calculateInput.currencyIsoCode}}</strong>.
     </p>
     <p>
       At <strong>{{expectedAnnualGrowthRate}}%</strong> returns,
       that Net Worth is forecasted to be <strong>{{fiDate}}</strong>; {{dateDistance}} from the first month.
       <span *ngIf="fiMonthForecast">
-        By that point, Net Worth is at <strong>{{fiMonthForecast.netWorth | number}}</strong>.
-        Of that total, contributions account for <strong>{{fiMonthForecast.totalContributions | number}}</strong> while
-        <strong>{{fiMonthForecast.totalReturns | number}}</strong> is earned returns.
+        By that point, Net Worth is at
+        <strong>{{fiMonthForecast.netWorth | currency:calculateInput.currencyIsoCode}}</strong>.
+        Of that total, contributions account for
+        <strong>{{fiMonthForecast.totalContributions | currency:calculateInput.currencyIsoCode}}</strong> while
+        <strong>{{fiMonthForecast.totalReturns | currency:calculateInput.currencyIsoCode}}</strong> is earned returns.
       </span>
     </p>
   </div>

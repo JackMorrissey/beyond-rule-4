@@ -12,6 +12,7 @@ import { Milestones } from '../milestone.model';
 export class TextComponent implements OnInit, OnChanges {
   @Input() forecast: Forecast;
   @Input() milestones: Milestones;
+  @Input() currencyIsoCode: string;
 
   milestonesWithForecast;
 
