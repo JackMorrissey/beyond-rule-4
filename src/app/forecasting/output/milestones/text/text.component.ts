@@ -6,7 +6,8 @@ import { Milestones } from '../milestone.model';
 
 @Component({
   selector: 'app-milestones-text',
-  templateUrl: 'text.component.html'
+  templateUrl: 'text.component.html',
+  styleUrls: ['./text.component.css']
 })
 
 export class TextComponent implements OnInit, OnChanges {
