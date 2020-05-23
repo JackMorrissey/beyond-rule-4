@@ -8,7 +8,7 @@
 ::ng-deep ngb-accordion .card-header > h5 > button {
   width: 100%;
   height: 100%;
-  padding: .5rem 1.25rem; /* Or whatever padding you would have applied in the next rule*/
+  padding: 0.5rem 1.25rem; /* Or whatever padding you would have applied in the next rule*/
 }
 
 ngb-accordion .card-header {
@@ -23,6 +23,11 @@ ngb-accordion .card-header {
   margin-left: 15px;
 }
 
-.thead-sum th, .thead-sum td {
+.thead-sum th,
+.thead-sum td {
   border: none;
+}
+
+table.expenses {
+  font-size: 0.85rem;
 }
