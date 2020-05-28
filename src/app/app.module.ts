@@ -23,7 +23,7 @@ import { AppComponent } from './app.component';
   ],
   imports: [
     BrowserModule,
-    NgbModule.forRoot(),
+    NgbModule,
     HomeModule,
     AboutModule,
     BeyondModule,
