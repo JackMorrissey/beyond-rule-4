@@ -74,6 +74,7 @@ export class ChartComponent implements OnInit, AfterContentInit, OnChanges {
   }
 
   setViewDimensions() {
+    if (!this.elementView) return;
     this.view = [this.elementView.nativeElement.offsetWidth, this.elementView.nativeElement.offsetHeight];
   }
 
