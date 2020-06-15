@@ -29,6 +29,10 @@ export class ImpactComponent implements OnInit, OnChanges {
 
         const currentFiForecast = this.getFiForecast(this.forecast, this.calculateInput.fiNumber);
 
+        if (!currentFiForecast) {
+            return;
+        }
+
         const categories = [].concat(...this.calculateInput.budgetCategoryGroups.map((group) => {
             return group.categories;
         }));
