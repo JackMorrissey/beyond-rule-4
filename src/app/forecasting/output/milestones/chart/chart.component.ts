@@ -74,7 +74,7 @@ export class ChartComponent implements OnInit, AfterContentInit, OnChanges {
   }
 
   setViewDimensions() {
-    if (!this.elementView) return;
+    if (!this.elementView) { return; }
     this.view = [this.elementView.nativeElement.offsetWidth, this.elementView.nativeElement.offsetHeight];
   }
 
@@ -158,7 +158,7 @@ export class ChartComponent implements OnInit, AfterContentInit, OnChanges {
   }
 
   private formatCurrency(val: number): string {
-    return Intl.NumberFormat(this.locale, { style: "currency", currency: this.currencyIsoCode }).format(val);
+    return Intl.NumberFormat(this.locale, { style: 'currency', currency: this.currencyIsoCode }).format(val);
   }
 
 }
