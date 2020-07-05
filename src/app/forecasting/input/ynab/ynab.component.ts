@@ -1,6 +1,6 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { FormGroup, FormArray, FormControl, FormBuilder, Validators } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { FormGroup, FormArray, FormBuilder, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { NgbPanelChangeEvent } from '@ng-bootstrap/ng-bootstrap';
 import { timer } from 'rxjs';
 import { debounce } from 'rxjs/operators';
@@ -9,7 +9,8 @@ import * as ynab from 'ynab';
 import { YnabApiService } from '../../../ynab-api/ynab-api.service';
 import { CalculateInput } from '../../models/calculate-input.model';
 import { round } from '../../utilities/number-utility';
-import { CategoryBudgetInfo } from './category-budget-info';
+import CategoryUtility from './category-utility';
+import NoteUtility from './note-utility';
 
 @Component({
   selector: 'app-ynab',
@@ -58,28 +59,6 @@ export class YnabComponent implements OnInit {
 
   public accordionPanelActiveStates: any = {};
 
-  private hiddenCategoryGroups = [
-    'credit card payments',
-    'internal master category',
-  ];
-  private contributionCategoryGroups = [
-    'fi',
-    'fire',
-    'financial independence',
-    'investments',
-    'retirement'
-  ];
-  private ignoredCategoryGroups = [
-    'debt payments',
-    ...this.contributionCategoryGroups,
-    ...this.hiddenCategoryGroups,
-  ];
-  private leanFiIgnoredCategoryGroups = [
-    'just for fun',
-    'quality of life goals',
-    ...this.ignoredCategoryGroups
-  ];
-
   constructor(private ynabService: YnabApiService, private formBuilder: FormBuilder, private activatedRoute: ActivatedRoute) {
     this.expenses = {
       ynab: {
@@ -127,7 +106,7 @@ export class YnabComponent implements OnInit {
 
     this.budgets = await this.ynabService.getBudgets();
 
-    const budgetId = await this.setInitialSelectedBudget();
+    const budgetId = this.setInitialSelectedBudget();
     await this.selectBudget(budgetId);
   }
 
@@ -164,7 +143,7 @@ export class YnabComponent implements OnInit {
 
     const mappedAccounts = this.mapAccounts(this.budget.accounts);
 
-    const mappedCategoryGroups = this.mapCategoryGroups(this.categoryGroupsWithCategories, months);
+    const mappedCategoryGroups = CategoryUtility.mapCategoryGroups(this.categoryGroupsWithCategories, months);
     const monthlyContribution = this.getMonthlyContribution(mappedCategoryGroups);
     this.contributionCategories = monthlyContribution.categories;
 
@@ -296,77 +275,6 @@ export class YnabComponent implements OnInit {
     this.netWorth = netWorth;
   }
 
-  private mapCategoryGroups(categoryGroupsWithCategories: ynab.CategoryGroupWithCategories[], monthDetails: ynab.MonthDetail[]) {
-    if (!categoryGroupsWithCategories || !monthDetails) {
-      return [];
-    }
-    const categoryGroups = categoryGroupsWithCategories.map(c => {
-      const categoryGroupIgnore = c.hidden || this.ignoredCategoryGroups.includes(c.name.toLowerCase());
-      const leanFiIgnore = categoryGroupIgnore || this.leanFiIgnoredCategoryGroups.includes(c.name.toLowerCase());
-      const isContribution = this.contributionCategoryGroups.includes(c.name.toLowerCase());
-      const mappedCategories =
-        c.categories.map(ca => this.mapCategory(ca, monthDetails, categoryGroupIgnore, leanFiIgnore, isContribution));
-      const hidden = c.hidden || this.hiddenCategoryGroups.includes(c.name.toLowerCase()) || mappedCategories.every(mc => mc.hidden);
-      return {
-        name: c.name,
-        id: c.id,
-        hidden,
-        categories: mappedCategories
-      };
-    });
-    categoryGroups.sort((a, b) => {
-      if (a.hidden === b.hidden) { return -1; }
-      if (a.hidden) { return 1; }
-      if (b.hidden) { return -1; }
-      return 0;
-    });
-
-    return categoryGroups.filter(c => !c.hidden);
-  }
-
-  private mapCategory(category: ynab.Category, monthDetails: ynab.MonthDetail[],
-    childrenIgnore: boolean, leanFiIgnore: boolean, isContribution: boolean) {
-    let ignore = childrenIgnore || category.hidden;
-    const categoryBudgetInfo = new CategoryBudgetInfo(category, monthDetails);
-    const retrievedBudgeted = categoryBudgetInfo.mean;
-
-    if (retrievedBudgeted < 0) {
-      // Do not know how to handle negative contributions or budgeting
-      // This typically happens if you're moving money around in your budget for the month
-      // Default it to 0 but allow overrides
-      ignore = true;
-    }
-
-    const overrides = this.getNoteOverrides(categoryBudgetInfo.categoryNote, retrievedBudgeted);
-
-    let computedFiBudget = ignore ? 0 : retrievedBudgeted;
-    if (overrides.computedFiBudget !== undefined) {
-      computedFiBudget = overrides.computedFiBudget;
-    }
-
-    let computedLeanFiBudget = leanFiIgnore ? 0 : computedFiBudget;
-    if (overrides.computedLeanFiBudget !== undefined) {
-      computedLeanFiBudget = overrides.computedLeanFiBudget;
-    }
-
-    let contributionBudget = isContribution ? retrievedBudgeted : 0;
-    if (overrides.contributionBudget !== undefined) {
-      contributionBudget = overrides.contributionBudget;
-    }
-
-    return Object.assign({
-      name: category.name,
-      ignore,
-      hidden: category.hidden,
-      id: category.id,
-      retrievedBudgeted,
-      computedFiBudget,
-      computedLeanFiBudget,
-      contributionBudget,
-      info: categoryBudgetInfo
-    });
-  }
-
   private mapAccounts(accounts: ynab.Account[]) {
     const mapped = accounts.filter(a => !(a.closed || a.deleted))
       .map(a => this.formBuilder.group(Object.assign({}, a, {
@@ -378,7 +286,7 @@ export class YnabComponent implements OnInit {
 
   private getAccountBalance(account: ynab.Account) {
     const balance = ynab.utils.convertMilliUnitsToCurrencyAmount(account.balance);
-    const overrides = this.getNoteOverrides(account.note, balance);
+    const overrides = NoteUtility.getNoteOverrides(account.note, balance);
 
     if (overrides.contributionBudget !== undefined) {
       return overrides.contributionBudget;
@@ -389,75 +297,6 @@ export class YnabComponent implements OnInit {
     }
 
     return 0;
-  }
-
-  private getNoteOverrides(note: string, originalValue: number) {
-    const override = {
-      contributionBudget: undefined,
-      computedLeanFiBudget: undefined,
-      computedFiBudget: undefined
-    };
-
-    if (!note) {
-      return override;
-    }
-
-    const commands = this.getCommands(note, originalValue);
-
-    commands.forEach(c => {
-      switch (c.key) {
-        case '+':
-        case 'c':
-        case 'contribution':
-          override.contributionBudget = c.value;
-          break;
-        case 'l':
-        case 'lfi':
-        case 'lean':
-          override.computedLeanFiBudget = c.value;
-          break;
-        case 'f':
-        case 'fi':
-          override.computedFiBudget = c.value;
-          break;
-        default:
-          break;
-      }
-    });
-
-    return override;
-  }
-
-  private getCommands(originalNote: string, originValue: number) {
-    const note = originalNote.toLowerCase();
-    const commandPrefix = 'br4';
-    if (note.indexOf(commandPrefix) === -1) {
-      return [];
-    }
-
-    const lines = note.split(commandPrefix);
-    if (!lines || !lines.length) {
-      return [];
-    }
-
-    return lines.map(line => {
-      const cleaned = line.replace(/\:/g, ' ').replace(/\s+/g, ' ').trim();
-      const numRegex = /[+-]?\d+(?:\.\d+)?/g;
-      const match = numRegex.exec(cleaned);
-      if (!match || !match.length) {
-        return {
-          key: cleaned,
-          value: originValue
-        };
-      }
-      const foundValue = match[0];
-      const key = cleaned.substr(0, cleaned.indexOf(foundValue)).trim();
-      const value = Number(foundValue);
-      return {
-        key,
-        value
-      };
-    }).filter(l => l.key);
   }
 
   private getMonthlyContribution(categoryGroups) {
@@ -514,5 +353,4 @@ export class YnabComponent implements OnInit {
     this.budgetForm.setControl('categoryGroups', this.formBuilder.array(categoryGroupFormGroups));
     this.budgetForm.setControl('accounts', this.formBuilder.array(mappedAccounts));
   }
-
 }
