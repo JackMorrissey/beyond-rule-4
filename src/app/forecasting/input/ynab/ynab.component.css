@@ -27,3 +27,7 @@ ngb-accordion .card-header {
 .thead-sum td {
   border: none;
 }
+
+table.expenses {
+  font-size: 0.8rem;
+}

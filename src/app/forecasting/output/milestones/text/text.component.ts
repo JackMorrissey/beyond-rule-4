@@ -6,7 +6,8 @@ import { Milestones } from '../milestone.model';
 
 @Component({
   selector: 'app-milestones-text',
-  templateUrl: 'text.component.html'
+  templateUrl: 'text.component.html',
+  styleUrls: ['./text.component.css']
 })
 
 export class TextComponent implements OnInit, OnChanges {
@@ -16,6 +17,7 @@ export class TextComponent implements OnInit, OnChanges {
 
   milestonesWithForecast;
 
+  private completeText = 'Achieved!';
 
   constructor() { }
 
@@ -52,11 +54,13 @@ export class TextComponent implements OnInit, OnChanges {
       const forecast = forecastSearch[foundIndex];
       const forecastDate = this.getDateString(forecast.date);
       const distance = this.getDistanceText(forecast.date);
+      const completed = distance === this.completeText;
       return {
         milestone,
         forecast,
         forecastDate,
-        distance
+        distance,
+        completed
       };
     });
   }
@@ -73,7 +77,7 @@ export class TextComponent implements OnInit, OnChanges {
   getDistanceText(forecastDate: Date) {
     const text = this.forecast.getDistanceFromFirstMonthText(forecastDate);
     if (!text) {
-      return 'Achieved!';
+      return this.completeText;
     }
     return text;
   }

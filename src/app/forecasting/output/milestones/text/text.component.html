@@ -1,22 +1,24 @@
-<table class="table table-striped">
-  <thead>
-    <tr>
-      <th>Milestone</th>
-      <th>Net Worth</th>
-      <th>Forecast Date</th>
-      <th>Distance</th>
-      <th>Contributions</th>
-      <th>Returns</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let m of milestonesWithForecast">
-      <td>{{ m.milestone.label }}</td>
-      <td>{{ m.milestone.value | currency:currencyIsoCode:'symbol':'1.0'}}</td>
-      <td>{{ m.forecastDate }}</td>
-      <td>{{ m.distance }}</td>
-      <td>{{ m.forecast?.totalContributions | currency:currencyIsoCode:'symbol':'1.0-0'}}</td>
-      <td>{{ m.forecast?.totalReturns | currency:currencyIsoCode:'symbol':'1.0-0'}}</td>
-    </tr>
-  </tbody>
-</table>
+<div class="table-responsive">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Milestone</th>
+        <th>Net Worth</th>
+        <th>Forecast Date</th>
+        <th>Distance</th>
+        <th>Contributions</th>
+        <th>Returns</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let m of milestonesWithForecast" [ngClass]="{'table-success' : m.completed}">
+        <td>{{ m.milestone.label }}</td>
+        <td>{{ m.milestone.value | currency:currencyIsoCode:'symbol':'1.0'}}</td>
+        <td>{{ m.forecastDate }}</td>
+        <td>{{ m.distance }}</td>
+        <td>{{ m.forecast?.totalContributions | currency:currencyIsoCode:'symbol':'1.0-0'}}</td>
+        <td>{{ m.forecast?.totalReturns | currency:currencyIsoCode:'symbol':'1.0-0'}}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

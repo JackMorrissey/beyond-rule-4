@@ -1,6 +1,13 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" routerLink="/">Beyond Rule 4</a>
-  <button class="navbar-toggler" type="button" (click)="isOpen = !isOpen"data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+  <a class="navbar-brand" routerLink="/">
+    <span class="font-weight-bold font-italic">
+      Beyond
+    </span>
+    Rule 4
+  </a>
+  <button class="navbar-toggler" type="button" (click)="isOpen = !isOpen" data-toggle="collapse"
+    data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+    aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
 
@@ -21,9 +28,13 @@
         <a class="nav-link">About</a>
       </li>
     </ul>
-    <form class="form-inline my-2 my-lg-0">
-      <button *ngIf="!isAuthorized" class="btn btn-outline-primary my-2 my-sm-0" (click)="authorize()" type="button">Authorize with YNAB</button>
-      <button *ngIf="isAuthorized" class="btn btn-outline-primary my-2 my-sm-0" (click)="logOut()" type="button">Log Out</button>
+    <form class="form-inline ml-2 my-2 my-lg-0">
+      <button *ngIf="!isAuthorized" class="btn btn-outline-primary my-2 my-sm-0" (click)="authorize()" type="button">
+        <i class="fas fa-key"></i>
+        Authorize with YNAB
+      </button>
+      <button *ngIf="isAuthorized" class="btn btn-outline-primary my-2 my-sm-0" (click)="logOut()" type="button">Log
+        Out</button>
     </form>
   </div>
 </nav>

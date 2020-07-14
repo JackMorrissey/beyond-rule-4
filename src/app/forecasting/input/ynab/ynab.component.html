@@ -1,4 +1,8 @@
-<div *ngIf="isUsingSampleData">(Using sample data)</div>
+<div class="alert alert-dark font-weight-bold" *ngIf="isUsingSampleData">
+  <i class="fas fa-info-circle"></i>
+  Using Sample Data
+</div>
+
 <form [formGroup]="budgetForm">
 
   <ngb-accordion [closeOthers]="false" (panelChange)="beforePanelChange($event)">
@@ -159,7 +163,7 @@
                 </td>
               </tr>
             </thead>
-            <thead class="thead-light">
+            <thead class="thead-dark">
               <tr>
                 <th>Account</th>
                 <th>YNAB Balance</th>
@@ -220,7 +224,7 @@
         </div>
         <div class="row" *ngIf="contributionCategories && contributionCategories.length">
           <table class="table col-12">
-            <thead class="thead-light">
+            <thead class="thead-dark">
               <tr>
                 <th>Category Name</th>
                 <th>Contribution</th>
@@ -293,28 +297,22 @@
       </ng-template>
       <ng-template ngbPanelContent>
         <div class="row">
-          <table class="table col-12">
-            <thead class="thead-light">
+          <table class="table table-sm col-12 expenses">
+            <thead class="thead-dark">
               <tr>
                 <th>Calculated</th>
                 <th>YNAB</th>
-                <th>FI
-                  <span>
-                    <button type="button" class="btn btn-light fa-lg" placement="bottom-left"
-                      triggers="click:blur hover"
-                      ngbTooltip="FI budget includes all expenses to maintain your current lifestyle.">
-                      <i class="fas fa-info-circle"></i>
-                    </button>
-                  </span>
+                <th placement="top-center" triggers="click:blur hover" container="body"
+                  ngbTooltip="FI budget includes all expenses to maintain your current lifestyle.">
+                  FI
+                  &nbsp;
+                  <i class="fas fa-info-circle"></i>
                 </th>
-                <th>Lean FI
-                  <span>
-                    <button type="button" class="btn btn-light fa-lg" placement="bottom-right"
-                      triggers="click:blur hover"
-                      ngbTooltip="Lean FI budget includes all expenses to just get by. Think FI but without any fun.">
-                      <i class="fas fa-info-circle"></i>
-                    </button>
-                  </span>
+                <th placement="top-center" triggers="click:blur hover" container="body"
+                  ngbTooltip="Lean FI budget includes all expenses to just get by. Think FI but without any fun.">
+                  Lean FI
+                  &nbsp;
+                  <i class="fas fa-info-circle"></i>
                 </th>
               </tr>
             </thead>
@@ -332,7 +330,7 @@
                 <td>{{expenses.leanFi.annual | currency:currencyIsoCode}}</td>
               </tr>
             </tbody>
-            <thead class="thead-light">
+            <thead class="thead-dark">
               <tr>
                 <th>Category</th>
                 <th>YNAB Budget</th>
@@ -342,8 +340,8 @@
             </thead>
             <tbody formArrayName="categoryGroups">
               <ng-container *ngFor="let categoryGroup of categoryGroups.controls; let i=index" [formGroupName]="i">
-                <tr>
-                  <th colspan="4">{{categoryGroup.value.name}}</th>
+                <tr class="table-secondary">
+                  <th colspan="4" class="">{{categoryGroup.value.name}}</th>
                 </tr>
                 <ng-container formArrayName="categories">
                   <tr *ngFor="let category of categoryGroup.get('categories').controls; let j=index"
@@ -357,10 +355,10 @@
                       </span>
                     </td>
                     <td>
-                      <input class="form-control" formControlName="fiBudget" type="number" />
+                      <input class="form-control form-control-sm" formControlName="fiBudget" type="number" />
                     </td>
                     <td>
-                      <input class="form-control" formControlName="leanFiBudget" type="number" />
+                      <input class="form-control form-control-sm" formControlName="leanFiBudget" type="number" />
                     </td>
                   </tr>
                 </ng-container>
