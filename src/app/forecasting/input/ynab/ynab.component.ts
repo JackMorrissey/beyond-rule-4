@@ -127,6 +127,7 @@ export class YnabComponent implements OnInit {
   }
 
   async selectBudget(budgetId: string) {
+    this.calculateInputChange.emit(undefined);
     this.budget = await this.ynabService.getBudgetById(budgetId);
     window.localStorage.setItem('br4-selected-budget', this.budget.id);
 
