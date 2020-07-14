@@ -17,7 +17,7 @@ export class TextComponent implements OnInit, OnChanges {
 
   milestonesWithForecast;
 
-  private completeText = "Achieved!";
+  private completeText = 'Achieved!';
 
   constructor() { }
 
