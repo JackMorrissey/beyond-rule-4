@@ -12,13 +12,7 @@ export class ForecastingInputComponent implements OnInit {
   @Output() calculateInputChange = new EventEmitter<CalculateInput>();
 
   constructor() {
-    const input = new CalculateInput();
-    input.annualExpenses = 30000;
-    input.leanAnnualExpenses = 25000;
-    input.leanFiPercentage = 0.7;
-    input.netWorth = 100000;
-    input.monthlyContribution = 1500;
-    this.calculateInput = input;
+
   }
 
   ngOnInit() {

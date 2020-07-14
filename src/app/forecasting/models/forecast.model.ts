@@ -6,6 +6,9 @@ export class Forecast {
   month0Date: Date;
 
   public constructor(calculateInput: CalculateInput, month0Date?: Date) {
+    if (!calculateInput) {
+      return;
+    }
     if (!this.month0Date) {
       this.month0Date = new Date();
     }
