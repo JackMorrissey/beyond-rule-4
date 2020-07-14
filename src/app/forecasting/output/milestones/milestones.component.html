@@ -6,12 +6,12 @@
 
 <div class="row">
   <app-milestones-chart class="milestones-chart col-sm" [forecast]="forecast" [milestones]="milestones"
-    [currencyIsoCode]="calculateInput.currencyIsoCode">
+    [currencyIsoCode]="calculateInput?.currencyIsoCode">
   </app-milestones-chart>
 </div>
 
 <div class="row">
   <app-milestones-text class="milestones-text col-sm" [forecast]="forecast" [milestones]="milestones"
-    [currencyIsoCode]="calculateInput.currencyIsoCode">
+    [currencyIsoCode]="calculateInput?.currencyIsoCode">
   </app-milestones-text>
 </div>
