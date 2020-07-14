@@ -248,12 +248,14 @@
           <div class="row">
             <div class="col-12">
               <h4>How we pull these numbers from YNAB</h4>
-              <p>The following category groups are automatically counted as contributions: </p>
+              <p>Any category groups containing the following text are automatically counted as contributions: </p>
               <ul>
                 <li>Financial Independence</li>
                 <li>Investments</li>
                 <li>Retirement</li>
                 <li>FIRE</li>
+                <li>📈</li>
+                <li>🔥</li>
               </ul>
               <p><span>If you would like to override the budgeted amount add <code>BR4 + <i>amount</i></code></span>
                 (e.g. <code>BR4 + 1000</code>) to the notes of that category. This is useful for including
@@ -369,9 +371,10 @@
             <h4>How we pull these numbers from YNAB</h4>
             <p>The following category groups are automatically budgeted to 0 for Financial Independence: </p>
             <ul>
-              <li>Financial Independence - You're already FI, no need to keep saving!</li>
+              <li>All defined Financial Independence category groups - You're already FI, no need to keep saving!</li>
               <li>Debt Payments - For simplicity, lets assume this is all paid off</li>
               <li>Credit Card Payments - For simplicity, lets assume you pay this off every month</li>
+              <li>Any category groups with names containing 📉 or 🔕</li>
             </ul>
             <p>In addition, the following category groups are automatically budgeted to 0 for Lean Financial
               Independence: </p>
@@ -379,7 +382,9 @@
               <li>Just For Fun - Lean FI is all about saying you could just make it by</li>
               <li>Quality of Life Goals - Theoretically, these goals aren't required to live a bland but financially
                 independent life</li>
+              <li>Any category groups with names containing 🌤️</li>
             </ul>
+            <p>Finally, any category groups with names containing 👻 are completely ignored from the software</p>
             <p>If you would like to override the FI Budget value add <code>BR4 FI <i>amount</i></code>
               (e.g. <code>BR4 FI 1100</code>) to the notes of that category.
             </p>
