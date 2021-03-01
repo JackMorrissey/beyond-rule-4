@@ -5,6 +5,6 @@
 
 export const environment = {
   production: false,
-  clientId: '7aec43a65f3a487eaf02d9781954537dde8c8f6929d8573935eb359742f9fc6d',
-  redirectUri: 'http://localhost:4200/connect'
+  clientId: (window['env']['clientId'] || '7aec43a65f3a487eaf02d9781954537dde8c8f6929d8573935eb359742f9fc6d'),
+  redirectUri: (window['env']['appUrl'] || 'http://localhost:4200') + '/connect' 
 };
