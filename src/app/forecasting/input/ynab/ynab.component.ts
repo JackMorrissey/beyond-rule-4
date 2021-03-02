@@ -179,6 +179,57 @@ export class YnabComponent implements OnInit {
     }
     return result;
   }
+  
+  /* Chooses months based on common decisions. Options: All, Last calendar year, Last 12 months, Year to date, Current month. */
+  async quickChooseMonths(choice: string) { 
+    // Get some etc facts that are shared by some of the buttons below.
+    const budgetId = window.localStorage.getItem('br4-selected-budget');
+    const currentMonth = await this.ynabService.getMonth(budgetId, 'current');
+    let currentMonthIdx = 0;
+    for (let i = 0; i < this.months.length; i++) {
+      const month = this.months[i];
+      if (currentMonth.month === month.month) {
+        currentMonthIdx = i;
+      }
+    }
+    
+    switch (choice) {
+      case 'all':
+        await this.selectMonths(this.months[this.months.length - 1].month, this.months[0].month);  
+        break;
+      case 'yr':
+        // Go to current month, work backwards to prev Dec, then calc from there. 
+        for (let i = currentMonthIdx + 1; i < this.months.length; i++) { //Note: Adding 1 to current month, in case this is december. We would want last year's december
+          const month = this.months[i];
+          if (month.month.endsWith('-12-01')) {
+            let startMonthIdx = Math.min(i+11, this.months.length-1) //Don't go too far into past
+            await this.selectMonths(this.months[startMonthIdx].month, this.months[i].month);
+            break;
+          }
+        }
+        break;
+      case '12':
+        let startMonthIdx = Math.min(currentMonthIdx+11, this.months.length-1) //Don't go too far into past
+        await this.selectMonths(this.months[startMonthIdx].month, currentMonth.month);
+        break;
+      case 'ytd':
+        // Go to current month, work backwards to prev Jan.
+        for (let i = currentMonthIdx; i < this.months.length; i++) {
+          const month = this.months[i];
+          if (month.month.endsWith('-01-01')) {
+            await this.selectMonths(this.months[i].month, currentMonth.month);
+            break;
+          }
+        }
+        break;
+      case 'curr':
+      default:
+        await this.selectMonths(currentMonth.month, currentMonth.month);
+        break;
+    }
+    
+    return;
+  }
 
   updateInput() {
     const selectedBudget = this.budgetForm.value.selectedBudget;

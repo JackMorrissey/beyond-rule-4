@@ -58,8 +58,21 @@
                 </select>
               </div>
             </div>
-
           </div>
+      
+      <div class="row">
+            <label for="selectedBudget" class="col-sm-12 col-md-5 col-form-label">Quick Choose</label>
+            <div class="col">
+              <div class="btn-group btn-group-sm d-flex" role="group" aria-label="Basic example">
+                <button type="button" class="btn btn-secondary w-100" (click)="quickChooseMonths('all')">All</button>
+                <button type="button" class="btn btn-secondary w-100" (click)="quickChooseMonths('yr')">Last Yr</button>
+                <button type="button" class="btn btn-secondary w-100" (click)="quickChooseMonths('12')">Last 12 Mo</button>
+                <button type="button" class="btn btn-secondary w-100" (click)="quickChooseMonths('ytd')">YTD</button>
+                <button type="button" class="btn btn-secondary w-100" (click)="quickChooseMonths('curr')">Current Month</button>
+              </div>
+            </div>
+          </div>
+      
           <div class="row">
             <div class="col">
               <small>The month range to use for average contributions and expenses
