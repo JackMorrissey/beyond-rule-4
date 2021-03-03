@@ -187,8 +187,7 @@ export class YnabComponent implements OnInit {
     const currentMonth = await this.ynabService.getMonth(budgetId, 'current');
     let currentMonthIdx = 0;
     for (let i = 0; i < this.months.length; i++) {
-      const month = this.months[i];
-      if (currentMonth.month === month.month) {
+      if (currentMonth.month === this.months[i].month) {
         currentMonthIdx = i;
       }
     }
@@ -200,8 +199,7 @@ export class YnabComponent implements OnInit {
       case 'yr':
         // Go to current month, work backwards to prev Dec, then calc from there. 
         for (let i = currentMonthIdx + 1; i < this.months.length; i++) { //Note: Adding 1 to current month, in case this is december. We would want last year's december
-          const month = this.months[i];
-          if (month.month.endsWith('-12-01')) {
+          if (this.months[i].month.endsWith('-12-01')) {
             let startMonthIdx = Math.min(i+11, this.months.length-1) //Don't go too far into past
             await this.selectMonths(this.months[startMonthIdx].month, this.months[i].month);
             break;
@@ -215,8 +213,7 @@ export class YnabComponent implements OnInit {
       case 'ytd':
         // Go to current month, work backwards to prev Jan.
         for (let i = currentMonthIdx; i < this.months.length; i++) {
-          const month = this.months[i];
-          if (month.month.endsWith('-01-01')) {
+          if (this.months[i].month.endsWith('-01-01')) {
             await this.selectMonths(this.months[i].month, currentMonth.month);
             break;
           }
