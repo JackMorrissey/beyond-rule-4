@@ -36,6 +36,8 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 
 ## Running the application in Docker
 
+### Quick Start (uses default dev localhost token)
+
 Build the container:
 
 ```shell
@@ -45,7 +47,27 @@ $ docker build -t br4 .
 Then run the container:
 
 ```shell
-$ docker run --name br4 -d -p 8080:80 br4
+$ docker run --name br4 -d -p 4200:80 br4
 ```
 
-Navigate to http://localhost:8080 to view the application.
+Navigate to http://localhost:4200 to view the application.
+
+### Using custom tokens
+
+You can utilize your own [YNAB API OAuth Application Token](https://api.youneedabudget.com/) by injecting environment variables.
+
+Your Client ID and Redirect URI(s) will be used when running your container. 
+
+Build the container:
+
+```shell
+$ docker build -t br4 .
+```
+
+Then run the container:
+
+```shell
+$ docker run --name br4 -d -p 8080:80 --env APP_URL="http://localhost:8080" --env CLIENT_ID="<CLIENT_ID_FROM_YNAB>" br4
+```
+
+Navigate to http://localhost:8080 to view the application. Note: This example uses port 8080, which will be required in the Redirect URI when registering your OAuth application. You are free to use other ports.
