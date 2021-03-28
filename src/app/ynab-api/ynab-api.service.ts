@@ -24,7 +24,7 @@ export class YnabApiService {
 
   authorize() {
     const uri =
-    // tslint:disable-next-line:max-line-length
+    // eslint-disable-next-line max-len
     `https://app.youneedabudget.com/oauth/authorize?client_id=${environment.clientId}&redirect_uri=${environment.redirectUri}&response_type=token&scope=read-only`;
     location.replace(uri);
   }
