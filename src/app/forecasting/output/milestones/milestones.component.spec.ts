@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { MilestonesComponent } from './milestones.component';
 
@@ -12,7 +12,7 @@ describe('MilestonesComponent', () => {
   let component: MilestonesComponent;
   let fixture: ComponentFixture<MilestonesComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [MilestonesComponent, ChartComponent, TextComponent],
       imports: [NgxChartsModule, BrowserAnimationsModule]
