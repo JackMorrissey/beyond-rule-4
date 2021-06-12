@@ -110,22 +110,6 @@ export class YnabComponent implements OnInit {
     await this.selectBudget(budgetId);
   }
 
-  private setInitialSelectedBudget(): string {
-    let selectedBudget = 'last-used';
-
-    const storageBudget = window.localStorage.getItem('br4-selected-budget');
-    if (storageBudget && this.budgets.some(b => b.id === storageBudget)) {
-      selectedBudget = storageBudget;
-    }
-
-    const queryBudget = this.activatedRoute.snapshot.queryParams['budgetId'];
-    if (queryBudget && this.budgets.some(b => b.id === queryBudget)) {
-      selectedBudget = queryBudget;
-    }
-
-    return selectedBudget;
-  }
-
   async selectBudget(budgetId: string) {
     this.calculateInputChange.emit(undefined);
     this.budget = await this.ynabService.getBudgetById(budgetId);
@@ -153,51 +137,24 @@ export class YnabComponent implements OnInit {
     this.updateInput();
   }
 
-  private setMonths(monthA: string, monthB: string): ynab.MonthDetail[] {
-    const result = new Array<ynab.MonthDetail>();
-    let inRange = false;
-    for (let i = 0; i < this.months.length; i++) {
-      const month = this.months[i];
-      if (month.month === monthA || month.month === monthB) {
-        if (inRange) {
-          this.selectedMonthA = month;
-          result.push(month);
-          break;
-        }
-
-        this.selectedMonthB = month;
-        if (monthA === monthB) {
-          this.selectedMonthA = month;
-          result.push(month);
-          break;
-        }
-        inRange = true;
-      }
-      if (inRange) {
-        result.push(month);
-      }
-    }
-    return result;
-  }
-  
   /* Chooses months based on common decisions. Options: All, Last calendar year, Last 12 months, Year to date, Current month. */
-  async quickChooseMonths(choice: string) { 
+  async quickChooseMonths(choice: string) {
     // Get some etc facts that are shared by some of the buttons below.
     const budgetId = window.localStorage.getItem('br4-selected-budget');
-    const currentMonth = await this.ynabService.getMonth(budgetId, 'current');
+    const currentMonth = this.currentMonth || await this.ynabService.getMonth(budgetId, 'current');
     let currentMonthIdx = 0;
     for (let i = 0; i < this.months.length; i++) {
       if (currentMonth.month === this.months[i].month) {
         currentMonthIdx = i;
       }
     }
-    
+
     switch (choice) {
       case 'all':
-        await this.selectMonths(this.months[this.months.length - 1].month, this.months[0].month);  
+        await this.selectMonths(this.months[this.months.length - 1].month, this.months[0].month);
         break;
       case 'yr':
-        // Go to current month, work backwards to prev Dec, then calc from there. 
+        // Go to current month, work backwards to prev Dec, then calc from there.
         for (let i = currentMonthIdx + 1; i < this.months.length; i++) { //Note: Adding 1 to current month, in case this is december. We would want last year's december
           if (this.months[i].month.endsWith('-12-01')) {
             let startMonthIdx = Math.min(i+11, this.months.length-1) //Don't go too far into past
@@ -224,7 +181,7 @@ export class YnabComponent implements OnInit {
         await this.selectMonths(currentMonth.month, currentMonth.month);
         break;
     }
-    
+
     return;
   }
 
@@ -287,6 +244,49 @@ export class YnabComponent implements OnInit {
 
   beforePanelChange($event: NgbPanelChangeEvent) {
     this.accordionPanelActiveStates[$event.panelId] = $event.nextState;
+  }
+
+  private setInitialSelectedBudget(): string {
+    let selectedBudget = 'last-used';
+
+    const storageBudget = window.localStorage.getItem('br4-selected-budget');
+    if (storageBudget && this.budgets.some(b => b.id === storageBudget)) {
+      selectedBudget = storageBudget;
+    }
+
+    const queryBudget = this.activatedRoute.snapshot.queryParams['budgetId'];
+    if (queryBudget && this.budgets.some(b => b.id === queryBudget)) {
+      selectedBudget = queryBudget;
+    }
+
+    return selectedBudget;
+  }
+
+  private setMonths(monthA: string, monthB: string): ynab.MonthDetail[] {
+    const result = new Array<ynab.MonthDetail>();
+    let inRange = false;
+    for (let i = 0; i < this.months.length; i++) {
+      const month = this.months[i];
+      if (month.month === monthA || month.month === monthB) {
+        if (inRange) {
+          this.selectedMonthA = month;
+          result.push(month);
+          break;
+        }
+
+        this.selectedMonthB = month;
+        if (monthA === monthB) {
+          this.selectedMonthA = month;
+          result.push(month);
+          break;
+        }
+        inRange = true;
+      }
+      if (inRange) {
+        result.push(month);
+      }
+    }
+    return result;
   }
 
   private getMonthlyExpenses(categoryGroups, budgetPropertyName) {
