@@ -11,7 +11,7 @@
 
   <!-- Load environment variables -->
   <script src="assets/env.js"></script>
-  
+
   <script>
     if (window.matchMedia('(prefers-color-scheme: dark)').media === 'not all') {
       document.documentElement.style.display = 'none';
@@ -29,6 +29,7 @@
     integrity="sha384-Bo21yfmmZuXwcN/9vKrA5jPUMhr7znVBBeLxT9MA4r2BchhusfJ6+n8TLGUcRAtL" crossorigin="anonymous"
     media="(prefers-color-scheme: dark)">
   <script defer src="https://use.fontawesome.com/releases/v5.13.0/js/all.js" crossorigin="anonymous"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-N0REZM6WE6"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag() {
@@ -39,14 +40,12 @@
     }
     gtag('js', new Date());
 
-    gtag('config', 'UA-124175775-1', { 'anonymize_ip': true });
+    gtag('config', 'G-N0REZM6WE6', { 'anonymize_ip': true });
   </script>
 </head>
 
 <body>
   <app-root></app-root>
 </body>
-
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-124175775-1"></script>
 
 </html>
