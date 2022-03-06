@@ -79,6 +79,27 @@ export class YnabComponent implements OnInit {
         annual: 0,
       },
     };
+
+    const safeWithdrawalRatePercentageStorage = parseFloat(
+      window.localStorage.getItem('br4-safe-withdrawal-rate')
+    );
+    if (
+      !!safeWithdrawalRatePercentageStorage &&
+      !isNaN(safeWithdrawalRatePercentageStorage)
+    ) {
+      this.safeWithdrawalRatePercentage = safeWithdrawalRatePercentageStorage;
+    }
+
+    const expectedAnnualGrowthRateStorage = parseFloat(
+      window.localStorage.getItem('br4-expect-annual-growth-rate')
+    );
+    if (
+      !!expectedAnnualGrowthRateStorage &&
+      !isNaN(expectedAnnualGrowthRateStorage)
+    ) {
+      this.expectedAnnualGrowthRate = expectedAnnualGrowthRateStorage;
+    }
+
     this.budgetForm = this.formBuilder.group({
       selectedBudget: ['', [Validators.required]],
       selectedMonthA: ['', [Validators.required]],
@@ -163,26 +184,14 @@ export class YnabComponent implements OnInit {
     result.monthFromName = this.selectedMonthA.month;
     result.monthToName = this.selectedMonthB.month;
 
-    const safeWithdrawalRatePercentage = Number.parseFloat(
-      this.budgetForm.value.safeWithdrawalRatePercentage
+    result.annualSafeWithdrawalRate = Math.max(
+      0,
+      this.safeWithdrawalRatePercentage / 100
     );
-    if (!Number.isNaN(safeWithdrawalRatePercentage)) {
-      this.safeWithdrawalRatePercentage = safeWithdrawalRatePercentage;
-      result.annualSafeWithdrawalRate = Math.max(
-        0,
-        safeWithdrawalRatePercentage / 100
-      );
-    }
-    const expectedAnnualGrowthRate = Number.parseFloat(
-      this.budgetForm.value.expectedAnnualGrowthRate
+    result.expectedAnnualGrowthRate = Math.max(
+      0,
+      this.expectedAnnualGrowthRate / 100
     );
-    if (!Number.isNaN(expectedAnnualGrowthRate)) {
-      this.expectedAnnualGrowthRate = expectedAnnualGrowthRate;
-      result.expectedAnnualGrowthRate = Math.max(
-        0,
-        expectedAnnualGrowthRate / 100
-      );
-    }
 
     result.roundAll();
     this.calculateInputChange.emit(result);
@@ -220,7 +229,7 @@ export class YnabComponent implements OnInit {
     await this.selectMonths(selectedMonths.from.month, selectedMonths.to.month);
   }
 
-  async toggleIncludeHiddenYnabCategories(newValue: boolean) {
+  toggleIncludeHiddenYnabCategories(newValue: boolean) {
     this.includeHiddenYnabCategories = newValue;
     if (newValue) {
       window.localStorage.setItem(
@@ -278,6 +287,34 @@ export class YnabComponent implements OnInit {
     await this.selectMonths(selectedMonths.from.month, selectedMonths.to.month);
   }
 
+  handlePercentageFormChanges() {
+    const parsedSafeWithdrawalRatePercentage = Number.parseFloat(
+      this.budgetForm.value.safeWithdrawalRatePercentage
+    );
+    if (
+      !Number.isNaN(parsedSafeWithdrawalRatePercentage) &&
+      parsedSafeWithdrawalRatePercentage !== this.safeWithdrawalRatePercentage
+    ) {
+      this.safeWithdrawalRatePercentage = parsedSafeWithdrawalRatePercentage;
+      // local storage
+      window.localStorage.setItem(
+        'br4-safe-withdrawal-rate',
+        parsedSafeWithdrawalRatePercentage.toString()
+      );
+    }
+    const parsedExpectedAnnualGrowthRate = Number.parseFloat(
+      this.budgetForm.value.expectedAnnualGrowthRate
+    );
+    if (!Number.isNaN(parsedExpectedAnnualGrowthRate)) {
+      this.expectedAnnualGrowthRate = parsedExpectedAnnualGrowthRate;
+      // local storage
+      window.localStorage.setItem(
+        'br4-expect-annual-growth-rate',
+        parsedExpectedAnnualGrowthRate.toString()
+      );
+    }
+  }
+
   handleFormChanges() {
     let toggledHidden = false;
     if (
@@ -289,6 +326,8 @@ export class YnabComponent implements OnInit {
         this.budgetForm.value.includeHiddenYnabCategories
       );
     }
+
+    this.handlePercentageFormChanges();
 
     const selectedBudget = this.budgetForm.value.selectedBudget;
     if (this.budget.id !== selectedBudget) {

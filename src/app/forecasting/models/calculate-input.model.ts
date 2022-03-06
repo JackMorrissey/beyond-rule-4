@@ -36,18 +36,18 @@ export class CalculateInput {
     this.leanAnnualExpenses = round(this.leanAnnualExpenses);
   }
 
-  get safeWidthdrawlTimes() {
+  get safeWithdrawalTimes() {
     return 1 / this.annualSafeWithdrawalRate;
   }
 
   get fiNumber() {
-    return this.safeWidthdrawlTimes * this.annualExpenses;
+    return this.safeWithdrawalTimes * this.annualExpenses;
   }
 
   get leanFiNumber() {
     let leanFiNumber = this.fiNumber * this.leanFiPercentage;
     if (this.leanAnnualExpenses) {
-      leanFiNumber = this.safeWidthdrawlTimes * this.leanAnnualExpenses;
+      leanFiNumber = this.safeWithdrawalTimes * this.leanAnnualExpenses;
     }
     return leanFiNumber;
   }

@@ -3,8 +3,16 @@ import { round } from '../../utilities/number-utility';
 export class Milestones {
   milestones: Milestone[];
 
-  public constructor(public fiNumber: number, public leanFiNumber, public eclipseNumber) {
-    this.milestones = this.calculateMilestones(fiNumber, leanFiNumber, eclipseNumber);
+  public constructor(
+    public fiNumber: number,
+    public leanFiNumber,
+    public eclipseNumber
+  ) {
+    this.milestones = this.calculateMilestones(
+      fiNumber,
+      leanFiNumber,
+      eclipseNumber
+    );
   }
 
   private calculateMilestones(fiNumber, leanFiNumber, eclipseNumber) {
@@ -20,7 +28,9 @@ export class Milestones {
       milestones.push(new Milestone('Lean FI', round(leanFiNumber))); // 0.7 * FI)
     }
     if (eclipseNumber) {
-      milestones.push(new Milestone('Contribution / Interest Eclipse', round(eclipseNumber)));
+      milestones.push(
+        new Milestone('Contribution / Returns Eclipse', round(eclipseNumber))
+      );
     }
     return milestones;
   }
