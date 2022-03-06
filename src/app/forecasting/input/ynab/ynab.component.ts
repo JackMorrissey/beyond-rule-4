@@ -11,6 +11,7 @@ import { CalculateInput } from '../../models/calculate-input.model';
 import { round } from '../../utilities/number-utility';
 import CategoryUtility from './category-utility';
 import NoteUtility, { Overrides } from './note-utility';
+import { getSelectedMonths, QuickSelectMonthChoice } from './months-utility';
 
 @Component({
   selector: 'app-ynab',
@@ -193,7 +194,14 @@ export class YnabComponent implements OnInit {
     window.localStorage.setItem('br4-selected-budget', this.budget.id);
 
     this.months = this.budget.months;
-    this.currentMonth = await this.ynabService.getMonth(budgetId, 'current');
+
+    try {
+      this.currentMonth = await this.ynabService.getMonth(budgetId, 'current');
+    } catch {
+      // on older accounts, this can 404 if they're not up to date. That's fine, we'll use the first month
+      this.currentMonth = this.months[0];
+    }
+
     this.categoryGroupsWithCategories =
       await this.ynabService.getCategoryGroupsWithCategories(this.budget.id);
     this.currencyIsoCode = this.budget.currency_format
@@ -204,7 +212,12 @@ export class YnabComponent implements OnInit {
       'br4-include-hidden-ynab-categories'
     );
 
-    await this.selectMonths(this.currentMonth.month, this.currentMonth.month);
+    const selectedMonths = getSelectedMonths(
+      this.currentMonth,
+      this.months,
+      'previousChoice'
+    );
+    await this.selectMonths(selectedMonths.from.month, selectedMonths.to.month);
   }
 
   async toggleIncludeHiddenYnabCategories(newValue: boolean) {
@@ -251,12 +264,9 @@ export class YnabComponent implements OnInit {
   }
 
   /* Chooses months based on common decisions. Options: All, Last calendar year, Last 12 months, Year to date, Current month. */
-  async quickChooseMonths(choice: string) {
+  async quickChooseMonths(choice: QuickSelectMonthChoice) {
     // Get some etc facts that are shared by some of the buttons below.
-    const budgetId = window.localStorage.getItem('br4-selected-budget');
-    const currentMonth =
-      this.currentMonth ||
-      (await this.ynabService.getMonth(budgetId, 'current'));
+    const currentMonth = this.currentMonth || this.months[0];
     let currentMonthIdx = 0;
     for (let i = 0; i < this.months.length; i++) {
       if (currentMonth.month === this.months[i].month) {
@@ -264,53 +274,8 @@ export class YnabComponent implements OnInit {
       }
     }
 
-    switch (choice) {
-      case 'all':
-        await this.selectMonths(
-          this.months[this.months.length - 1].month,
-          this.months[0].month
-        );
-        break;
-      case 'yr':
-        // Go to current month, work backwards to prev Dec, then calc from there.
-        //Note: Adding 1 to current month, in case this is december. We would want last year's december
-        for (let i = currentMonthIdx + 1; i < this.months.length; i++) {
-          if (this.months[i].month.endsWith('-12-01')) {
-            const startMonthIndex = Math.min(i + 11, this.months.length - 1); //Don't go too far into past
-            await this.selectMonths(
-              this.months[startMonthIndex].month,
-              this.months[i].month
-            );
-            break;
-          }
-        }
-        break;
-      case '12':
-        const startMonthIdx = Math.min(
-          currentMonthIdx + 11,
-          this.months.length - 1
-        ); //Don't go too far into past
-        await this.selectMonths(
-          this.months[startMonthIdx].month,
-          currentMonth.month
-        );
-        break;
-      case 'ytd':
-        // Go to current month, work backwards to prev Jan.
-        for (let i = currentMonthIdx; i < this.months.length; i++) {
-          if (this.months[i].month.endsWith('-01-01')) {
-            await this.selectMonths(this.months[i].month, currentMonth.month);
-            break;
-          }
-        }
-        break;
-      case 'curr':
-      default:
-        await this.selectMonths(currentMonth.month, currentMonth.month);
-        break;
-    }
-
-    return;
+    const selectedMonths = getSelectedMonths(currentMonth, this.months, choice);
+    await this.selectMonths(selectedMonths.from.month, selectedMonths.to.month);
   }
 
   handleFormChanges() {
@@ -370,8 +335,7 @@ export class YnabComponent implements OnInit {
   private setMonths(monthA: string, monthB: string): ynab.MonthDetail[] {
     const result = new Array<ynab.MonthDetail>();
     let inRange = false;
-    for (let i = 0; i < this.months.length; i++) {
-      const month = this.months[i];
+    for (const month of this.months) {
       if (month.month === monthA || month.month === monthB) {
         if (inRange) {
           this.selectedMonthA = month;

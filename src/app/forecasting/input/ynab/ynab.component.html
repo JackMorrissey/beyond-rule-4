@@ -102,15 +102,22 @@
               <div ngbDropdown class="input-group d-inline-block">
                 <button
                   class="btn btn-outline-secondary btn-sm w-100"
-                  id="dropdownBasic1"
+                  id="quickSelectMonths"
                   ngbDropdownToggle
                 >
                   Quick Choose
                 </button>
-                <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+                <div ngbDropdownMenu aria-labelledby="quickSelectMonths">
+                  <button
+                    ngbDropdownItem
+                    (click)="quickChooseMonths('allTrim')"
+                  >
+                    All Complete
+                  </button>
                   <button ngbDropdownItem (click)="quickChooseMonths('all')">
                     All
                   </button>
+
                   <button ngbDropdownItem (click)="quickChooseMonths('yr')">
                     Last Year
                   </button>

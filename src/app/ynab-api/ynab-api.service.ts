@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Cookie } from 'ng2-cookies';
 
-
 import * as ynab from 'ynab';
 import { environment } from '../../environments/environment';
 
@@ -24,14 +23,13 @@ export class YnabApiService {
 
   authorize() {
     const uri =
-    // eslint-disable-next-line max-len
-    `https://app.youneedabudget.com/oauth/authorize?client_id=${environment.clientId}&redirect_uri=${environment.redirectUri}&response_type=token&scope=read-only`;
+      // eslint-disable-next-line max-len
+      `https://app.youneedabudget.com/oauth/authorize?client_id=${environment.clientId}&redirect_uri=${environment.redirectUri}&response_type=token&scope=read-only`;
     location.replace(uri);
   }
 
   getToken() {
     return Cookie.get(tokenName);
-
   }
 
   clearToken() {
@@ -58,10 +56,13 @@ export class YnabApiService {
   // thanks Ynab Starter!
   findYnabToken(): boolean {
     let token = null;
-    const search = window.location.hash.substring(1).replace(/&/g, '","').replace(/=/g, '":"');
+    const search = window.location.hash
+      .substring(1)
+      .replace(/&/g, '","')
+      .replace(/=/g, '":"');
     if (search && search !== '') {
       // Try to get access_token from the hash returned by OAuth
-      const params = JSON.parse('{"' + search + '"}', function(key, value) {
+      const params = JSON.parse('{"' + search + '"}', function (key, value) {
         return key === '' ? value : decodeURIComponent(value);
       });
       token = params.access_token;
@@ -83,7 +84,7 @@ export class YnabApiService {
 
     try {
       const budgets = await this.ynabApi.budgets.getBudgets();
-    return budgets.data.budgets;
+      return budgets.data.budgets;
     } catch (error) {
       console.error(error);
     }
@@ -96,26 +97,30 @@ export class YnabApiService {
 
     try {
       const budget = await this.ynabApi.budgets.getBudgetById(budgetId);
-    return budget.data.budget;
+      return budget.data.budget;
     } catch (error) {
       console.error(error);
     }
   }
 
-  async getMonth(budgetId: string, budgetMonth: Date | 'current'): Promise<ynab.MonthDetail> {
+  async getMonth(
+    budgetId: string,
+    budgetMonth: Date | 'current'
+  ): Promise<ynab.MonthDetail> {
     if (this.useSampleData) {
       return SampleData.Month;
     }
 
-    try {
-      const month = await this.ynabApi.months.getBudgetMonth(budgetId, budgetMonth);
-      return month.data.month;
-    } catch (error) {
-      console.error(error);
-    }
+    const month = await this.ynabApi.months.getBudgetMonth(
+      budgetId,
+      budgetMonth
+    );
+    return month.data.month;
   }
 
-  async getCategoryGroupsWithCategories(budgetId: string): Promise<ynab.CategoryGroupWithCategories[]> {
+  async getCategoryGroupsWithCategories(
+    budgetId: string
+  ): Promise<ynab.CategoryGroupWithCategories[]> {
     if (this.useSampleData) {
       return SampleData.CategoryGroupsWithCategories;
     }
