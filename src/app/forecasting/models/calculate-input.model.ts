@@ -10,13 +10,19 @@ export class CalculateInput {
   leanFiPercentage = 0;
   budgetCategoryGroups = [];
   currencyIsoCode = 'USD';
+  monthFromName = '';
+  monthToName = '';
 
   public constructor(init?: Partial<CalculateInput>) {
-    Object.assign(this, {
-      annualSafeWithdrawalRate: 0.04,
-      leanFiPercentage: 0.7,
-      expectedAnnualGrowthRate: 0.07,
-    }, init);
+    Object.assign(
+      this,
+      {
+        annualSafeWithdrawalRate: 0.04,
+        leanFiPercentage: 0.7,
+        expectedAnnualGrowthRate: 0.07,
+      },
+      init
+    );
     this.roundAll();
   }
 

@@ -159,6 +159,8 @@ export class YnabComponent implements OnInit {
     result.monthlyContribution = this.budgetForm.value.monthlyContribution;
     result.budgetCategoryGroups = this.budgetForm.value.categoryGroups;
     result.currencyIsoCode = this.currencyIsoCode;
+    result.monthFromName = this.selectedMonthA.month;
+    result.monthToName = this.selectedMonthB.month;
 
     const safeWithdrawalRatePercentage = Number.parseFloat(
       this.budgetForm.value.safeWithdrawalRatePercentage
