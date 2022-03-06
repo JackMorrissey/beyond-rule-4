@@ -10,13 +10,19 @@ export class CalculateInput {
   leanFiPercentage = 0;
   budgetCategoryGroups = [];
   currencyIsoCode = 'USD';
+  monthFromName = '';
+  monthToName = '';
 
   public constructor(init?: Partial<CalculateInput>) {
-    Object.assign(this, {
-      annualSafeWithdrawalRate: 0.04,
-      leanFiPercentage: 0.7,
-      expectedAnnualGrowthRate: 0.07,
-    }, init);
+    Object.assign(
+      this,
+      {
+        annualSafeWithdrawalRate: 0.04,
+        leanFiPercentage: 0.7,
+        expectedAnnualGrowthRate: 0.07,
+      },
+      init
+    );
     this.roundAll();
   }
 
@@ -30,18 +36,18 @@ export class CalculateInput {
     this.leanAnnualExpenses = round(this.leanAnnualExpenses);
   }
 
-  get safeWidthdrawlTimes() {
+  get safeWithdrawalTimes() {
     return 1 / this.annualSafeWithdrawalRate;
   }
 
   get fiNumber() {
-    return this.safeWidthdrawlTimes * this.annualExpenses;
+    return this.safeWithdrawalTimes * this.annualExpenses;
   }
 
   get leanFiNumber() {
     let leanFiNumber = this.fiNumber * this.leanFiPercentage;
     if (this.leanAnnualExpenses) {
-      leanFiNumber = this.safeWidthdrawlTimes * this.leanAnnualExpenses;
+      leanFiNumber = this.safeWithdrawalTimes * this.leanAnnualExpenses;
     }
     return leanFiNumber;
   }

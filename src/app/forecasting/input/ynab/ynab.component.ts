@@ -11,6 +11,7 @@ import { CalculateInput } from '../../models/calculate-input.model';
 import { round } from '../../utilities/number-utility';
 import CategoryUtility from './category-utility';
 import NoteUtility, { Overrides } from './note-utility';
+import { getSelectedMonths, QuickSelectMonthChoice } from './months-utility';
 
 @Component({
   selector: 'app-ynab',
@@ -32,6 +33,7 @@ export class YnabComponent implements OnInit {
   public currentMonth: ynab.MonthDetail;
   public selectedMonthA: ynab.MonthDetail;
   public selectedMonthB: ynab.MonthDetail;
+  public includeHiddenYnabCategories = false;
   public categoryGroupsWithCategories: ynab.CategoryGroupWithCategories[];
 
   public ynabNetWorth: number;
@@ -77,11 +79,33 @@ export class YnabComponent implements OnInit {
         annual: 0,
       },
     };
+
+    const safeWithdrawalRatePercentageStorage = parseFloat(
+      window.localStorage.getItem('br4-safe-withdrawal-rate')
+    );
+    if (
+      !!safeWithdrawalRatePercentageStorage &&
+      !isNaN(safeWithdrawalRatePercentageStorage)
+    ) {
+      this.safeWithdrawalRatePercentage = safeWithdrawalRatePercentageStorage;
+    }
+
+    const expectedAnnualGrowthRateStorage = parseFloat(
+      window.localStorage.getItem('br4-expect-annual-growth-rate')
+    );
+    if (
+      !!expectedAnnualGrowthRateStorage &&
+      !isNaN(expectedAnnualGrowthRateStorage)
+    ) {
+      this.expectedAnnualGrowthRate = expectedAnnualGrowthRateStorage;
+    }
+
     this.budgetForm = this.formBuilder.group({
       selectedBudget: ['', [Validators.required]],
       selectedMonthA: ['', [Validators.required]],
       selectedMonthB: ['', [Validators.required]],
       monthlyContribution: [0, [Validators.required]],
+      includeHiddenYnabCategories: [true],
       categoryGroups: this.formBuilder.array([]),
       accounts: this.formBuilder.array([]),
       safeWithdrawalRatePercentage: [
@@ -110,7 +134,7 @@ export class YnabComponent implements OnInit {
       debounce(() => timer(500))
     );
     formChanges.subscribe(() => {
-      this.updateInput();
+      this.handleFormChanges();
     });
 
     this.budgets = await this.ynabService.getBudgets();
@@ -119,127 +143,7 @@ export class YnabComponent implements OnInit {
     await this.selectBudget(budgetId);
   }
 
-  async selectBudget(budgetId: string) {
-    this.calculateInputChange.emit(undefined);
-    this.budget = await this.ynabService.getBudgetById(budgetId);
-    window.localStorage.setItem('br4-selected-budget', this.budget.id);
-
-    this.months = this.budget.months;
-    this.currentMonth = await this.ynabService.getMonth(budgetId, 'current');
-    this.categoryGroupsWithCategories =
-      await this.ynabService.getCategoryGroupsWithCategories(this.budget.id);
-    this.currencyIsoCode = this.budget.currency_format
-      ? this.budget.currency_format.iso_code
-      : 'USD';
-
-    await this.selectMonths(this.currentMonth.month, this.currentMonth.month);
-  }
-
-  async selectMonths(monthA: string, monthB: string) {
-    const months = this.setMonths(monthA, monthB);
-
-    const mappedAccounts = this.mapAccounts(this.budget.accounts);
-
-    const mappedCategoryGroups = CategoryUtility.mapCategoryGroups(
-      this.categoryGroupsWithCategories,
-      months
-    );
-    const monthlyContribution = this.getMonthlyContribution(
-      mappedCategoryGroups,
-      mappedAccounts
-    );
-    this.contributionCategories = monthlyContribution.categories;
-
-    this.resetForm(
-      mappedCategoryGroups,
-      monthlyContribution.value,
-      mappedAccounts
-    );
-
-    this.updateInput();
-  }
-
-  /* Chooses months based on common decisions. Options: All, Last calendar year, Last 12 months, Year to date, Current month. */
-  async quickChooseMonths(choice: string) {
-    // Get some etc facts that are shared by some of the buttons below.
-    const budgetId = window.localStorage.getItem('br4-selected-budget');
-    const currentMonth =
-      this.currentMonth ||
-      (await this.ynabService.getMonth(budgetId, 'current'));
-    let currentMonthIdx = 0;
-    for (let i = 0; i < this.months.length; i++) {
-      if (currentMonth.month === this.months[i].month) {
-        currentMonthIdx = i;
-      }
-    }
-
-    switch (choice) {
-      case 'all':
-        await this.selectMonths(
-          this.months[this.months.length - 1].month,
-          this.months[0].month
-        );
-        break;
-      case 'yr':
-        // Go to current month, work backwards to prev Dec, then calc from there.
-        //Note: Adding 1 to current month, in case this is december. We would want last year's december
-        for (let i = currentMonthIdx + 1; i < this.months.length; i++) {
-          if (this.months[i].month.endsWith('-12-01')) {
-            const startMonthIdx = Math.min(i + 11, this.months.length - 1); //Don't go too far into past
-            await this.selectMonths(
-              this.months[startMonthIdx].month,
-              this.months[i].month
-            );
-            break;
-          }
-        }
-        break;
-      case '12':
-        const startMonthIdx = Math.min(
-          currentMonthIdx + 11,
-          this.months.length - 1
-        ); //Don't go too far into past
-        await this.selectMonths(
-          this.months[startMonthIdx].month,
-          currentMonth.month
-        );
-        break;
-      case 'ytd':
-        // Go to current month, work backwards to prev Jan.
-        for (let i = currentMonthIdx; i < this.months.length; i++) {
-          if (this.months[i].month.endsWith('-01-01')) {
-            await this.selectMonths(this.months[i].month, currentMonth.month);
-            break;
-          }
-        }
-        break;
-      case 'curr':
-      default:
-        await this.selectMonths(currentMonth.month, currentMonth.month);
-        break;
-    }
-
-    return;
-  }
-
-  updateInput() {
-    const selectedBudget = this.budgetForm.value.selectedBudget;
-    if (this.budget.id !== selectedBudget) {
-      this.selectBudget(selectedBudget);
-      return;
-    }
-
-    if (
-      this.selectedMonthA.month !== this.budgetForm.value.selectedMonthA ||
-      this.selectedMonthB.month !== this.budgetForm.value.selectedMonthB
-    ) {
-      this.selectMonths(
-        this.budgetForm.value.selectedMonthA,
-        this.budgetForm.value.selectedMonthB
-      );
-      return;
-    }
-
+  recalculate() {
     const fiMonthlyExpenses = this.getMonthlyExpenses(
       this.budgetForm.value.categoryGroups,
       'fiBudget'
@@ -277,30 +181,174 @@ export class YnabComponent implements OnInit {
     result.monthlyContribution = this.budgetForm.value.monthlyContribution;
     result.budgetCategoryGroups = this.budgetForm.value.categoryGroups;
     result.currencyIsoCode = this.currencyIsoCode;
+    result.monthFromName = this.selectedMonthA.month;
+    result.monthToName = this.selectedMonthB.month;
 
-    const safeWithdrawalRatePercentage = Number.parseFloat(
-      this.budgetForm.value.safeWithdrawalRatePercentage
+    result.annualSafeWithdrawalRate = Math.max(
+      0,
+      this.safeWithdrawalRatePercentage / 100
     );
-    if (!Number.isNaN(safeWithdrawalRatePercentage)) {
-      this.safeWithdrawalRatePercentage = safeWithdrawalRatePercentage;
-      result.annualSafeWithdrawalRate = Math.max(
-        0,
-        safeWithdrawalRatePercentage / 100
-      );
-    }
-    const expectedAnnualGrowthRate = Number.parseFloat(
-      this.budgetForm.value.expectedAnnualGrowthRate
+    result.expectedAnnualGrowthRate = Math.max(
+      0,
+      this.expectedAnnualGrowthRate / 100
     );
-    if (!Number.isNaN(expectedAnnualGrowthRate)) {
-      this.expectedAnnualGrowthRate = expectedAnnualGrowthRate;
-      result.expectedAnnualGrowthRate = Math.max(
-        0,
-        expectedAnnualGrowthRate / 100
-      );
-    }
 
     result.roundAll();
     this.calculateInputChange.emit(result);
+  }
+
+  async selectBudget(budgetId: string) {
+    this.calculateInputChange.emit(undefined);
+    this.budget = await this.ynabService.getBudgetById(budgetId);
+    window.localStorage.setItem('br4-selected-budget', this.budget.id);
+
+    this.months = this.budget.months;
+
+    try {
+      this.currentMonth = await this.ynabService.getMonth(budgetId, 'current');
+    } catch {
+      // on older accounts, this can 404 if they're not up to date. That's fine, we'll use the first month
+      this.currentMonth = this.months[0];
+    }
+
+    this.categoryGroupsWithCategories =
+      await this.ynabService.getCategoryGroupsWithCategories(this.budget.id);
+    this.currencyIsoCode = this.budget.currency_format
+      ? this.budget.currency_format.iso_code
+      : 'USD';
+
+    this.includeHiddenYnabCategories = !!window.localStorage.getItem(
+      'br4-include-hidden-ynab-categories'
+    );
+
+    const selectedMonths = getSelectedMonths(
+      this.currentMonth,
+      this.months,
+      'previousChoice'
+    );
+    await this.selectMonths(selectedMonths.from.month, selectedMonths.to.month);
+  }
+
+  toggleIncludeHiddenYnabCategories(newValue: boolean) {
+    this.includeHiddenYnabCategories = newValue;
+    if (newValue) {
+      window.localStorage.setItem(
+        'br4-include-hidden-ynab-categories',
+        newValue.toString()
+      );
+    } else {
+      window.localStorage.removeItem('br4-include-hidden-ynab-categories');
+    }
+  }
+
+  /**
+   * Select months and reset the form with the categories
+   *
+   * @param monthA start month
+   * @param monthB end month
+   */
+  async selectMonths(monthA: string, monthB: string) {
+    const months = this.setMonths(monthA, monthB);
+
+    const mappedAccounts = this.mapAccounts(this.budget.accounts);
+
+    const mappedCategoryGroups = CategoryUtility.mapCategoryGroups(
+      this.categoryGroupsWithCategories,
+      months,
+      this.includeHiddenYnabCategories
+    );
+    const monthlyContribution = this.getMonthlyContribution(
+      mappedCategoryGroups,
+      mappedAccounts
+    );
+    this.contributionCategories = monthlyContribution.categories;
+
+    this.resetForm(
+      mappedCategoryGroups,
+      monthlyContribution.value,
+      mappedAccounts
+    );
+
+    this.recalculate();
+  }
+
+  /* Chooses months based on common decisions. Options: All, Last calendar year, Last 12 months, Year to date, Current month. */
+  async quickChooseMonths(choice: QuickSelectMonthChoice) {
+    // Get some etc facts that are shared by some of the buttons below.
+    const currentMonth = this.currentMonth || this.months[0];
+    let currentMonthIdx = 0;
+    for (let i = 0; i < this.months.length; i++) {
+      if (currentMonth.month === this.months[i].month) {
+        currentMonthIdx = i;
+      }
+    }
+
+    const selectedMonths = getSelectedMonths(currentMonth, this.months, choice);
+    await this.selectMonths(selectedMonths.from.month, selectedMonths.to.month);
+  }
+
+  handlePercentageFormChanges() {
+    const parsedSafeWithdrawalRatePercentage = Number.parseFloat(
+      this.budgetForm.value.safeWithdrawalRatePercentage
+    );
+    if (
+      !Number.isNaN(parsedSafeWithdrawalRatePercentage) &&
+      parsedSafeWithdrawalRatePercentage !== this.safeWithdrawalRatePercentage
+    ) {
+      this.safeWithdrawalRatePercentage = parsedSafeWithdrawalRatePercentage;
+      // local storage
+      window.localStorage.setItem(
+        'br4-safe-withdrawal-rate',
+        parsedSafeWithdrawalRatePercentage.toString()
+      );
+    }
+    const parsedExpectedAnnualGrowthRate = Number.parseFloat(
+      this.budgetForm.value.expectedAnnualGrowthRate
+    );
+    if (!Number.isNaN(parsedExpectedAnnualGrowthRate)) {
+      this.expectedAnnualGrowthRate = parsedExpectedAnnualGrowthRate;
+      // local storage
+      window.localStorage.setItem(
+        'br4-expect-annual-growth-rate',
+        parsedExpectedAnnualGrowthRate.toString()
+      );
+    }
+  }
+
+  handleFormChanges() {
+    let toggledHidden = false;
+    if (
+      this.includeHiddenYnabCategories !==
+      this.budgetForm.value.includeHiddenYnabCategories
+    ) {
+      toggledHidden = true;
+      this.toggleIncludeHiddenYnabCategories(
+        this.budgetForm.value.includeHiddenYnabCategories
+      );
+    }
+
+    this.handlePercentageFormChanges();
+
+    const selectedBudget = this.budgetForm.value.selectedBudget;
+    if (this.budget.id !== selectedBudget) {
+      // calls selectMonths after it's done resetting
+      this.selectBudget(selectedBudget);
+      return;
+    }
+
+    if (
+      toggledHidden ||
+      this.selectedMonthA.month !== this.budgetForm.value.selectedMonthA ||
+      this.selectedMonthB.month !== this.budgetForm.value.selectedMonthB
+    ) {
+      this.selectMonths(
+        this.budgetForm.value.selectedMonthA,
+        this.budgetForm.value.selectedMonthB
+      );
+      return;
+    }
+
+    this.recalculate();
   }
 
   beforePanelChange($event: NgbPanelChangeEvent) {
@@ -326,8 +374,7 @@ export class YnabComponent implements OnInit {
   private setMonths(monthA: string, monthB: string): ynab.MonthDetail[] {
     const result = new Array<ynab.MonthDetail>();
     let inRange = false;
-    for (let i = 0; i < this.months.length; i++) {
-      const month = this.months[i];
+    for (const month of this.months) {
       if (month.month === monthA || month.month === monthB) {
         if (inRange) {
           this.selectedMonthA = month;
@@ -477,6 +524,7 @@ export class YnabComponent implements OnInit {
       selectedBudget: this.budget.id,
       selectedMonthA: this.selectedMonthA.month,
       selectedMonthB: this.selectedMonthB.month,
+      includeHiddenYnabCategories: this.includeHiddenYnabCategories,
       monthlyContribution,
       expectedAnnualGrowthRate: this.expectedAnnualGrowthRate,
       safeWithdrawalRatePercentage: this.safeWithdrawalRatePercentage,
@@ -486,7 +534,7 @@ export class YnabComponent implements OnInit {
       this.formBuilder.group({
         name: cg.name,
         id: cg.id,
-        hidden: cg.id,
+        hidden: cg.hidden,
         categories: this.formBuilder.array(
           cg.categories.map((c) =>
             this.formBuilder.group({

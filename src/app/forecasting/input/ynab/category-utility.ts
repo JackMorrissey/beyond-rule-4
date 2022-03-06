@@ -3,44 +3,69 @@ import { CategoryBudgetInfo } from './category-budget-info';
 import NoteUtility from './note-utility';
 
 export default class CategoryUtility {
-  private static hiddenCategoryGroups = [
-    'internal master category',
-    '👻'
-  ];
+  private static hiddenCategoryGroups = ['internal master category', '👻'];
   private static contributionCategoryGroups = [
     'fire',
     'financial independence',
     'investments',
     'retirement',
     '📈',
-    '🔥'
+    '🔥',
   ];
   private static ignoredCategoryGroups = [
     'credit card payments',
     'debt payments',
     '📉',
-    '🔕'
+    '🔕',
   ];
   private static leanFiIgnoredCategoryGroups = [
     'just for fun',
     'quality of life goals',
-    '🌤️'
+    '🌤️',
   ];
 
-  public static mapCategoryGroups(categoryGroupsWithCategories: ynab.CategoryGroupWithCategories[], monthDetails: ynab.MonthDetail[]) {
+  public static mapCategoryGroups(
+    categoryGroupsWithCategories: ynab.CategoryGroupWithCategories[],
+    monthDetails: ynab.MonthDetail[],
+    includeHiddenYnabCategories: boolean
+  ) {
     if (!categoryGroupsWithCategories || !monthDetails) {
       return [];
     }
-    const categoryGroups = categoryGroupsWithCategories.map(c => {
+    const categoryGroups = categoryGroupsWithCategories.map((c) => {
       const lowerName = c.name.toLowerCase();
-      const isOfHiddenCategoryGroups = !!this.hiddenCategoryGroups.find(g => lowerName.includes(g));
-      const isContribution = !!this.contributionCategoryGroups.find(g => lowerName.includes(g));
-      const isOfIgnoredCategoryGroups = !!this.ignoredCategoryGroups.find(g => lowerName.includes(g));
-      const generalIgnore = c.hidden || isOfHiddenCategoryGroups || isContribution || isOfIgnoredCategoryGroups;
-      const leanFiIgnore = generalIgnore || !!this.leanFiIgnoredCategoryGroups.find(g => lowerName.includes(g));
-      const mappedCategories =
-        c.categories.map(ca => this.mapCategory(ca, monthDetails, generalIgnore, leanFiIgnore, isContribution));
-      const hidden = c.hidden || isOfHiddenCategoryGroups || mappedCategories.every(mc => mc.hidden);
+      const isOfHiddenCategoryGroups = !!this.hiddenCategoryGroups.find((g) =>
+        lowerName.includes(g)
+      );
+      const isContribution = !!this.contributionCategoryGroups.find((g) =>
+        lowerName.includes(g)
+      );
+      const isOfIgnoredCategoryGroups = !!this.ignoredCategoryGroups.find((g) =>
+        lowerName.includes(g)
+      );
+      const isCategoryDirectlyHidden = !includeHiddenYnabCategories && c.hidden;
+      const generalIgnore =
+        isCategoryDirectlyHidden ||
+        isOfHiddenCategoryGroups ||
+        isContribution ||
+        isOfIgnoredCategoryGroups;
+      const leanFiIgnore =
+        generalIgnore ||
+        !!this.leanFiIgnoredCategoryGroups.find((g) => lowerName.includes(g));
+      const mappedCategories = c.categories.map((ca) =>
+        this.mapCategory(
+          ca,
+          monthDetails,
+          generalIgnore,
+          leanFiIgnore,
+          isContribution,
+          includeHiddenYnabCategories
+        )
+      );
+      const hidden =
+        isCategoryDirectlyHidden ||
+        isOfHiddenCategoryGroups ||
+        mappedCategories.every((mc) => mc.hidden);
       return {
         name: c.name,
         id: c.id,
@@ -48,17 +73,25 @@ export default class CategoryUtility {
         categories: mappedCategories,
         isContribution,
         generalIgnore,
-        leanFiIgnore
+        leanFiIgnore,
       };
     });
 
     // @ts-ignore (deleted isn't in current ynab import)
-    return categoryGroups.filter(c => !c.hidden && !c.deleted);
+    return categoryGroups.filter((c) => !c.hidden && !c.deleted);
   }
 
-  private static mapCategory(category: ynab.Category, monthDetails: ynab.MonthDetail[],
-    childrenIgnore: boolean, leanFiIgnore: boolean, isContribution: boolean) {
-    let ignore = childrenIgnore || category.hidden;
+  private static mapCategory(
+    category: ynab.Category,
+    monthDetails: ynab.MonthDetail[],
+    childrenIgnore: boolean,
+    leanFiIgnore: boolean,
+    isContribution: boolean,
+    includeHiddenYnabCategories: boolean
+  ) {
+    const isCategoryDirectlyHidden =
+      !includeHiddenYnabCategories && category.hidden;
+    let ignore = childrenIgnore || isCategoryDirectlyHidden;
     const categoryBudgetInfo = new CategoryBudgetInfo(category, monthDetails);
     const retrievedBudgeted = categoryBudgetInfo.mean;
 
@@ -69,7 +102,10 @@ export default class CategoryUtility {
       ignore = true;
     }
 
-    const overrides = NoteUtility.getNoteOverrides(categoryBudgetInfo.categoryNote, retrievedBudgeted);
+    const overrides = NoteUtility.getNoteOverrides(
+      categoryBudgetInfo.categoryNote,
+      retrievedBudgeted
+    );
 
     let computedFiBudget = ignore ? 0 : retrievedBudgeted;
     if (overrides.computedFiBudget !== undefined) {
@@ -89,13 +125,13 @@ export default class CategoryUtility {
     return Object.assign({
       name: category.name,
       ignore,
-      hidden: category.hidden,
+      hidden: isCategoryDirectlyHidden,
       id: category.id,
       retrievedBudgeted,
       computedFiBudget,
       computedLeanFiBudget,
       contributionBudget,
-      info: categoryBudgetInfo
+      info: categoryBudgetInfo,
     });
   }
 }
