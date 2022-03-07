@@ -23,6 +23,13 @@ ngb-accordion .card-header {
   margin-left: 15px;
 }
 
+.budgetForm {
+  word-break: break-word;
+}
+.budgetForm td {
+  min-width: 60px;
+}
+
 .thead-sum th,
 .thead-sum td {
   border: none;
