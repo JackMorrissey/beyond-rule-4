@@ -394,23 +394,25 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let category of contributionCategories">
-                <td>{{ category.name }}</td>
-                <td>
-                  <span
-                    ngbPopover="Min:  {{
-                      category.info.min.value | currency: currencyIsoCode
-                    }} Max:  {{
-                      category.info.max.value | currency: currencyIsoCode
-                    }} Mean: {{
-                      category.info.mean | currency: currencyIsoCode
-                    }} "
-                    triggers="mouseenter:mouseleave"
-                  >
-                    {{ category.value | currency: currencyIsoCode }}
-                  </span>
-                </td>
-              </tr>
+              <ng-container *ngFor="let category of contributionCategories">
+                <tr *ngIf="!category.hidden">
+                  <td>{{ category.name }}</td>
+                  <td>
+                    <span
+                      ngbPopover="Min:  {{
+                        category.info.min.value | currency: currencyIsoCode
+                      }} Max:  {{
+                        category.info.max.value | currency: currencyIsoCode
+                      }} Mean: {{
+                        category.info.mean | currency: currencyIsoCode
+                      }} "
+                      triggers="mouseenter:mouseleave"
+                    >
+                      {{ category.value | currency: currencyIsoCode }}
+                    </span>
+                  </td>
+                </tr>
+              </ng-container>
             </tbody>
           </table>
         </div>
@@ -567,48 +569,52 @@
                   <th colspan="4" class="">{{ categoryGroup.value.name }}</th>
                 </tr>
                 <ng-container formArrayName="categories">
-                  <tr
+                  <ng-container
                     *ngFor="
                       let category of categoryGroup.get('categories').controls;
                       let j = index
                     "
                     [formGroupName]="j"
                   >
-                    <td>{{ category.value.name }}</td>
-                    <td>
-                      <span
-                        ngbPopover="Min:  {{
-                          category.value.info.min.value
-                            | currency: currencyIsoCode
-                        }} Max:  {{
-                          category.value.info.max.value
-                            | currency: currencyIsoCode
-                        }} Mean: {{
-                          category.value.info.mean | currency: currencyIsoCode
-                        }} "
-                        triggers="mouseenter:mouseleave"
-                      >
-                        {{
-                          category.value.retrievedBudgeted
-                            | currency: currencyIsoCode
-                        }}
-                      </span>
-                    </td>
-                    <td>
-                      <input
-                        class="form-control form-control-sm"
-                        formControlName="fiBudget"
-                        type="number"
-                      />
-                    </td>
-                    <td>
-                      <input
-                        class="form-control form-control-sm"
-                        formControlName="leanFiBudget"
-                        type="number"
-                      />
-                    </td>
-                  </tr>
+                    <tr *ngIf="!category.value.hidden">
+                      <td>
+                        {{ category.value.name }}
+                      </td>
+                      <td>
+                        <span
+                          ngbPopover="Min:  {{
+                            category.value.info.min.value
+                              | currency: currencyIsoCode
+                          }} Max:  {{
+                            category.value.info.max.value
+                              | currency: currencyIsoCode
+                          }} Mean: {{
+                            category.value.info.mean | currency: currencyIsoCode
+                          }} "
+                          triggers="mouseenter:mouseleave"
+                        >
+                          {{
+                            category.value.retrievedBudgeted
+                              | currency: currencyIsoCode
+                          }}
+                        </span>
+                      </td>
+                      <td>
+                        <input
+                          class="form-control form-control-sm"
+                          formControlName="fiBudget"
+                          type="number"
+                        />
+                      </td>
+                      <td>
+                        <input
+                          class="form-control form-control-sm"
+                          formControlName="leanFiBudget"
+                          type="number"
+                        />
+                      </td>
+                    </tr>
+                  </ng-container>
                 </ng-container>
               </ng-container>
             </tbody>

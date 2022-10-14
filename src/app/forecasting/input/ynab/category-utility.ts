@@ -121,7 +121,6 @@ export default class CategoryUtility {
     if (overrides.contributionBudget !== undefined) {
       contributionBudget = overrides.contributionBudget;
     }
-
     return Object.assign({
       name: category.name,
       ignore,
