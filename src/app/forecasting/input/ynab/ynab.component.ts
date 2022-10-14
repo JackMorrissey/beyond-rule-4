@@ -485,6 +485,7 @@ export class YnabComponent implements OnInit {
               name: c.name,
               value: c.contributionBudget,
               info: c.info,
+              hidden: c.hidden,
             });
           }
         });
@@ -546,6 +547,7 @@ export class YnabComponent implements OnInit {
               leanFiBudget: c.computedLeanFiBudget,
               info: c.info,
               ignore: c.ignore,
+              hidden: c.hidden,
             })
           )
         ),
