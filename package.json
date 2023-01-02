@@ -31,11 +31,11 @@
     "zone.js": "^0.11.5"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^0.1102.19",
+    "@angular-devkit/build-angular": "^15.0.4",
     "@angular-eslint/builder": "2.0.2",
     "@angular-eslint/eslint-plugin": "2.0.2",
     "@angular-eslint/eslint-plugin-template": "2.0.2",
-    "@angular-eslint/schematics": "2.0.2",
+    "@angular-eslint/schematics": "15.1.0",
     "@angular-eslint/template-parser": "2.0.2",
     "@angular/cli": "11.2.6",
     "@angular/compiler-cli": "11.2.7",
