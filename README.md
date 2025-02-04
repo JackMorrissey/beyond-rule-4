@@ -1,6 +1,9 @@
 # Beyond Rule 4
 
-<img src="logo.png" alt="Beyond Rule 4 Logo" width="64"/>
+<a href="https://beyondrule4.jmmorrissey.com/" target="_blank">
+  <img src="logo.png" alt="Beyond Rule 4 Logo" width="64"/>
+</a>
+
 
 [Live Site](https://beyondrule4.jmmorrissey.com)
 
