@@ -1,5 +1,7 @@
 # Beyond Rule 4
 
+<img src="logo.png" alt="Beyond Rule 4 Logo" width="64"/>
+
 [Live Site](https://beyondrule4.jmmorrissey.com)
 
 This project is a Financial Independence forecasting tool built with the intent of using the YNAB API.
