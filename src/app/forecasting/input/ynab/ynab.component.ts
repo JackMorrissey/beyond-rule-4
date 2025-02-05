@@ -463,8 +463,7 @@ export class YnabComponent implements OnInit {
     }
 
     if (
-      account.type === ynab.Account.TypeEnum.InvestmentAccount ||
-      account.type === ynab.Account.TypeEnum.OtherAsset
+      account.type === ynab.AccountType.OtherAsset
     ) {
       return ynabBalance;
     }
