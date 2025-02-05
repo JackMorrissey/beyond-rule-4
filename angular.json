@@ -123,7 +123,6 @@
       }
     }
   },
-  "defaultProject": "fi-forecasting",
   "schematics": {
     "@schematics/angular:component": {
       "prefix": "app",

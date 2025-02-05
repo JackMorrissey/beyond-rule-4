@@ -1,5 +1,5 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { FormGroup, FormArray, FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormArray, UntypedFormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { NgbPanelChangeEvent } from '@ng-bootstrap/ng-bootstrap';
 import { timer } from 'rxjs';
@@ -21,7 +21,7 @@ import { getSelectedMonths, QuickSelectMonthChoice } from './months-utility';
 export class YnabComponent implements OnInit {
   @Output() calculateInputChange = new EventEmitter<CalculateInput>();
 
-  budgetForm: FormGroup;
+  budgetForm: UntypedFormGroup;
   displayContributionInfo = true;
   currencyIsoCode = 'USD';
   public safeWithdrawalRatePercentage = 4.0;
@@ -62,7 +62,7 @@ export class YnabComponent implements OnInit {
 
   constructor(
     private ynabService: YnabApiService,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private activatedRoute: ActivatedRoute
   ) {
     this.expenses = {
@@ -119,12 +119,12 @@ export class YnabComponent implements OnInit {
     });
   }
 
-  get categoryGroups(): FormArray {
-    return this.budgetForm.get('categoryGroups') as FormArray;
+  get categoryGroups(): UntypedFormArray {
+    return this.budgetForm.get('categoryGroups') as UntypedFormArray;
   }
 
-  get accounts(): FormArray {
-    return this.budgetForm.get('accounts') as FormArray;
+  get accounts(): UntypedFormArray {
+    return this.budgetForm.get('accounts') as UntypedFormArray;
   }
 
   async ngOnInit() {
