@@ -80,7 +80,7 @@ export class ChartComponent implements OnInit, AfterContentInit, OnChanges {
 
   getToolTipDate(tooltipItem: any) {
     const forecastDate: Date = tooltipItem.name;
-    const options = { year: 'numeric', month: 'short' };
+    const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'short' };
     const date = forecastDate.toLocaleDateString(this.locale, options);
     const distance = this.forecast.getDistanceFromFirstMonthText(forecastDate);
     if (!distance) {

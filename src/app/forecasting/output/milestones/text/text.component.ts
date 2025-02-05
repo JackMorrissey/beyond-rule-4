@@ -70,7 +70,7 @@ export class TextComponent implements OnInit, OnChanges {
       return 'N/A';
     }
 
-    const options = { year: 'numeric', month: 'short' };
+    const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'short' };
     return forecastDate.toLocaleDateString('en-US', options);
   }
 
