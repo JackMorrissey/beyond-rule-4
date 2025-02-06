@@ -29,6 +29,7 @@ $text-color-dark: white;
 
 body {
   font-family: $font-stack;
+  font-size: 0.9375rem;
 }
 
 @media (prefers-color-scheme: dark) {
