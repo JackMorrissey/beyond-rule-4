@@ -28,6 +28,14 @@ $container-max-widths: ( // Restore Bootstrap 4 container widths
     border-color: $gray-100;
 }
 
+a {
+    text-decoration: none; /* Remove underline by default */
+}
+  
+a:hover, a:focus {
+    text-decoration: underline; /* Add underline on hover or focus */
+}
+
 /* Global styles and imports */
 $font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, 
               "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
