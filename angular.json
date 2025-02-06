@@ -56,18 +56,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "fi-forecasting:build"
+            "buildTarget": "fi-forecasting:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "fi-forecasting:build:production"
+              "buildTarget": "fi-forecasting:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "fi-forecasting:build"
+            "buildTarget": "fi-forecasting:build"
           }
         },
         "test": {
