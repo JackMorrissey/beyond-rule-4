@@ -12,20 +12,6 @@
       <ng-template ngbPanelTitle>
         <span class="float-start">Settings</span>
         <span class="accordion-info">
-          <span class="accordion-toggle">
-            <span
-              [ngClass]="{
-                'd-none': accordionPanelActiveStates.pSettings !== true
-              }"
-              ><i class="fas fa-caret-square-down"></i
-            ></span>
-            <span
-              [ngClass]="{
-                'd-none': accordionPanelActiveStates.pSettings === true
-              }"
-              ><i class="fas fa-caret-square-up"></i
-            ></span>
-          </span>
         </span>
       </ng-template>
       <ng-template ngbPanelContent>
@@ -259,20 +245,6 @@
         <span class="float-start">Starting Portfolio</span>
         <span class="accordion-info">
           {{ netWorth | currency: currencyIsoCode }}
-          <span class="accordion-toggle">
-            <span
-              [ngClass]="{
-                'd-none': accordionPanelActiveStates.pNetWorth !== true
-              }"
-              ><i class="fas fa-caret-square-down"></i
-            ></span>
-            <span
-              [ngClass]="{
-                'd-none': accordionPanelActiveStates.pNetWorth === true
-              }"
-              ><i class="fas fa-caret-square-up"></i
-            ></span>
-          </span>
         </span>
       </ng-template>
       <ng-template ngbPanelContent>
@@ -343,20 +315,6 @@
           >{{
             budgetForm.value.monthlyContribution | currency: currencyIsoCode
           }}
-          <span class="accordion-toggle">
-            <span
-              [ngClass]="{
-                'd-none': accordionPanelActiveStates.pContributions !== true
-              }"
-              ><i class="fas fa-caret-square-down"></i
-            ></span>
-            <span
-              [ngClass]="{
-                'd-none': accordionPanelActiveStates.pContributions === true
-              }"
-              ><i class="fas fa-caret-square-up"></i
-            ></span>
-          </span>
         </span>
       </ng-template>
 
@@ -488,20 +446,6 @@
         <span class="float-start">Expenses</span>
         <span class="accordion-info"
           >{{ expenses.fi.annual | currency: currencyIsoCode }}
-          <span class="accordion-toggle">
-            <span
-              [ngClass]="{
-                'd-none': accordionPanelActiveStates.pExpenses !== true
-              }"
-              ><i class="fas fa-caret-square-down"></i
-            ></span>
-            <span
-              [ngClass]="{
-                'd-none': accordionPanelActiveStates.pExpenses === true
-              }"
-              ><i class="fas fa-caret-square-up"></i
-            ></span>
-          </span>
         </span>
       </ng-template>
       <ng-template ngbPanelContent>
