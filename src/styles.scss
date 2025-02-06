@@ -16,6 +16,18 @@ $container-max-widths: ( // Restore Bootstrap 4 container widths
     padding-right: 16px;
   }
 
+.accordion-button {
+    background-color: $gray-100; 
+    color: $success;
+    border-color: $gray-100;
+}
+  
+.accordion-button:not(.collapsed) {
+    background-color: $gray-100; 
+    color: $success;
+    border-color: $gray-100;
+}
+
 /* Global styles and imports */
 $font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, 
               "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
