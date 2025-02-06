@@ -10,7 +10,7 @@
   >
     <ngb-panel id="pSettings">
       <ng-template ngbPanelTitle>
-        <span class="float-left">Settings</span>
+        <span class="float-start">Settings</span>
         <span class="accordion-info">
           <span class="accordion-toggle">
             <span
@@ -256,7 +256,7 @@
     </ngb-panel>
     <ngb-panel id="pNetWorth">
       <ng-template ngbPanelTitle>
-        <span class="float-left">Starting Portfolio</span>
+        <span class="float-start">Starting Portfolio</span>
         <span class="accordion-info">
           {{ netWorth | currency: currencyIsoCode }}
           <span class="accordion-toggle">
@@ -338,7 +338,7 @@
     </ngb-panel>
     <ngb-panel id="pContributions">
       <ng-template ngbPanelTitle>
-        <span class="float-left">Contributions</span>
+        <span class="float-start">Contributions</span>
         <span class="accordion-info"
           >{{
             budgetForm.value.monthlyContribution | currency: currencyIsoCode
@@ -485,7 +485,7 @@
     </ngb-panel>
     <ngb-panel id="pExpenses">
       <ng-template ngbPanelTitle>
-        <span class="float-left">Expenses</span>
+        <span class="float-start">Expenses</span>
         <span class="accordion-info"
           >{{ expenses.fi.annual | currency: currencyIsoCode }}
           <span class="accordion-toggle">

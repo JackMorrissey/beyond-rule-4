@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <a class="navbar-brand d-flex align-items-center" routerLink="/">
-    <img src="assets/favicon-96x96.png" alt="Beyond Rule 4 Logo" width="40" height="40" class="mr-2">
+    <img src="assets/favicon-96x96.png" alt="Beyond Rule 4 Logo" width="40" height="40" class="me-2">
     <span class="font-weight-bold font-italic">Beyond</span>&nbsp;Rule 4
   </a>
   <button class="navbar-toggler" type="button" (click)="isOpen = !isOpen" data-toggle="collapse"
@@ -10,7 +10,7 @@
   </button>
 
   <div class="navbar-collapse" [ngClass]="{collapse: !isOpen}" id="navbarSupportedContent">
-    <ul class="navbar-nav mr-auto">
+    <ul class="navbar-nav me-auto">
       <li class="nav-item" routerLinkActive="active" routerLink="/home">
         <a class="nav-link">Home</a>
       </li>
@@ -26,7 +26,7 @@
         <a class="nav-link">About</a>
       </li>
     </ul>
-    <form class="form-inline ml-2 my-2 my-lg-0">
+    <form class="form-inline ms-2 my-2 my-lg-0">
       <button *ngIf="!isAuthorized" class="btn btn-outline-primary my-2 my-sm-0" (click)="authorize()" type="button">
         <i class="fas fa-key"></i>
         Authorize with YNAB
