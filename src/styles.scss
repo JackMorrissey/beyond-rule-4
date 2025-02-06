@@ -1,5 +1,12 @@
 $enable-rfs: false;  // Disable responsive font sizes
 
+$container-max-widths: ( // Restore Bootstrap 4 container widths
+  sm: 540px,
+  md: 720px,
+  lg: 960px,
+  xl: 1140px
+) !default;
+
 @import "bootswatch/dist/flatly/variables";
 @import 'bootstrap/scss/bootstrap';
 @import "bootswatch/dist/flatly/bootswatch";
