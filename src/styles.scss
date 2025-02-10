@@ -1,5 +1,8 @@
 $enable-rfs: false;  // Disable responsive font sizes
 
+$link-decoration: none;
+$link-hover-decoration: underline;
+
 $container-max-widths: ( // Restore Bootstrap 4 container widths
   sm: 540px,
   md: 720px,
@@ -26,14 +29,6 @@ $container-max-widths: ( // Restore Bootstrap 4 container widths
     background-color: $gray-100; 
     color: $success;
     border-color: $gray-100;
-}
-
-a {
-    text-decoration: none; /* Remove underline by default */
-}
-  
-a:hover, a:focus {
-    text-decoration: underline; /* Add underline on hover or focus */
 }
 
 /* Global styles and imports */
