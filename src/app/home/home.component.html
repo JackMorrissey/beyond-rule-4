@@ -7,10 +7,10 @@
         <p><a href="https://www.youneedabudget.com/method/">Rule check!</a> How are you doing?</p>
         <ul class="list-unstyled ps-3">
 
-          <li><i class="far fa-check-square"></i> Every dollar has a job.</li>
-          <li><i class="far fa-check-square"></i> You've embraced your true expenses.</li>
-          <li><i class="far fa-check-square"></i> You're rolling with the punches.</li>
-          <li><i class="far fa-check-square"></i> Your money has aged 30 days.</li>
+          <li><fa-icon [icon]="['far', 'check-square']"></fa-icon> Every dollar has a job.</li>
+          <li><fa-icon [icon]="['far', 'check-square']"></fa-icon> You've embraced your true expenses.</li>
+          <li><fa-icon [icon]="['far', 'check-square']"></fa-icon> You're rolling with the punches.</li>
+          <li><fa-icon [icon]="['far', 'check-square']"></fa-icon> Your money has aged 30 days.</li>
         </ul>
 
         <p>Congratulations! You've conquered the four rules. You are well on your way to financial peace. Now what?</p>
@@ -36,12 +36,12 @@
 
         <div *ngIf="isAuthorized" class="mb-2">
           <p class="text-success">Successfully authorized with YNAB! What's next?</p>
-          <div class="mb-2"><a routerLink="/beyond" class="btn btn-success">Go Beyond <i class="fas fa-forward"></i></a>
+          <div class="mb-2"><a routerLink="/beyond" class="btn btn-success">Go Beyond <fa-icon [icon]="['fas', 'forward']"></fa-icon></a>
           </div>
         </div>
         <div *ngIf="!isAuthorized" class="mb-3">
           <p>Authorize with YNAB and let's find out!</p>
-          <div class=""><button (click)="authorize()" class="btn btn-primary btn-lg"><i class="fas fa-key"></i>
+          <div class=""><button (click)="authorize()" class="btn btn-primary btn-lg"><fa-icon [icon]="['fas', 'key']"></fa-icon>
               Authorize with YNAB</button></div>
           <div class="text-small mb-4 text-muted">We do not track or collect personal information. <a
               routerLink="/about">Privacy
@@ -49,14 +49,13 @@
 
           <div>
             <p>Just browsing? No worries!</p>
-            <div class="mb-2"><a routerLink="/beyond" class="btn btn-secondary">Continue With Example Data <i
-                  class="fas fa-forward"></i></a></div>
+            <div class="mb-2"><a routerLink="/beyond" class="btn btn-secondary">Continue With Example Data <fa-icon [icon]="['fas', 'forward']"></fa-icon></a></div>
           </div>
         </div>
       </div>
     </div>
     <div class="col-lg-3 text-center d-none d-lg-block">
-      <i class="fas fa-rocket giant-icon mt-5"></i>
+      <fa-icon [icon]="['fas', 'rocket']" class="giant-icon mt-5"></fa-icon>
     </div>
   </div>
 </div>

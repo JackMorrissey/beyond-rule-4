@@ -28,7 +28,7 @@
     </ul>
     <form class="form-inline ms-2 my-2 my-lg-0">
       <button *ngIf="!isAuthorized" class="btn btn-outline-primary my-2 my-sm-0" (click)="authorize()" type="button">
-        <i class="fas fa-key"></i>
+        <fa-icon [icon]="['fas', 'key']"></fa-icon>
         Authorize with YNAB
       </button>
       <button *ngIf="isAuthorized" class="btn btn-outline-primary my-2 my-sm-0" (click)="logOut()" type="button">Log

@@ -18,10 +18,10 @@
                 <td>{{ c.category.fiBudget | currency:calculateInput.currencyIsoCode }}</td>
                 <td>
                     <span [ngClass]="{'d-none': c.isFi === true}">
-                        <i class="fas fa-plus-circle"></i>
+                        <fa-icon [icon]="['fas', 'plus-circle']"></fa-icon>
                     </span>
                     <span [ngClass]="{'d-none': c.isFi !== true}">
-                        <i class="fas fa-check-circle"></i>
+                        <fa-icon [icon]="['fas', 'check-circle']"></fa-icon>
                     </span>
                     {{ c.impactDate }}
                 </td>
