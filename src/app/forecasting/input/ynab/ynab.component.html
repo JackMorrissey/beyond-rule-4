@@ -12,6 +12,12 @@
       <ng-template ngbPanelTitle>
         <span class="float-start">Settings</span>
         <span class="accordion-info">
+          <span class="accordion-toggle">
+            <fa-icon
+              [icon]="['fas', 'caret-square-down']"
+              [transform]="{ rotate: accordionPanelActiveStates.pSettings ? 180 : 0 }"
+            ></fa-icon>
+          </span>
         </span>
       </ng-template>
       <ng-template ngbPanelContent>
@@ -245,6 +251,12 @@
         <span class="float-start">Starting Portfolio</span>
         <span class="accordion-info">
           {{ netWorth | currency: currencyIsoCode }}
+          <span class="accordion-toggle">
+            <fa-icon
+              [icon]="['fas', 'caret-square-down']"
+              [transform]="{ rotate: accordionPanelActiveStates.pNetWorth ? 180 : 0 }"
+            ></fa-icon>
+          </span>
         </span>
       </ng-template>
       <ng-template ngbPanelContent>
@@ -315,6 +327,12 @@
           >{{
             budgetForm.value.monthlyContribution | currency: currencyIsoCode
           }}
+          <span class="accordion-toggle">
+            <fa-icon
+              [icon]="['fas', 'caret-square-down']"
+              [transform]="{ rotate: accordionPanelActiveStates.pContributions ? 180 : 0 }"
+            ></fa-icon>
+          </span>
         </span>
       </ng-template>
 
@@ -446,6 +464,12 @@
         <span class="float-start">Expenses</span>
         <span class="accordion-info"
           >{{ expenses.fi.annual | currency: currencyIsoCode }}
+          <span class="accordion-toggle">
+            <fa-icon
+              [icon]="['fas', 'caret-square-down']"
+              [transform]="{ rotate: accordionPanelActiveStates.pExpenses ? 180 : 0 }"
+            ></fa-icon>
+          </span>
         </span>
       </ng-template>
       <ng-template ngbPanelContent>

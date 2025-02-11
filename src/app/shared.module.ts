@@ -6,7 +6,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { RouterModule, Routes } from '@angular/router';
 import { FontAwesomeModule, FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import { faCheckSquare } from '@fortawesome/free-regular-svg-icons';
-import { faRocket, faForward, faRunning, faExternalLinkSquareAlt, faInfoCircle, faCheckCircle, faSync, faPlusCircle, faKey} from '@fortawesome/free-solid-svg-icons';
+import { faRocket, faForward, faRunning, faExternalLinkSquareAlt, faInfoCircle, faCheckCircle, faSync, faPlusCircle, faKey, faCaretSquareDown} from '@fortawesome/free-solid-svg-icons';
 
 @NgModule({
   imports: [
@@ -29,6 +29,6 @@ import { faRocket, faForward, faRunning, faExternalLinkSquareAlt, faInfoCircle, 
 })
 export class SharedModule {
   constructor(library: FaIconLibrary) {
-    library.addIcons(faCheckSquare, faRocket, faForward, faRunning, faExternalLinkSquareAlt, faInfoCircle, faCheckCircle, faSync, faPlusCircle, faKey);
+    library.addIcons(faCheckSquare, faRocket, faForward, faRunning, faExternalLinkSquareAlt, faInfoCircle, faCheckCircle, faSync, faPlusCircle, faKey, faCaretSquareDown);
   }
 }
