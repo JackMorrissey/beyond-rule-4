@@ -11,13 +11,11 @@
     <ngb-panel id="pSettings">
       <ng-template ngbPanelTitle>
         <span class="float-start">Settings</span>
-        <span class="accordion-info">
-          <span class="accordion-toggle">
-            <fa-icon
-              [icon]="['fas', 'caret-square-down']"
-              [transform]="{ rotate: accordionPanelActiveStates.pSettings ? 180 : 0 }"
-            ></fa-icon>
-          </span>
+        <span class="ms-auto">
+          <fa-icon
+            [icon]="['fas', 'caret-square-down']"
+            [transform]="{ rotate: accordionPanelActiveStates.pSettings ? 180 : 0 }"
+          ></fa-icon>
         </span>
       </ng-template>
       <ng-template ngbPanelContent>
@@ -249,14 +247,13 @@
     <ngb-panel id="pNetWorth">
       <ng-template ngbPanelTitle>
         <span class="float-start">Starting Portfolio</span>
-        <span class="accordion-info">
+        <span class="ms-auto">
           {{ netWorth | currency: currencyIsoCode }}
-          <span class="accordion-toggle">
-            <fa-icon
-              [icon]="['fas', 'caret-square-down']"
-              [transform]="{ rotate: accordionPanelActiveStates.pNetWorth ? 180 : 0 }"
-            ></fa-icon>
-          </span>
+          <fa-icon
+            [icon]="['fas', 'caret-square-down']"
+            [transform]="{ rotate: accordionPanelActiveStates.pNetWorth ? 180 : 0 }"
+            class="ms-3"
+          ></fa-icon>
         </span>
       </ng-template>
       <ng-template ngbPanelContent>
@@ -323,16 +320,15 @@
     <ngb-panel id="pContributions">
       <ng-template ngbPanelTitle>
         <span class="float-start">Contributions</span>
-        <span class="accordion-info"
+        <span class="ms-auto"
           >{{
             budgetForm.value.monthlyContribution | currency: currencyIsoCode
           }}
-          <span class="accordion-toggle">
-            <fa-icon
-              [icon]="['fas', 'caret-square-down']"
-              [transform]="{ rotate: accordionPanelActiveStates.pContributions ? 180 : 0 }"
-            ></fa-icon>
-          </span>
+          <fa-icon
+            [icon]="['fas', 'caret-square-down']"
+            [transform]="{ rotate: accordionPanelActiveStates.pContributions ? 180 : 0 }"
+            class="ms-3"
+          ></fa-icon>
         </span>
       </ng-template>
 
@@ -462,14 +458,13 @@
     <ngb-panel id="pExpenses">
       <ng-template ngbPanelTitle>
         <span class="float-start">Expenses</span>
-        <span class="accordion-info"
+        <span class="ms-auto"
           >{{ expenses.fi.annual | currency: currencyIsoCode }}
-          <span class="accordion-toggle">
-            <fa-icon
-              [icon]="['fas', 'caret-square-down']"
-              [transform]="{ rotate: accordionPanelActiveStates.pExpenses ? 180 : 0 }"
-            ></fa-icon>
-          </span>
+          <fa-icon
+            [icon]="['fas', 'caret-square-down']"
+            [transform]="{ rotate: accordionPanelActiveStates.pExpenses ? 180 : 0 }"
+            class="ms-3"
+          ></fa-icon>
         </span>
       </ng-template>
       <ng-template ngbPanelContent>
