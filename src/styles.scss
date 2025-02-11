@@ -1,7 +1,9 @@
+@import "bootswatch/dist/flatly/variables";
 $enable-rfs: false;  // Disable responsive font sizes
 
 $link-decoration: none;
 $link-hover-decoration: underline;
+$link-color-dark: $success;
 
 $container-max-widths: ( // Restore Bootstrap 4 container widths
   sm: 540px,
@@ -10,7 +12,23 @@ $container-max-widths: ( // Restore Bootstrap 4 container widths
   xl: 1140px
 ) !default;
 
-@import "bootswatch/dist/flatly/variables";
+$accordion-padding-y:                     8px;
+$accordion-padding-x:                     20px;
+$accordion-button-color:                  $success;
+$accordion-button-active-color:           $success;
+$accordion-button-bg:                     var(--bs-accordion-button-bg);
+$accordion-button-active-bg:               var(--bs-accordion-button-active-bg);
+
+:root {
+  --bs-accordion-button-bg: #{ $gray-100 };
+  --bs-accordion-button-active-bg: #{ $gray-100} ;
+}
+
+[data-bs-theme="dark"] {
+  --bs-accordion-button-bg: #{ $gray-800 };
+  --bs-accordion-button-active-bg: #{ $gray-800 };
+}
+
 @import 'bootstrap/scss/bootstrap';
 @import "bootswatch/dist/flatly/bootswatch";
 
@@ -18,18 +36,6 @@ $container-max-widths: ( // Restore Bootstrap 4 container widths
     padding-left: 16px;
     padding-right: 16px;
   }
-
-.accordion-button {
-    background-color: $gray-100; 
-    color: $success;
-    border-color: $gray-100;
-}
-  
-.accordion-button:not(.collapsed) {
-    background-color: $gray-100; 
-    color: $success;
-    border-color: $gray-100;
-}
 
 .accordion-button.collapsed::after {
   display: none;

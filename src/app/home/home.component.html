@@ -41,7 +41,7 @@
         </div>
         <div *ngIf="!isAuthorized" class="mb-3">
           <p>Authorize with YNAB and let's find out!</p>
-          <div class=""><button (click)="authorize()" class="btn btn-primary btn-lg"><fa-icon [icon]="['fas', 'key']"></fa-icon>
+          <div class=""><button (click)="authorize()" class="btn btn-success btn-lg"><fa-icon [icon]="['fas', 'key']"></fa-icon>
               Authorize with YNAB</button></div>
           <div class="text-small mb-4 text-muted">We do not track or collect personal information. <a
               routerLink="/about">Privacy
