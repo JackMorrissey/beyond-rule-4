@@ -1,6 +1,6 @@
 {
-  "name": "Beyond Rule 4",
-  "short_name": "Beyond4",
+  "name": "Beyond Rule 4 - YNAB and Financial Independence (FIRE)",
+  "short_name": "Beyond Rule 4",
   "icons": [
     {
       "src": "/assets/web-app-manifest-192x192.png",
@@ -15,7 +15,7 @@
       "purpose": "maskable"
     }
   ],
-  "theme_color": "#18BC9C",
-  "background_color": "#18BC9C",
+  "theme_color": "#7b8a8b",
+  "background_color": "#7b8a8b",
   "display": "standalone"
 }

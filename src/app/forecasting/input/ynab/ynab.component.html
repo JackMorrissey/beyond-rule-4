@@ -1,5 +1,5 @@
-<div class="alert alert-dark font-weight-bold" *ngIf="isUsingSampleData">
-  <i class="fas fa-info-circle"></i>
+<div class="alert alert-dark fw-bold" *ngIf="isUsingSampleData">
+  <fa-icon [icon]="['fas', 'info-circle']"></fa-icon>
   Using Sample Data
 </div>
 
@@ -10,27 +10,17 @@
   >
     <ngb-panel id="pSettings">
       <ng-template ngbPanelTitle>
-        <span class="float-left">Settings</span>
-        <span class="accordion-info">
-          <span class="accordion-toggle">
-            <span
-              [ngClass]="{
-                'd-none': accordionPanelActiveStates.pSettings !== true
-              }"
-              ><i class="fas fa-caret-square-down"></i
-            ></span>
-            <span
-              [ngClass]="{
-                'd-none': accordionPanelActiveStates.pSettings === true
-              }"
-              ><i class="fas fa-caret-square-up"></i
-            ></span>
-          </span>
+        <span class="float-start">Settings</span>
+        <span class="ms-auto">
+          <fa-icon
+            [icon]="['fas', 'caret-square-down']"
+            [transform]="{ rotate: accordionPanelActiveStates.pSettings ? 180 : 0 }"
+          ></fa-icon>
         </span>
       </ng-template>
       <ng-template ngbPanelContent>
         <div class="form-group">
-          <div class="row">
+          <div class="row mb-3">
             <label
               for="selectedBudget"
               class="col-sm-12 col-md-5 col-form-label"
@@ -52,7 +42,7 @@
           </div>
         </div>
         <div class="form-group">
-          <div class="row">
+          <div class="row mb-1">
             <label
               for="selectedBudget"
               class="col-sm-12 col-md-5 col-form-label"
@@ -72,7 +62,7 @@
               </div>
             </div>
           </div>
-          <div class="row">
+          <div class="row mb-1">
             <label
               for="selectedBudget"
               class="col-sm-12 col-md-5 col-form-label"
@@ -93,7 +83,7 @@
             </div>
           </div>
 
-          <div class="row">
+          <div class="row mb-1">
             <label
               for="selectedBudget"
               class="col-sm-12 col-md-5 col-form-label"
@@ -135,7 +125,7 @@
             </div>
           </div>
 
-          <div class="row">
+          <div class="row mb-3">
             <div class="col">
               <small
                 >The month range to use for average contributions and expenses
@@ -165,7 +155,7 @@
               </div>
             </div>
           </div>
-          <div class="row">
+          <div class="row mb-3">
             <div class="col">
               <small
                 >"The rate that you can withdraw from your portfolio every year
@@ -175,7 +165,7 @@
                   target="_blank"
                   href="https://www.madfientist.com/safe-withdrawal-rate/"
                   >Mad Fientist
-                  <i class="fas fa-external-link-square-alt fa-sm"></i>
+                  <fa-icon [icon]="['fas', 'external-link-square-alt']" size="sm"></fa-icon>
                 </a>
               </small>
               <div>
@@ -184,14 +174,14 @@
                     target="_blank"
                     href="http://www.mrmoneymustache.com/2012/05/29/how-much-do-i-need-for-retirement/"
                     >4% - Mr. Money Mustache
-                    <i class="fas fa-external-link-square-alt fa-sm"></i>
+                    <fa-icon [icon]="['fas', 'external-link-square-alt']" size="sm"></fa-icon>
                   </a>
                   |
                   <a
                     target="_blank"
-                    href="https://www.morningstar.com.au/insights/retirement/246616/the-4-rule-explained"
-                    >The 4% rule explained - Morningstar
-                    <i class="fas fa-external-link-square-alt fa-sm"></i>
+                    href="https://web.archive.org/web/20181009165106/http://media.morningstar.com/uk/MEDIA/Comprehensive_update_on_the_Safe_Withdrawal_Rate.pdf"
+                    >SWR in the UK - Morningstar
+                    <fa-icon [icon]="['fas', 'external-link-square-alt']" size="sm"></fa-icon>
                   </a>
                 </small>
               </div>
@@ -221,29 +211,29 @@
               </div>
             </div>
           </div>
-          <div class="row">
+          <div class="row mb-3">
             <div class="col">
               <small>
                 <a
                   target="_blank"
                   href="http://www.mrmoneymustache.com/2011/06/06/dude-wheres-my-7-investment-return/"
                   >7% - Mr. Money Mustache
-                  <i class="fas fa-external-link-square-alt fa-sm"></i>
+                  <fa-icon [icon]="['fas', 'external-link-square-alt']" size="sm"></fa-icon>
                 </a>
               </small>
             </div>
           </div>
-          <div class="row">
+          <div class="row mb-3">
             <label
               for="includeHiddenYnabCategories"
-              class="col-sm-12 col-md-5 col-form-label"
+              class="col-sm-12 col-md-5 col-form-label d-flex align-items-center"
               >Include Hidden Categories</label
             >
             <div class="col">
-              <div class="input-group">
+              <div class="form-check d-flex align-items-center">
                 <input
                   type="checkbox"
-                  class="form-control"
+                  class="form-check-input"
                   id="includeHiddenYnabCategories"
                   formControlName="includeHiddenYnabCategories"
                   aria-describedby="includeHiddenYnabCategoriesHelp"
@@ -256,27 +246,18 @@
     </ngb-panel>
     <ngb-panel id="pNetWorth">
       <ng-template ngbPanelTitle>
-        <span class="float-left">Starting Portfolio</span>
-        <span class="accordion-info">
+        <span class="float-start">Starting Portfolio</span>
+        <span class="ms-auto">
           {{ netWorth | currency: currencyIsoCode }}
-          <span class="accordion-toggle">
-            <span
-              [ngClass]="{
-                'd-none': accordionPanelActiveStates.pNetWorth !== true
-              }"
-              ><i class="fas fa-caret-square-down"></i
-            ></span>
-            <span
-              [ngClass]="{
-                'd-none': accordionPanelActiveStates.pNetWorth === true
-              }"
-              ><i class="fas fa-caret-square-up"></i
-            ></span>
-          </span>
+          <fa-icon
+            [icon]="['fas', 'caret-square-down']"
+            [transform]="{ rotate: accordionPanelActiveStates.pNetWorth ? 180 : 0 }"
+            class="ms-3"
+          ></fa-icon>
         </span>
       </ng-template>
       <ng-template ngbPanelContent>
-        <div class="row">
+        <div class="row mb-3">
           <table class="table col-12">
             <thead class="thead-sum">
               <tr>
@@ -293,7 +274,7 @@
                 </td>
               </tr>
             </thead>
-            <thead class="thead-dark">
+            <thead class="table-dark">
               <tr>
                 <th>Account</th>
                 <th>YNAB Balance</th>
@@ -338,30 +319,21 @@
     </ngb-panel>
     <ngb-panel id="pContributions">
       <ng-template ngbPanelTitle>
-        <span class="float-left">Contributions</span>
-        <span class="accordion-info"
+        <span class="float-start">Contributions</span>
+        <span class="ms-auto"
           >{{
             budgetForm.value.monthlyContribution | currency: currencyIsoCode
           }}
-          <span class="accordion-toggle">
-            <span
-              [ngClass]="{
-                'd-none': accordionPanelActiveStates.pContributions !== true
-              }"
-              ><i class="fas fa-caret-square-down"></i
-            ></span>
-            <span
-              [ngClass]="{
-                'd-none': accordionPanelActiveStates.pContributions === true
-              }"
-              ><i class="fas fa-caret-square-up"></i
-            ></span>
-          </span>
+          <fa-icon
+            [icon]="['fas', 'caret-square-down']"
+            [transform]="{ rotate: accordionPanelActiveStates.pContributions ? 180 : 0 }"
+            class="ms-3"
+          ></fa-icon>
         </span>
       </ng-template>
 
       <ng-template ngbPanelContent>
-        <div class="form-group row">
+        <div class="form-group row mb-3">
           <label
             for="monthlyContribution"
             class="col-sm-12 col-md-5 col-form-label"
@@ -378,7 +350,7 @@
           </div>
           <!-- <div class="col-sm-1">
             <button type="button" class="btn btn-link" (click)="displayContributionInfo = !displayContributionInfo">
-              <i class="fas fa-info-circle"></i>
+              <fa-icon [icon]="['fas', 'info-circle']"></fa-icon>
             </button>
           </div> -->
         </div>
@@ -387,7 +359,7 @@
           *ngIf="contributionCategories && contributionCategories.length"
         >
           <table class="table col-12">
-            <thead class="thead-dark">
+            <thead class="table-dark">
               <tr>
                 <th>Category Name</th>
                 <th>Contribution</th>
@@ -485,49 +457,40 @@
     </ngb-panel>
     <ngb-panel id="pExpenses">
       <ng-template ngbPanelTitle>
-        <span class="float-left">Expenses</span>
-        <span class="accordion-info"
+        <span class="float-start">Expenses</span>
+        <span class="ms-auto"
           >{{ expenses.fi.annual | currency: currencyIsoCode }}
-          <span class="accordion-toggle">
-            <span
-              [ngClass]="{
-                'd-none': accordionPanelActiveStates.pExpenses !== true
-              }"
-              ><i class="fas fa-caret-square-down"></i
-            ></span>
-            <span
-              [ngClass]="{
-                'd-none': accordionPanelActiveStates.pExpenses === true
-              }"
-              ><i class="fas fa-caret-square-up"></i
-            ></span>
-          </span>
+          <fa-icon
+            [icon]="['fas', 'caret-square-down']"
+            [transform]="{ rotate: accordionPanelActiveStates.pExpenses ? 180 : 0 }"
+            class="ms-3"
+          ></fa-icon>
         </span>
       </ng-template>
       <ng-template ngbPanelContent>
         <div class="row">
           <table class="table table-sm col-12 expenses">
-            <thead class="thead-dark">
+            <thead class="table-dark">
               <tr>
                 <th>Calculated</th>
                 <th>YNAB</th>
                 <th
-                  placement="top-center"
+                  placement="top"
                   triggers="click:blur hover"
                   container="body"
                   ngbTooltip="FI budget includes all expenses to maintain your current lifestyle."
                 >
                   FI &nbsp;
-                  <i class="fas fa-info-circle"></i>
+                  <fa-icon [icon]="['fas', 'info-circle']"></fa-icon>
                 </th>
                 <th
-                  placement="top-center"
+                  placement="top"
                   triggers="click:blur hover"
                   container="body"
                   ngbTooltip="Lean FI budget includes all expenses to just get by. Think FI but without any fun."
                 >
                   Lean FI &nbsp;
-                  <i class="fas fa-info-circle"></i>
+                  <fa-icon [icon]="['fas', 'info-circle']"></fa-icon>
                 </th>
               </tr>
             </thead>
@@ -549,7 +512,7 @@
                 </td>
               </tr>
             </tbody>
-            <thead class="thead-dark">
+            <thead class="table-dark">
               <tr>
                 <th>Category</th>
                 <th>YNAB Budget</th>

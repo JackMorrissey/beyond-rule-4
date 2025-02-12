@@ -11,18 +11,6 @@
   padding: 0.5rem 1.25rem; /* Or whatever padding you would have applied in the next rule*/
 }
 
-ngb-accordion .card-header {
-  padding: 0; /* Just to make sure the <a> fills the whole card header */
-}
-
-.accordion-info {
-  float: right;
-}
-
-.accordion-toggle {
-  margin-left: 15px;
-}
-
 .budgetForm {
   word-break: break-word;
 }

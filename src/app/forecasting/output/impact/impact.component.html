@@ -1,4 +1,4 @@
-<h3 class="font-weight-bolder">Expense Impact on FI Date</h3>
+<h3 class="fw-bolder">Expense Impact on FI Date</h3>
 <p>Each component of your spending adds time to your FI Date. Eliminate spending in a category below and move that
     spending to savings contributions, and you can reduce your FI Date by the amount under <strong>Impact on FI
         Date</strong>.
@@ -18,10 +18,10 @@
                 <td>{{ c.category.fiBudget | currency:calculateInput.currencyIsoCode }}</td>
                 <td>
                     <span [ngClass]="{'d-none': c.isFi === true}">
-                        <i class="fas fa-plus-circle"></i>
+                        <fa-icon [icon]="['fas', 'plus-circle']"></fa-icon>
                     </span>
                     <span [ngClass]="{'d-none': c.isFi !== true}">
-                        <i class="fas fa-check-circle"></i>
+                        <fa-icon [icon]="['fas', 'check-circle']"></fa-icon>
                     </span>
                     {{ c.impactDate }}
                 </td>

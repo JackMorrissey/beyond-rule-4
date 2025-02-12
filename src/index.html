@@ -11,15 +11,17 @@
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
   <link rel="shortcut icon" href="assets/favicon.ico" />
   <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png" />
-  <meta name="apple-mobile-web-app-title" content="Beyond4" />
+  <meta name="apple-mobile-web-app-title" content="Beyond Rule 4" />
   <link rel="manifest" href="assets/site.webmanifest" />
 
   <!-- Load environment variables -->
   <script src="assets/env.js"></script>
 
-  <script defer src="https://use.fontawesome.com/releases/v5.13.0/js/all.js" crossorigin="anonymous"></script>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-N0REZM6WE6"></script>
   <script>
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      document.documentElement.setAttribute('data-bs-theme', 'dark');
+    }
     window.dataLayer = window.dataLayer || [];
     function gtag() {
       if (!navigator || !navigator.doNotTrack) {
