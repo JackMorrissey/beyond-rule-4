@@ -1,7 +1,6 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { UntypedFormGroup, UntypedFormArray, UntypedFormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { NgbPanelChangeEvent } from '@ng-bootstrap/ng-bootstrap';
 import { timer } from 'rxjs';
 import { debounce } from 'rxjs/operators';
 import * as ynab from 'ynab';
@@ -57,8 +56,6 @@ export class YnabComponent implements OnInit {
   };
   public contributionCategories: any;
   public isUsingSampleData = false;
-
-  public accordionPanelActiveStates: any = {};
 
   constructor(
     private ynabService: YnabApiService,
@@ -349,10 +346,6 @@ export class YnabComponent implements OnInit {
     }
 
     this.recalculate();
-  }
-
-  beforePanelChange($event: NgbPanelChangeEvent) {
-    this.accordionPanelActiveStates[$event.panelId] = $event.nextState;
   }
 
   private setInitialSelectedBudget(): string {
