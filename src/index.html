@@ -12,7 +12,7 @@
   <link rel="shortcut icon" href="assets/favicon.ico" />
   <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png" />
   <meta name="apple-mobile-web-app-title" content="Beyond Rule 4" />
-  <link rel="manifest" href="assets/site.webmanifest" />
+  <link rel="manifest" id="manifest-placeholder" />
 
   <!-- Load environment variables -->
   <script src="assets/env.js"></script>
@@ -21,6 +21,10 @@
   <script>
     if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
       document.documentElement.setAttribute('data-bs-theme', 'dark');
+      document.querySelector('#manifest-placeholder').setAttribute('href', '/assets/site.webmanifest-dark');
+    } else {
+      document.documentElement.setAttribute('data-bs-theme', 'light');
+      document.querySelector('#manifest-placeholder').setAttribute('href', '/assets/site.webmanifest');
     }
     window.dataLayer = window.dataLayer || [];
     function gtag() {
