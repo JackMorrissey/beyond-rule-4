@@ -4,7 +4,8 @@ import { CalculateInput } from '../../models/calculate-input.model';
 
 @Component({
     selector: 'app-expense-impact',
-    templateUrl: 'impact.component.html'
+    templateUrl: 'impact.component.html',
+    standalone: false
 })
 
 export class ImpactComponent implements OnInit, OnChanges {

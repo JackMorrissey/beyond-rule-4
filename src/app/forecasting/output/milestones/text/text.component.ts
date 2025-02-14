@@ -5,9 +5,10 @@ import { Forecast, MonthlyForecast } from '../../../models/forecast.model';
 import { Milestones } from '../milestone.model';
 
 @Component({
-  selector: 'app-milestones-text',
-  templateUrl: 'text.component.html',
-  styleUrls: ['./text.component.css']
+    selector: 'app-milestones-text',
+    templateUrl: 'text.component.html',
+    styleUrls: ['./text.component.css'],
+    standalone: false
 })
 
 export class TextComponent implements OnInit, OnChanges {

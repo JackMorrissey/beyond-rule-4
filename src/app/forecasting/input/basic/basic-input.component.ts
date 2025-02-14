@@ -6,8 +6,9 @@ import { debounce } from 'rxjs/operators';
 import { CalculateInput } from '../../models/calculate-input.model';
 
 @Component({
-  selector: 'app-basic-input',
-  templateUrl: 'basic-input.component.html'
+    selector: 'app-basic-input',
+    templateUrl: 'basic-input.component.html',
+    standalone: false
 })
 
 export class BasicInputComponent implements OnInit, OnChanges {

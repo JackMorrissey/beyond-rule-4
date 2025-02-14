@@ -5,9 +5,10 @@ import { Forecast } from '../../models/forecast.model';
 import { Milestones } from './milestone.model';
 
 @Component({
-  selector: 'app-milestones',
-  templateUrl: './milestones.component.html',
-  styleUrls: ['./milestones.component.css']
+    selector: 'app-milestones',
+    templateUrl: './milestones.component.html',
+    styleUrls: ['./milestones.component.css'],
+    standalone: false
 })
 export class MilestonesComponent implements OnInit, OnChanges {
 

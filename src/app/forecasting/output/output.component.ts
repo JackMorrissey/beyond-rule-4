@@ -4,8 +4,9 @@ import { CalculateInput } from '../models/calculate-input.model';
 import { Forecast } from '../models/forecast.model';
 
 @Component({
-  selector: 'app-forecasting-output',
-  templateUrl: 'output.component.html'
+    selector: 'app-forecasting-output',
+    templateUrl: 'output.component.html',
+    standalone: false
 })
 
 export class ForecastingOutputComponent implements OnInit, OnChanges {

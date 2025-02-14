@@ -13,9 +13,10 @@ import NoteUtility, { Overrides } from './note-utility';
 import { getSelectedMonths, QuickSelectMonthChoice } from './months-utility';
 
 @Component({
-  selector: 'app-ynab',
-  templateUrl: 'ynab.component.html',
-  styleUrls: ['./ynab.component.css'],
+    selector: 'app-ynab',
+    templateUrl: 'ynab.component.html',
+    styleUrls: ['./ynab.component.css'],
+    standalone: false
 })
 export class YnabComponent implements OnInit {
   @Output() calculateInputChange = new EventEmitter<CalculateInput>();

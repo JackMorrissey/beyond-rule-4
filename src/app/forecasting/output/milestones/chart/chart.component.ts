@@ -9,12 +9,13 @@ import { Milestones } from '../milestone.model';
 declare let d3: any;
 
 @Component({
-  selector: 'app-milestones-chart',
-  templateUrl: './chart.component.html',
-  styleUrls: [
-    './chart.component.css'
-  ],
-  encapsulation: ViewEncapsulation.None
+    selector: 'app-milestones-chart',
+    templateUrl: './chart.component.html',
+    styleUrls: [
+        './chart.component.css'
+    ],
+    encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 export class ChartComponent implements OnInit, AfterContentInit, OnChanges {
   @ViewChild('chartContainer') elementView: ElementRef;

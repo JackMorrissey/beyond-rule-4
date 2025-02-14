@@ -3,8 +3,9 @@ import { Component, OnInit } from '@angular/core';
 import { YnabApiService } from '../ynab-api/ynab-api.service';
 
 @Component({
-  selector: 'app-navigation',
-  templateUrl: 'navigation.component.html'
+    selector: 'app-navigation',
+    templateUrl: 'navigation.component.html',
+    standalone: false
 })
 
 export class NavigationComponent implements OnInit {
