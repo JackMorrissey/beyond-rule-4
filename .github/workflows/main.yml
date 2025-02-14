@@ -20,7 +20,7 @@ jobs:
     - name: Use Node.js 12.x
       uses: actions/setup-node@v1
       with:
-        node-version: '18'
+        node-version: '22'
 
     - name: Build Project
       run: |
@@ -37,4 +37,4 @@ jobs:
         ftp-username: ${{ secrets.FTP_USERNAME }}
         ftp-password: ${{ secrets.FTP_PASSWORD }}
         git-ftp-args: --insecure
-        local-dir: dist
+        local-dir: dist/browser
