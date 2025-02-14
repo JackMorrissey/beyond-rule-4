@@ -14,6 +14,13 @@
             "outputPath": {
               "base": "dist"
             },
+            "stylePreprocessorOptions": {
+              "sass": {
+                "silenceDeprecations": [
+                  "import"
+                ]
+              }
+            },
             "index": "src/index.html",
             "tsConfig": "src/tsconfig.app.json",
             "polyfills": [
