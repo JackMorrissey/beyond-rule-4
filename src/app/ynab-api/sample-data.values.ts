@@ -12,7 +12,7 @@ const sampleAccounts: ynab.Account[] = [
     {
         'id': '2fa4eba8-8c06-4688-9282-e300f2a781c7',
         'name': 'Retirement Accounts',
-        'type': ynab.Account.TypeEnum.InvestmentAccount,
+        'type': ynab.AccountType.OtherAsset,
         'on_budget': false,
         'closed': false,
         'note': '7%\nAll IRAs, 401ks',
@@ -25,7 +25,8 @@ const sampleAccounts: ynab.Account[] = [
     {
         'id': '2fa4efeb-c837-464d-b3b2-a28bd0e6f046',
         'name': 'HSA Total',
-        'type': ynab.Account.TypeEnum.InvestmentAccount,
+        'type': ynab.AccountType.OtherAsset,
+        
         'on_budget': false,
         'closed': false,
         'note': '7%',
@@ -38,7 +39,7 @@ const sampleAccounts: ynab.Account[] = [
     {
         'id': '2fa4e6fe-9294-4638-beb1-139ba4cbe954',
         'name': 'Taxable Account Total',
-        'type': ynab.Account.TypeEnum.InvestmentAccount,
+        'type': ynab.AccountType.OtherAsset,
         'on_budget': false,
         'closed': false,
         'note': '7%',
@@ -51,7 +52,7 @@ const sampleAccounts: ynab.Account[] = [
     {
         'id': '2fa4eb1b-e194-4646-9b25-3096040be1cd',
         'name': 'Checking',
-        'type': ynab.Account.TypeEnum.Checking,
+        'type': ynab.AccountType.Checking,
         'on_budget': true,
         'closed': false,
         'note': null,
@@ -64,7 +65,7 @@ const sampleAccounts: ynab.Account[] = [
     {
         'id': '2fa4e857-46bc-4652-89bb-21875fe5ae6a',
         'name': 'Savings',
-        'type': ynab.Account.TypeEnum.Savings,
+        'type': ynab.AccountType.Savings,
         'on_budget': true,
         'closed': false,
         'note': null,
@@ -77,7 +78,7 @@ const sampleAccounts: ynab.Account[] = [
     {
         'id': '2fa4e819-18a5-46ed-a90b-90584f2a1069',
         'name': 'Student Loans',
-        'type': ynab.Account.TypeEnum.OtherLiability,
+        'type': ynab.AccountType.OtherLiability,
         'on_budget': false,
         'closed': false,
         'note': '4.5%',
@@ -90,7 +91,7 @@ const sampleAccounts: ynab.Account[] = [
     {
         'id': '2fa4e6df-b3cd-46b6-b475-614b0e9a061d',
         'name': 'My Credit Card',
-        'type': ynab.Account.TypeEnum.CreditCard,
+        'type': ynab.AccountType.CreditCard,
         'on_budget': true,
         'closed': false,
         'note': null,
@@ -103,7 +104,7 @@ const sampleAccounts: ynab.Account[] = [
     {
         'id': '2fa4e6a4-5a9c-46e5-92ef-9ceea549b1a9',
         'name': 'Other credit card',
-        'type': ynab.Account.TypeEnum.CreditCard,
+        'type': ynab.AccountType.CreditCard,
         'on_budget': true,
         'closed': false,
         'note': null,

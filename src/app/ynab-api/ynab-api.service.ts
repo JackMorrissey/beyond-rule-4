@@ -113,7 +113,7 @@ export class YnabApiService {
 
     const month = await this.ynabApi.months.getBudgetMonth(
       budgetId,
-      budgetMonth
+      budgetMonth instanceof Date ? budgetMonth.toISOString().substring(0, 10) : budgetMonth
     );
     return month.data.month;
   }

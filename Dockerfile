@@ -1,7 +1,7 @@
 ### STAGE 1: Build ###
 
 # We label our stage as 'builder'
-FROM node:12-alpine as builder
+FROM node:22-alpine AS builder
 
 COPY package.json package-lock.json ./
 
@@ -15,12 +15,12 @@ WORKDIR /ng-app
 COPY . .
 
 ## Build the angular app in production mode and store the artifacts in dist folder
-RUN $(npm bin)/ng build --prod
+RUN npm run build
 
 
 ### STAGE 2: Setup ###
 
-FROM nginx:1.13.3-alpine
+FROM nginx:1.27.4-alpine
 
 ## Copy our default nginx config
 COPY nginx/default.conf /etc/nginx/conf.d/
@@ -29,7 +29,7 @@ COPY nginx/default.conf /etc/nginx/conf.d/
 RUN rm -rf /usr/share/nginx/html/*
 
 ## From 'builder' stage copy over the artifacts in dist folder to default nginx public folder
-COPY --from=builder /ng-app/dist /usr/share/nginx/html
+COPY --from=builder /ng-app/dist/browser /usr/share/nginx/html
 
 ## Replace environment variables + start app
 CMD ["/bin/sh",  "-c",  "envsubst < /usr/share/nginx/html/assets/env.template.js > /usr/share/nginx/html/assets/env.js && exec nginx -g 'daemon off;'"]

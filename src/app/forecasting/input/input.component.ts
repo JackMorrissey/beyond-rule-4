@@ -3,8 +3,9 @@ import { Component, OnInit, EventEmitter, Input, Output } from '@angular/core';
 import { CalculateInput } from '../models/calculate-input.model';
 
 @Component({
-  selector: 'app-forecasting-input',
-  templateUrl: 'input.component.html'
+    selector: 'app-forecasting-input',
+    templateUrl: 'input.component.html',
+    standalone: false
 })
 
 export class ForecastingInputComponent implements OnInit {

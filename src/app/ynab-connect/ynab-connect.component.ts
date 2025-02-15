@@ -6,8 +6,9 @@ import { YnabApiService } from '../ynab-api/ynab-api.service';
 declare var gtag: any;
 
 @Component({
-  selector: 'app-ynab-connect',
-  templateUrl: 'ynab-connect.component.html'
+    selector: 'app-ynab-connect',
+    templateUrl: 'ynab-connect.component.html',
+    standalone: false
 })
 
 export class YnabConnectComponent implements OnInit {

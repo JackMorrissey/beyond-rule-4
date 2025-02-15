@@ -1,48 +1,58 @@
-# See http://help.github.com/ignore-files/ for more about ignoring files.
+.DS_STORE
 
-# secrets
-*.secret.*
+/dist/
+/bazel-out
+/integration/bazel/bazel-*
+*.log
+node_modules/
+modules/ssr-benchmarks/node_modules/
 
-# compiled output
-/dist
-/dist-server
-/tmp
-/out-tsc
-
-# dependencies
-/node_modules
-
-# IDEs and editors
-/.idea
-.project
-.classpath
-.c9/
-*.launch
+# Include when developing application packages.
+pubspec.lock
+.c9
+.idea/
+.devcontainer/*
+!.devcontainer/README.md
+!.devcontainer/recommended-devcontainer.json
+!.devcontainer/recommended-Dockerfile
 .settings/
-*.sublime-workspace
+.vscode/launch.json
+.vscode/settings.json
+.vscode/tasks.json
+*.swo
+*.swp
+modules/.settings
+modules/.vscode
+.vimrc
+.nvimrc
 
-# IDE - VSCode
-.vs/*
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
+# Don't check in secret files
+*secret.js
 
-# misc
-/.sass-cache
-/connect.lock
-/coverage
-/libpeerconnection.log
+# Ignore npm/yarn debug log
 npm-debug.log
 yarn-error.log
-testem.log
-/typings
 
-# e2e
-/e2e/*.js
-/e2e/*.map
+# build-analytics
+.build-analytics
 
-# System Files
-.DS_Store
-Thumbs.db
+# rollup-test output
+/modules/rollup-test/dist/
+
+# User specific bazel settings
+.bazelrc.user
+
+# User specific ng-dev settings
+.ng-dev.user*
+
+.notes.md
+baseline.json
+
+# Ignore .history for the xyz.local-history VSCode extension
+.history
+
+# Husky
+.husky/_
+
+# Ignore cache created with the Angular CLI.
+.angular/

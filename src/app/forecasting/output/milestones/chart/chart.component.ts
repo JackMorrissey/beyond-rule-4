@@ -9,12 +9,13 @@ import { Milestones } from '../milestone.model';
 declare let d3: any;
 
 @Component({
-  selector: 'app-milestones-chart',
-  templateUrl: './chart.component.html',
-  styleUrls: [
-    './chart.component.css'
-  ],
-  encapsulation: ViewEncapsulation.None
+    selector: 'app-milestones-chart',
+    templateUrl: './chart.component.html',
+    styleUrls: [
+        './chart.component.css'
+    ],
+    encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 export class ChartComponent implements OnInit, AfterContentInit, OnChanges {
   @ViewChild('chartContainer') elementView: ElementRef;
@@ -80,7 +81,7 @@ export class ChartComponent implements OnInit, AfterContentInit, OnChanges {
 
   getToolTipDate(tooltipItem: any) {
     const forecastDate: Date = tooltipItem.name;
-    const options = { year: 'numeric', month: 'short' };
+    const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'short' };
     const date = forecastDate.toLocaleDateString(this.locale, options);
     const distance = this.forecast.getDistanceFromFirstMonthText(forecastDate);
     if (!distance) {

@@ -1,7 +1,6 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { FormGroup, FormArray, FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormArray, UntypedFormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { NgbPanelChangeEvent } from '@ng-bootstrap/ng-bootstrap';
 import { timer } from 'rxjs';
 import { debounce } from 'rxjs/operators';
 import * as ynab from 'ynab';
@@ -14,14 +13,15 @@ import NoteUtility, { Overrides } from './note-utility';
 import { getSelectedMonths, QuickSelectMonthChoice } from './months-utility';
 
 @Component({
-  selector: 'app-ynab',
-  templateUrl: 'ynab.component.html',
-  styleUrls: ['./ynab.component.css'],
+    selector: 'app-ynab',
+    templateUrl: 'ynab.component.html',
+    styleUrls: ['./ynab.component.css'],
+    standalone: false
 })
 export class YnabComponent implements OnInit {
   @Output() calculateInputChange = new EventEmitter<CalculateInput>();
 
-  budgetForm: FormGroup;
+  budgetForm: UntypedFormGroup;
   displayContributionInfo = true;
   currencyIsoCode = 'USD';
   public safeWithdrawalRatePercentage = 4.0;
@@ -58,11 +58,9 @@ export class YnabComponent implements OnInit {
   public contributionCategories: any;
   public isUsingSampleData = false;
 
-  public accordionPanelActiveStates: any = {};
-
   constructor(
     private ynabService: YnabApiService,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private activatedRoute: ActivatedRoute
   ) {
     this.expenses = {
@@ -119,12 +117,12 @@ export class YnabComponent implements OnInit {
     });
   }
 
-  get categoryGroups(): FormArray {
-    return this.budgetForm.get('categoryGroups') as FormArray;
+  get categoryGroups(): UntypedFormArray {
+    return this.budgetForm.get('categoryGroups') as UntypedFormArray;
   }
 
-  get accounts(): FormArray {
-    return this.budgetForm.get('accounts') as FormArray;
+  get accounts(): UntypedFormArray {
+    return this.budgetForm.get('accounts') as UntypedFormArray;
   }
 
   async ngOnInit() {
@@ -351,10 +349,6 @@ export class YnabComponent implements OnInit {
     this.recalculate();
   }
 
-  beforePanelChange($event: NgbPanelChangeEvent) {
-    this.accordionPanelActiveStates[$event.panelId] = $event.nextState;
-  }
-
   private setInitialSelectedBudget(): string {
     let selectedBudget = 'last-used';
 
@@ -463,8 +457,7 @@ export class YnabComponent implements OnInit {
     }
 
     if (
-      account.type === ynab.Account.TypeEnum.InvestmentAccount ||
-      account.type === ynab.Account.TypeEnum.OtherAsset
+      account.type === ynab.AccountType.OtherAsset
     ) {
       return ynabBalance;
     }

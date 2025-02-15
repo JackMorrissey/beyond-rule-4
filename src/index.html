@@ -12,30 +12,20 @@
   <link rel="shortcut icon" href="assets/favicon.ico" />
   <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png" />
   <meta name="apple-mobile-web-app-title" content="Beyond Rule 4" />
-  <link rel="manifest" href="assets/site.webmanifest" />
+  <link rel="manifest" id="manifest-placeholder" />
 
   <!-- Load environment variables -->
   <script src="assets/env.js"></script>
 
-  <script>
-    if (window.matchMedia('(prefers-color-scheme: dark)').media === 'not all') {
-      document.documentElement.style.display = 'none';
-      document.head.insertAdjacentHTML(
-        'beforeend',
-        '<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.5.0/flatly/bootstrap.min.css" onload="document.documentElement.style.display = \'\'">'
-      );
-    }
-  </script>
-
-  <link href="https://stackpath.bootstrapcdn.com/bootswatch/4.5.0/flatly/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-mhpbKVUOPCSocLzx2ElRISIORFRwr1ZbO9bAlowgM5kO7hnpRBe+brVj8NNPUiFs" crossorigin="anonymous"
-    media="(prefers-color-scheme: no-preference), (prefers-color-scheme: light)">
-  <link href="https://stackpath.bootstrapcdn.com/bootswatch/4.5.0/darkly/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-Bo21yfmmZuXwcN/9vKrA5jPUMhr7znVBBeLxT9MA4r2BchhusfJ6+n8TLGUcRAtL" crossorigin="anonymous"
-    media="(prefers-color-scheme: dark)">
-  <script defer src="https://use.fontawesome.com/releases/v5.13.0/js/all.js" crossorigin="anonymous"></script>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-N0REZM6WE6"></script>
   <script>
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      document.documentElement.setAttribute('data-bs-theme', 'dark');
+      document.querySelector('#manifest-placeholder').setAttribute('href', '/assets/site.webmanifest-dark');
+    } else {
+      document.documentElement.setAttribute('data-bs-theme', 'light');
+      document.querySelector('#manifest-placeholder').setAttribute('href', '/assets/site.webmanifest');
+    }
     window.dataLayer = window.dataLayer || [];
     function gtag() {
       if (!navigator || !navigator.doNotTrack) {

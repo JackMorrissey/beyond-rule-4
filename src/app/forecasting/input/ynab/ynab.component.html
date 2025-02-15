@@ -1,704 +1,535 @@
-<div class="alert alert-dark font-weight-bold" *ngIf="isUsingSampleData">
-  <i class="fas fa-info-circle"></i>
+<div class="alert alert-dark fw-bold" *ngIf="isUsingSampleData">
+  <fa-icon [icon]="['fas', 'info-circle']"></fa-icon>
   Using Sample Data
 </div>
 
 <form [formGroup]="budgetForm" class="budgetForm">
-  <ngb-accordion
-    [closeOthers]="false"
-    (panelChange)="beforePanelChange($event)"
-  >
-    <ngb-panel id="pSettings">
-      <ng-template ngbPanelTitle>
-        <span class="float-left">Settings</span>
-        <span class="accordion-info">
-          <span class="accordion-toggle">
-            <span
-              [ngClass]="{
-                'd-none': accordionPanelActiveStates.pSettings !== true
-              }"
-              ><i class="fas fa-caret-square-down"></i
-            ></span>
-            <span
-              [ngClass]="{
-                'd-none': accordionPanelActiveStates.pSettings === true
-              }"
-              ><i class="fas fa-caret-square-up"></i
-            ></span>
-          </span>
-        </span>
-      </ng-template>
-      <ng-template ngbPanelContent>
-        <div class="form-group">
-          <div class="row">
-            <label
-              for="selectedBudget"
-              class="col-sm-12 col-md-5 col-form-label"
-              >Budget</label
-            >
-            <div class="col">
-              <div class="input-group">
-                <select
-                  class="form-control"
-                  id="selectedBudget"
-                  formControlName="selectedBudget"
-                >
-                  <option *ngFor="let budget of budgets" [value]="budget.id">
-                    {{ budget.name }}
-                  </option>
-                </select>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="form-group">
-          <div class="row">
-            <label
-              for="selectedBudget"
-              class="col-sm-12 col-md-5 col-form-label"
-              >Month Start</label
-            >
-            <div class="col">
-              <div class="input-group">
-                <select
-                  class="form-control"
-                  id="selectedMonthA"
-                  formControlName="selectedMonthA"
-                >
-                  <option *ngFor="let month of months" [value]="month.month">
-                    {{ month.month }}
-                  </option>
-                </select>
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <label
-              for="selectedBudget"
-              class="col-sm-12 col-md-5 col-form-label"
-              >Month End</label
-            >
-            <div class="col">
-              <div class="input-group">
-                <select
-                  class="form-control"
-                  id="selectedMonthB"
-                  formControlName="selectedMonthB"
-                >
-                  <option *ngFor="let month of months" [value]="month.month">
-                    {{ month.month }}
-                  </option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <div class="row">
-            <label
-              for="selectedBudget"
-              class="col-sm-12 col-md-5 col-form-label"
-            ></label>
-            <div class="col">
-              <div ngbDropdown class="input-group d-inline-block">
-                <button
-                  class="btn btn-outline-secondary btn-sm w-100"
-                  id="quickSelectMonths"
-                  ngbDropdownToggle
-                >
-                  Quick Choose
-                </button>
-                <div ngbDropdownMenu aria-labelledby="quickSelectMonths">
-                  <button
-                    ngbDropdownItem
-                    (click)="quickChooseMonths('allTrim')"
-                  >
-                    All Complete
-                  </button>
-                  <button ngbDropdownItem (click)="quickChooseMonths('all')">
-                    All
-                  </button>
-
-                  <button ngbDropdownItem (click)="quickChooseMonths('yr')">
-                    Last Year
-                  </button>
-                  <button ngbDropdownItem (click)="quickChooseMonths('12')">
-                    Last 12 Months
-                  </button>
-                  <button ngbDropdownItem (click)="quickChooseMonths('ytd')">
-                    YTD
-                  </button>
-                  <button ngbDropdownItem (click)="quickChooseMonths('curr')">
-                    Current Month
-                  </button>
+  <div ngbAccordion [closeOthers]="false">
+    <div ngbAccordionItem id="pSettings">
+      <h2 ngbAccordionHeader>
+        <button ngbAccordionButton>
+          <span class="float-start">Settings</span>
+          <div class="ms-auto"></div>
+        </button>
+      </h2>
+      <div ngbAccordionCollapse>
+        <div ngbAccordionBody>
+          <ng-template>
+            <div class="form-group">
+              <div class="row mb-3">
+                <label for="selectedBudget" class="col-sm-12 col-md-5 col-form-label">Budget</label>
+                <div class="col">
+                  <div class="input-group">
+                    <select class="form-control" id="selectedBudget" formControlName="selectedBudget">
+                      <option *ngFor="let budget of budgets" [value]="budget.id">
+                        {{ budget.name }}
+                      </option>
+                    </select>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+            <div class="form-group">
+              <div class="row mb-1">
+                <label for="selectedBudget" class="col-sm-12 col-md-5 col-form-label">Month Start</label>
+                <div class="col">
+                  <div class="input-group">
+                    <select class="form-control" id="selectedMonthA" formControlName="selectedMonthA">
+                      <option *ngFor="let month of months" [value]="month.month">
+                        {{ month.month }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-1">
+                <label for="selectedBudget" class="col-sm-12 col-md-5 col-form-label">Month End</label>
+                <div class="col">
+                  <div class="input-group">
+                    <select class="form-control" id="selectedMonthB" formControlName="selectedMonthB">
+                      <option *ngFor="let month of months" [value]="month.month">
+                        {{ month.month }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+              </div>
 
-          <div class="row">
-            <div class="col">
-              <small
-                >The month range to use for average contributions and expenses
-              </small>
-            </div>
-          </div>
-        </div>
-        <div class="form-group">
-          <div class="row">
-            <label
-              for="safeWithdrawalRatePercentage"
-              class="col-sm-12 col-md-5 col-form-label"
-              >Safe Withdrawal Rate</label
-            >
-            <div class="col">
-              <div class="input-group">
-                <input
-                  type="number"
-                  class="form-control"
-                  id="safeWithdrawalRatePercentage"
-                  formControlName="safeWithdrawalRatePercentage"
-                  step="0.01"
-                />
-                <div class="input-group-append">
-                  <div class="input-group-text">%</div>
+              <div class="row mb-1">
+                <label for="selectedBudget" class="col-sm-12 col-md-5 col-form-label"></label>
+                <div class="col">
+                  <div ngbDropdown class="input-group d-inline-block">
+                    <button class="btn btn-outline-secondary btn-sm w-100" id="quickSelectMonths" ngbDropdownToggle>
+                      Quick Choose
+                    </button>
+                    <div ngbDropdownMenu aria-labelledby="quickSelectMonths">
+                      <button ngbDropdownItem (click)="quickChooseMonths('allTrim')">
+                        All Complete
+                      </button>
+                      <button ngbDropdownItem (click)="quickChooseMonths('all')">
+                        All
+                      </button>
+
+                      <button ngbDropdownItem (click)="quickChooseMonths('yr')">
+                        Last Year
+                      </button>
+                      <button ngbDropdownItem (click)="quickChooseMonths('12')">
+                        Last 12 Months
+                      </button>
+                      <button ngbDropdownItem (click)="quickChooseMonths('ytd')">
+                        YTD
+                      </button>
+                      <button ngbDropdownItem (click)="quickChooseMonths('curr')">
+                        Current Month
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row mb-3">
+                <div class="col">
+                  <small>The month range to use for average contributions and expenses
+                  </small>
                 </div>
               </div>
             </div>
-          </div>
-          <div class="row">
-            <div class="col">
-              <small
-                >"The rate that you can withdraw from your portfolio every year
-                that ensures you have a high probability of never running out of
-                money." -
-                <a
-                  target="_blank"
-                  href="https://www.madfientist.com/safe-withdrawal-rate/"
-                  >Mad Fientist
-                  <i class="fas fa-external-link-square-alt fa-sm"></i>
-                </a>
-              </small>
-              <div>
-                <small>
-                  <a
-                    target="_blank"
-                    href="http://www.mrmoneymustache.com/2012/05/29/how-much-do-i-need-for-retirement/"
-                    >4% - Mr. Money Mustache
-                    <i class="fas fa-external-link-square-alt fa-sm"></i>
-                  </a>
-                  |
-                  <a
-                    target="_blank"
-                    href="https://web.archive.org/web/20181009165106/http://media.morningstar.com/uk/MEDIA/Comprehensive_update_on_the_Safe_Withdrawal_Rate.pdf"
-                    >SWR in the UK - Morningstar
-                    <i class="fas fa-external-link-square-alt fa-sm"></i>
-                  </a>
-                </small>
+            <div class="form-group">
+              <div class="row">
+                <label for="safeWithdrawalRatePercentage" class="col-sm-12 col-md-5 col-form-label">Safe Withdrawal
+                  Rate</label>
+                <div class="col">
+                  <div class="input-group">
+                    <input type="number" class="form-control" id="safeWithdrawalRatePercentage"
+                      formControlName="safeWithdrawalRatePercentage" step="0.01" />
+                    <div class="input-group-append">
+                      <div class="input-group-text">%</div>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-        </div>
-        <div class="form-group">
-          <div class="row">
-            <label
-              for="expectedAnnualGrowthRate"
-              class="col-sm-12 col-md-5 col-form-label"
-              >Expected Annual Rate of Return</label
-            >
-            <div class="col">
-              <div class="input-group">
-                <input
-                  type="number"
-                  class="form-control"
-                  id="expectedAnnualGrowthRate"
-                  formControlName="expectedAnnualGrowthRate"
-                  step="0.01"
-                  aria-describedby="expectedAnnualGrowthRateHelp"
-                />
-                <div class="input-group-append">
-                  <div class="input-group-text">%</div>
+              <div class="row mb-3">
+                <div class="col">
+                  <small>"The rate that you can withdraw from your portfolio every year
+                    that ensures you have a high probability of never running out of
+                    money." -
+                    <a target="_blank" href="https://www.madfientist.com/safe-withdrawal-rate/">Mad Fientist
+                      <fa-icon [icon]="['fas', 'external-link-square-alt']" size="sm"></fa-icon>
+                    </a>
+                  </small>
+                  <div>
+                    <small>
+                      <a target="_blank"
+                        href="http://www.mrmoneymustache.com/2012/05/29/how-much-do-i-need-for-retirement/">4% - Mr.
+                        Money
+                        Mustache
+                        <fa-icon [icon]="['fas', 'external-link-square-alt']" size="sm"></fa-icon>
+                      </a>
+                      |
+                      <a target="_blank"
+                        href="https://web.archive.org/web/20181009165106/http://media.morningstar.com/uk/MEDIA/Comprehensive_update_on_the_Safe_Withdrawal_Rate.pdf">SWR
+                        in the UK - Morningstar
+                        <fa-icon [icon]="['fas', 'external-link-square-alt']" size="sm"></fa-icon>
+                      </a>
+                    </small>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div class="row">
-            <div class="col">
-              <small>
-                <a
-                  target="_blank"
-                  href="http://www.mrmoneymustache.com/2011/06/06/dude-wheres-my-7-investment-return/"
-                  >7% - Mr. Money Mustache
-                  <i class="fas fa-external-link-square-alt fa-sm"></i>
-                </a>
-              </small>
-            </div>
-          </div>
-          <div class="row">
-            <label
-              for="includeHiddenYnabCategories"
-              class="col-sm-12 col-md-5 col-form-label"
-              >Include Hidden Categories</label
-            >
-            <div class="col">
-              <div class="input-group">
-                <input
-                  type="checkbox"
-                  class="form-control"
-                  id="includeHiddenYnabCategories"
-                  formControlName="includeHiddenYnabCategories"
-                  aria-describedby="includeHiddenYnabCategoriesHelp"
-                />
+            <div class="form-group">
+              <div class="row">
+                <label for="expectedAnnualGrowthRate" class="col-sm-12 col-md-5 col-form-label">Expected Annual Rate of
+                  Return</label>
+                <div class="col">
+                  <div class="input-group">
+                    <input type="number" class="form-control" id="expectedAnnualGrowthRate"
+                      formControlName="expectedAnnualGrowthRate" step="0.01"
+                      aria-describedby="expectedAnnualGrowthRateHelp" />
+                    <div class="input-group-append">
+                      <div class="input-group-text">%</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col">
+                  <small>
+                    <a target="_blank"
+                      href="http://www.mrmoneymustache.com/2011/06/06/dude-wheres-my-7-investment-return/">7% - Mr.
+                      Money
+                      Mustache
+                      <fa-icon [icon]="['fas', 'external-link-square-alt']" size="sm"></fa-icon>
+                    </a>
+                  </small>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <label for="includeHiddenYnabCategories"
+                  class="col-sm-12 col-md-5 col-form-label d-flex align-items-center">Include Hidden Categories</label>
+                <div class="col">
+                  <div class="form-check d-flex align-items-center">
+                    <input type="checkbox" class="form-check-input" id="includeHiddenYnabCategories"
+                      formControlName="includeHiddenYnabCategories"
+                      aria-describedby="includeHiddenYnabCategoriesHelp" />
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
+          </ng-template>
         </div>
-      </ng-template>
-    </ngb-panel>
-    <ngb-panel id="pNetWorth">
-      <ng-template ngbPanelTitle>
-        <span class="float-left">Starting Portfolio</span>
-        <span class="accordion-info">
-          {{ netWorth | currency: currencyIsoCode }}
-          <span class="accordion-toggle">
-            <span
-              [ngClass]="{
-                'd-none': accordionPanelActiveStates.pNetWorth !== true
-              }"
-              ><i class="fas fa-caret-square-down"></i
-            ></span>
-            <span
-              [ngClass]="{
-                'd-none': accordionPanelActiveStates.pNetWorth === true
-              }"
-              ><i class="fas fa-caret-square-up"></i
-            ></span>
+      </div>
+    </div>
+    <div ngbAccordionItem id="pNetWorth">
+      <h2 ngbAccordionHeader>
+        <button ngbAccordionButton>
+          <span class="float-start">Starting Portfolio</span>
+          <span class="ms-auto">
+            {{ netWorth | currency: currencyIsoCode }}
           </span>
-        </span>
-      </ng-template>
-      <ng-template ngbPanelContent>
-        <div class="row">
-          <table class="table col-12">
-            <thead class="thead-sum">
-              <tr>
-                <th>Starting Balance</th>
-                <td>{{ ynabNetWorth | currency: currencyIsoCode }}</td>
-                <td>{{ netWorth | currency: currencyIsoCode }}</td>
-              </tr>
-              <tr>
-                <td colspan="3">
-                  <small
-                    >The initial amount to compound with the expected annual
-                    rate of return</small
-                  >
-                </td>
-              </tr>
-            </thead>
-            <thead class="thead-dark">
-              <tr>
-                <th>Account</th>
-                <th>YNAB Balance</th>
-                <th>Balance</th>
-              </tr>
-            </thead>
-            <tbody formArrayName="accounts">
-              <tr
-                *ngFor="let account of accounts.controls; let i = index"
-                [formGroupName]="i"
-              >
-                <td>{{ account.value.name }}</td>
-                <td>
-                  {{ account.value.ynabBalance | currency: currencyIsoCode }}
-                </td>
-                <td>
-                  <input
-                    class="form-control"
-                    formControlName="balance"
-                    type="number"
-                  />
-                </td>
-              </tr>
-            </tbody>
-          </table>
+        </button>
+      </h2>
+      <div ngbAccordionCollapse>
+        <div ngbAccordionBody>
+          <ng-template>
+            <div class="row mb-3">
+              <table class="table col-12">
+                <thead class="thead-sum">
+                  <tr>
+                    <th>Starting Balance</th>
+                    <td>{{ ynabNetWorth | currency: currencyIsoCode }}</td>
+                    <td>{{ netWorth | currency: currencyIsoCode }}</td>
+                  </tr>
+                  <tr>
+                    <td colspan="3">
+                      <small>The initial amount to compound with the expected annual
+                        rate of return</small>
+                    </td>
+                  </tr>
+                </thead>
+                <thead class="table-dark">
+                  <tr>
+                    <th>Account</th>
+                    <th>YNAB Balance</th>
+                    <th>Balance</th>
+                  </tr>
+                </thead>
+                <tbody formArrayName="accounts">
+                  <tr *ngFor="let account of accounts.controls; let i = index" [formGroupName]="i">
+                    <td>{{ account.value.name }}</td>
+                    <td>
+                      {{ account.value.ynabBalance | currency: currencyIsoCode }}
+                    </td>
+                    <td>
+                      <input class="form-control" formControlName="balance" type="number" />
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="row">
+              <div class="col-12">
+                <h4>How we pull these numbers from YNAB</h4>
+                <p>By default, all Asset (e.g. Investment) accounts are summed.</p>
+                <p>
+                  To override the balance add <code>BR4 + <i>amount</i></code> (e.g.
+                  <code>BR4 + 1000</code>) to the Account Notes of that account.
+                </p>
+                <p>
+                  Or, add <code>BR4 +</code> without an amount to override with the
+                  YNAB balance regardless of the account type.
+                </p>
+              </div>
+            </div>
+          </ng-template>
         </div>
-        <div class="row">
-          <div class="col-12">
-            <h4>How we pull these numbers from YNAB</h4>
-            <p>By default, all Asset (e.g. Investment) accounts are summed.</p>
-            <p>
-              To override the balance add <code>BR4 + <i>amount</i></code> (e.g.
-              <code>BR4 + 1000</code>) to the Account Notes of that account.
-            </p>
-            <p>
-              Or, add <code>BR4 +</code> without an amount to override with the
-              YNAB balance regardless of the account type.
-            </p>
-          </div>
-        </div>
-      </ng-template>
-    </ngb-panel>
-    <ngb-panel id="pContributions">
-      <ng-template ngbPanelTitle>
-        <span class="float-left">Contributions</span>
-        <span class="accordion-info"
-          >{{
-            budgetForm.value.monthlyContribution | currency: currencyIsoCode
-          }}
-          <span class="accordion-toggle">
-            <span
-              [ngClass]="{
-                'd-none': accordionPanelActiveStates.pContributions !== true
-              }"
-              ><i class="fas fa-caret-square-down"></i
-            ></span>
-            <span
-              [ngClass]="{
-                'd-none': accordionPanelActiveStates.pContributions === true
-              }"
-              ><i class="fas fa-caret-square-up"></i
-            ></span>
-          </span>
-        </span>
-      </ng-template>
+      </div>
+    </div>
+    <div ngbAccordionItem id="pContributions">
+      <h2 ngbAccordionHeader>
+        <button ngbAccordionButton>
+          <span class="float-start">Contributions</span>
+          <span class="ms-auto">{{ budgetForm.value.monthlyContribution | currency: currencyIsoCode }}</span>
+        </button>
+      </h2>
 
-      <ng-template ngbPanelContent>
-        <div class="form-group row">
-          <label
-            for="monthlyContribution"
-            class="col-sm-12 col-md-5 col-form-label"
-            >Monthly Investment Contribution</label
-          >
-          <div class="col">
-            <input
-              type="number"
-              class="form-control"
-              id="monthlyContribution"
-              formControlName="monthlyContribution"
-              step="100"
-            />
-          </div>
-          <!-- <div class="col-sm-1">
-            <button type="button" class="btn btn-link" (click)="displayContributionInfo = !displayContributionInfo">
-              <i class="fas fa-info-circle"></i>
-            </button>
-          </div> -->
-        </div>
-        <div
-          class="row"
-          *ngIf="contributionCategories && contributionCategories.length"
-        >
-          <table class="table col-12">
-            <thead class="thead-dark">
-              <tr>
-                <th>Category Name</th>
-                <th>Contribution</th>
-              </tr>
-            </thead>
-            <tbody>
-              <ng-container *ngFor="let category of contributionCategories">
-                <tr *ngIf="!category.hidden">
-                  <td>{{ category.name }}</td>
-                  <td>
-                    <span
-                      ngbPopover="Min:  {{
-                        category.info.min.value | currency: currencyIsoCode
-                      }} Max:  {{
-                        category.info.max.value | currency: currencyIsoCode
-                      }} Mean: {{
-                        category.info.mean | currency: currencyIsoCode
-                      }} "
-                      triggers="mouseenter:mouseleave"
-                    >
-                      {{ category.value | currency: currencyIsoCode }}
-                    </span>
-                  </td>
-                </tr>
-              </ng-container>
-            </tbody>
-          </table>
-        </div>
-        <div *ngIf="displayContributionInfo">
-          <div class="row">
-            <div class="col-12">
-              <h4>How we pull these numbers from YNAB</h4>
-              <p>
-                Any category groups containing the following text are
-                automatically counted as contributions:
-              </p>
-              <ul>
-                <li>Financial Independence</li>
-                <li>Investments</li>
-                <li>Retirement</li>
-                <li>FIRE</li>
-                <li>📈</li>
-                <li>🔥</li>
-              </ul>
-              <p>
-                <span
-                  >If you would like to override the budgeted amount add
-                  <code>BR4 + <i>amount</i></code></span
-                >
-                (e.g. <code>BR4 + 1000</code>) to the notes of that category.
-                This is useful for including contributions to employer accounts
-                that aren't budgeted.
-              </p>
-              <p>
-                Add <code>BR4 +</code> without an amount to override with the
-                YNAB balance as a contribution regardless of the category group
-                name.
-              </p>
+
+      <div ngbAccordionCollapse>
+        <div ngbAccordionBody>
+          <ng-template>
+            <div class="form-group row mb-3">
+              <label for="monthlyContribution" class="col-sm-12 col-md-5 col-form-label">Monthly Investment
+                Contribution</label>
+              <div class="col">
+                <input type="number" class="form-control" id="monthlyContribution" formControlName="monthlyContribution"
+                  step="100" />
+              </div>
+              <!-- <div class="col-sm-1">
+              <button type="button" class="btn btn-link" (click)="displayContributionInfo = !displayContributionInfo">
+                <fa-icon [icon]="['fas', 'info-circle']"></fa-icon>
+              </button>
+            </div> -->
             </div>
-          </div>
-          <div class="row">
-            <div class="col-12">
-              <img
-                src="assets/images/FiCategory.png"
-                class="img-fluid"
-                alt="Category Image"
-              />
-            </div>
-            <div class="col-12">
-              <img
-                src="assets/images/ContributionNotes.png"
-                class="img-fluid"
-                alt="Contribution Notes"
-              />
-            </div>
-            <div class="col-12">
-              <p class="small">
-                (When editing a category's Notes, use
-                <kbd>shift + enter</kbd> or <kbd>shift + return</kbd> to create
-                a new line.)
-              </p>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-12">
-              <p>
-                As another option, Accounts can log a monthly contribution by
-                adding <code>BR4 +m <i>amount</i></code> (e.g.
-                <code>BR4 +m 100</code>) to the Account Notes.
-              </p>
-            </div>
-          </div>
-        </div>
-      </ng-template>
-    </ngb-panel>
-    <ngb-panel id="pExpenses">
-      <ng-template ngbPanelTitle>
-        <span class="float-left">Expenses</span>
-        <span class="accordion-info"
-          >{{ expenses.fi.annual | currency: currencyIsoCode }}
-          <span class="accordion-toggle">
-            <span
-              [ngClass]="{
-                'd-none': accordionPanelActiveStates.pExpenses !== true
-              }"
-              ><i class="fas fa-caret-square-down"></i
-            ></span>
-            <span
-              [ngClass]="{
-                'd-none': accordionPanelActiveStates.pExpenses === true
-              }"
-              ><i class="fas fa-caret-square-up"></i
-            ></span>
-          </span>
-        </span>
-      </ng-template>
-      <ng-template ngbPanelContent>
-        <div class="row">
-          <table class="table table-sm col-12 expenses">
-            <thead class="thead-dark">
-              <tr>
-                <th>Calculated</th>
-                <th>YNAB</th>
-                <th
-                  placement="top-center"
-                  triggers="click:blur hover"
-                  container="body"
-                  ngbTooltip="FI budget includes all expenses to maintain your current lifestyle."
-                >
-                  FI &nbsp;
-                  <i class="fas fa-info-circle"></i>
-                </th>
-                <th
-                  placement="top-center"
-                  triggers="click:blur hover"
-                  container="body"
-                  ngbTooltip="Lean FI budget includes all expenses to just get by. Think FI but without any fun."
-                >
-                  Lean FI &nbsp;
-                  <i class="fas fa-info-circle"></i>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <th>Monthly Expenses</th>
-                <td>{{ expenses.ynab.monthly | currency: currencyIsoCode }}</td>
-                <td>{{ expenses.fi.monthly | currency: currencyIsoCode }}</td>
-                <td>
-                  {{ expenses.leanFi.monthly | currency: currencyIsoCode }}
-                </td>
-              </tr>
-              <tr>
-                <th>Estimated Annual Expenses</th>
-                <td>{{ expenses.ynab.annual | currency: currencyIsoCode }}</td>
-                <td>{{ expenses.fi.annual | currency: currencyIsoCode }}</td>
-                <td>
-                  {{ expenses.leanFi.annual | currency: currencyIsoCode }}
-                </td>
-              </tr>
-            </tbody>
-            <thead class="thead-dark">
-              <tr>
-                <th>Category</th>
-                <th>YNAB Budget</th>
-                <th>FI Budget</th>
-                <th>Lean FI Budget</th>
-              </tr>
-            </thead>
-            <tbody formArrayName="categoryGroups">
-              <ng-container
-                *ngFor="
-                  let categoryGroup of categoryGroups.controls;
-                  let i = index
-                "
-                [formGroupName]="i"
-              >
-                <tr class="table-secondary">
-                  <th colspan="4" class="">{{ categoryGroup.value.name }}</th>
-                </tr>
-                <ng-container formArrayName="categories">
-                  <ng-container
-                    *ngFor="
-                      let category of categoryGroup.get('categories').controls;
-                      let j = index
-                    "
-                    [formGroupName]="j"
-                  >
-                    <tr *ngIf="!category.value.hidden">
+            <div class="row" *ngIf="contributionCategories && contributionCategories.length">
+              <table class="table col-12">
+                <thead class="table-dark">
+                  <tr>
+                    <th>Category Name</th>
+                    <th>Contribution</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <ng-container *ngFor="let category of contributionCategories">
+                    <tr *ngIf="!category.hidden">
+                      <td>{{ category.name }}</td>
                       <td>
-                        {{ category.value.name }}
-                      </td>
-                      <td>
-                        <span
-                          ngbPopover="Min:  {{
-                            category.value.info.min.value
-                              | currency: currencyIsoCode
-                          }} Max:  {{
-                            category.value.info.max.value
-                              | currency: currencyIsoCode
-                          }} Mean: {{
-                            category.value.info.mean | currency: currencyIsoCode
-                          }} "
-                          triggers="mouseenter:mouseleave"
-                        >
-                          {{
-                            category.value.retrievedBudgeted
-                              | currency: currencyIsoCode
-                          }}
+                        <span ngbPopover="Min:  {{
+                          category.info.min.value | currency: currencyIsoCode
+                        }} Max:  {{
+                          category.info.max.value | currency: currencyIsoCode
+                        }} Mean: {{
+                          category.info.mean | currency: currencyIsoCode
+                        }} " triggers="mouseenter:mouseleave">
+                          {{ category.value | currency: currencyIsoCode }}
                         </span>
-                      </td>
-                      <td>
-                        <input
-                          class="form-control form-control-sm"
-                          formControlName="fiBudget"
-                          type="number"
-                        />
-                      </td>
-                      <td>
-                        <input
-                          class="form-control form-control-sm"
-                          formControlName="leanFiBudget"
-                          type="number"
-                        />
                       </td>
                     </tr>
                   </ng-container>
-                </ng-container>
-              </ng-container>
-            </tbody>
-          </table>
+                </tbody>
+              </table>
+            </div>
+            <div *ngIf="displayContributionInfo">
+              <div class="row">
+                <div class="col-12">
+                  <h4>How we pull these numbers from YNAB</h4>
+                  <p>
+                    Any category groups containing the following text are
+                    automatically counted as contributions:
+                  </p>
+                  <ul>
+                    <li>Financial Independence</li>
+                    <li>Investments</li>
+                    <li>Retirement</li>
+                    <li>FIRE</li>
+                    <li>📈</li>
+                    <li>🔥</li>
+                  </ul>
+                  <p>
+                    <span>If you would like to override the budgeted amount add
+                      <code>BR4 + <i>amount</i></code></span>
+                    (e.g. <code>BR4 + 1000</code>) to the notes of that category.
+                    This is useful for including contributions to employer accounts
+                    that aren't budgeted.
+                  </p>
+                  <p>
+                    Add <code>BR4 +</code> without an amount to override with the
+                    YNAB balance as a contribution regardless of the category group
+                    name.
+                  </p>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-12">
+                  <img src="assets/images/FiCategory.png" class="img-fluid" alt="Category Image" />
+                </div>
+                <div class="col-12">
+                  <img src="assets/images/ContributionNotes.png" class="img-fluid" alt="Contribution Notes" />
+                </div>
+                <div class="col-12">
+                  <p class="small">
+                    (When editing a category's Notes, use
+                    <kbd>shift + enter</kbd> or <kbd>shift + return</kbd> to create
+                    a new line.)
+                  </p>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-12">
+                  <p>
+                    As another option, Accounts can log a monthly contribution by
+                    adding <code>BR4 +m <i>amount</i></code> (e.g.
+                    <code>BR4 +m 100</code>) to the Account Notes.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </ng-template>
         </div>
-        <div class="row">
-          <div class="col-12">
-            <h4>How we pull these numbers from YNAB</h4>
-            <p>
-              The following category groups are automatically budgeted to 0 for
-              Financial Independence:
-            </p>
-            <ul>
-              <li>
-                All defined Financial Independence category groups - You're
-                already FI, no need to keep saving!
-              </li>
-              <li>
-                Debt Payments - For simplicity, lets assume this is all paid off
-              </li>
-              <li>
-                Credit Card Payments - For simplicity, lets assume you pay this
-                off every month
-              </li>
-              <li>Any category groups with names containing 📉 or 🔕</li>
-            </ul>
-            <p>
-              In addition, the following category groups are automatically
-              budgeted to 0 for Lean Financial Independence:
-            </p>
-            <ul>
-              <li>
-                Just For Fun - Lean FI is all about saying you could just make
-                it by
-              </li>
-              <li>
-                Quality of Life Goals - Theoretically, these goals aren't
-                required to live a bland but financially independent life
-              </li>
-              <li>Any category groups with names containing 🌤️</li>
-            </ul>
-            <p>
-              Finally, any category groups with names containing 👻 are
-              completely ignored from the software
-            </p>
-            <p>
-              If you would like to override the FI Budget value add
-              <code>BR4 FI <i>amount</i></code> (e.g. <code>BR4 FI 1100</code>)
-              to the notes of that category.
-            </p>
-            <p>
-              To further override the Lean FI value, use
-              <code>BR4 LFI <i>amount</i></code> (e.g. <code>BR4 LFI 400</code>)
-            </p>
-            <p>
-              Add <code>BR4 FI</code> or <code>BR4 LFI</code> without an amount
-              to override with the YNAB balance regardless of the category group
-              name.
-            </p>
-          </div>
+      </div>
+    </div>
+    <div ngbAccordionItem id="pExpenses">
+      <h2 ngbAccordionHeader>
+        <button ngbAccordionButton>
+          <span class="float-start">Expenses</span>
+          <span class="ms-auto"> {{ expenses.fi.annual | currency: currencyIsoCode }}</span>
+        </button>
+      </h2>
+      <div ngbAccordionCollapse>
+        <div ngbAccordionBody>
+          <ng-template>
+            <div class="row">
+              <table class="table table-sm col-12 expenses">
+                <thead class="table-dark">
+                  <tr>
+                    <th>Calculated</th>
+                    <th>YNAB</th>
+                    <th placement="top" triggers="click:blur hover" container="body"
+                      ngbTooltip="FI budget includes all expenses to maintain your current lifestyle.">
+                      FI &nbsp;
+                      <fa-icon [icon]="['fas', 'info-circle']"></fa-icon>
+                    </th>
+                    <th placement="top" triggers="click:blur hover" container="body"
+                      ngbTooltip="Lean FI budget includes all expenses to just get by. Think FI but without any fun.">
+                      Lean FI &nbsp;
+                      <fa-icon [icon]="['fas', 'info-circle']"></fa-icon>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th>Monthly Expenses</th>
+                    <td>{{ expenses.ynab.monthly | currency: currencyIsoCode }}</td>
+                    <td>{{ expenses.fi.monthly | currency: currencyIsoCode }}</td>
+                    <td>
+                      {{ expenses.leanFi.monthly | currency: currencyIsoCode }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>Estimated Annual Expenses</th>
+                    <td>{{ expenses.ynab.annual | currency: currencyIsoCode }}</td>
+                    <td>{{ expenses.fi.annual | currency: currencyIsoCode }}</td>
+                    <td>
+                      {{ expenses.leanFi.annual | currency: currencyIsoCode }}
+                    </td>
+                  </tr>
+                </tbody>
+                <thead class="table-dark">
+                  <tr>
+                    <th>Category</th>
+                    <th>YNAB Budget</th>
+                    <th>FI Budget</th>
+                    <th>Lean FI Budget</th>
+                  </tr>
+                </thead>
+                <tbody formArrayName="categoryGroups">
+                  <ng-container *ngFor="
+                    let categoryGroup of categoryGroups.controls;
+                    let i = index
+                  " [formGroupName]="i">
+                    <tr class="table-secondary">
+                      <th colspan="4" class="">{{ categoryGroup.value.name }}</th>
+                    </tr>
+                    <ng-container formArrayName="categories">
+                      <ng-container *ngFor="
+                        let category of categoryGroup.get('categories').controls;
+                        let j = index
+                      " [formGroupName]="j">
+                        <tr *ngIf="!category.value.hidden">
+                          <td>
+                            {{ category.value.name }}
+                          </td>
+                          <td>
+                            <span ngbPopover="Min:  {{
+                              category.value.info.min.value
+                                | currency: currencyIsoCode
+                            }} Max:  {{
+                              category.value.info.max.value
+                                | currency: currencyIsoCode
+                            }} Mean: {{
+                              category.value.info.mean | currency: currencyIsoCode
+                            }} " triggers="mouseenter:mouseleave">
+                              {{
+                              category.value.retrievedBudgeted
+                              | currency: currencyIsoCode
+                              }}
+                            </span>
+                          </td>
+                          <td>
+                            <input class="form-control form-control-sm" formControlName="fiBudget" type="number" />
+                          </td>
+                          <td>
+                            <input class="form-control form-control-sm" formControlName="leanFiBudget" type="number" />
+                          </td>
+                        </tr>
+                      </ng-container>
+                    </ng-container>
+                  </ng-container>
+                </tbody>
+              </table>
+            </div>
+            <div class="row">
+              <div class="col-12">
+                <h4>How we pull these numbers from YNAB</h4>
+                <p>
+                  The following category groups are automatically budgeted to 0 for
+                  Financial Independence:
+                </p>
+                <ul>
+                  <li>
+                    All defined Financial Independence category groups - You're
+                    already FI, no need to keep saving!
+                  </li>
+                  <li>
+                    Debt Payments - For simplicity, lets assume this is all paid off
+                  </li>
+                  <li>
+                    Credit Card Payments - For simplicity, lets assume you pay this
+                    off every month
+                  </li>
+                  <li>Any category groups with names containing 📉 or 🔕</li>
+                </ul>
+                <p>
+                  In addition, the following category groups are automatically
+                  budgeted to 0 for Lean Financial Independence:
+                </p>
+                <ul>
+                  <li>
+                    Just For Fun - Lean FI is all about saying you could just make
+                    it by
+                  </li>
+                  <li>
+                    Quality of Life Goals - Theoretically, these goals aren't
+                    required to live a bland but financially independent life
+                  </li>
+                  <li>Any category groups with names containing 🌤️</li>
+                </ul>
+                <p>
+                  Finally, any category groups with names containing 👻 are
+                  completely ignored from the software
+                </p>
+                <p>
+                  If you would like to override the FI Budget value add
+                  <code>BR4 FI <i>amount</i></code> (e.g. <code>BR4 FI 1100</code>)
+                  to the notes of that category.
+                </p>
+                <p>
+                  To further override the Lean FI value, use
+                  <code>BR4 LFI <i>amount</i></code> (e.g. <code>BR4 LFI 400</code>)
+                </p>
+                <p>
+                  Add <code>BR4 FI</code> or <code>BR4 LFI</code> without an amount
+                  to override with the YNAB balance regardless of the category group
+                  name.
+                </p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12">
+                <img src="assets/images/HousingCategory.png" class="img-fluid" alt="Housing Category Image" />
+              </div>
+              <div class="col-12">
+                <img src="assets/images/HousingNotes.png" class="img-fluid"
+                  alt="Editing the notes for the Mortgage category" />
+              </div>
+              <div class="col-12">
+                <p class="small">
+                  (When editing a category's Notes, use <kbd>shift + enter</kbd> or
+                  <kbd>shift + return</kbd> to create a new line.)
+                </p>
+              </div>
+            </div>
+          </ng-template>
         </div>
-        <div class="row">
-          <div class="col-12">
-            <img
-              src="assets/images/HousingCategory.png"
-              class="img-fluid"
-              alt="Housing Category Image"
-            />
-          </div>
-          <div class="col-12">
-            <img
-              src="assets/images/HousingNotes.png"
-              class="img-fluid"
-              alt="Editing the notes for the Mortgage category"
-            />
-          </div>
-          <div class="col-12">
-            <p class="small">
-              (When editing a category's Notes, use <kbd>shift + enter</kbd> or
-              <kbd>shift + return</kbd> to create a new line.)
-            </p>
-          </div>
-        </div>
-      </ng-template>
-    </ngb-panel>
-  </ngb-accordion>
+      </div>
+    </div>
+  </div>
 </form>

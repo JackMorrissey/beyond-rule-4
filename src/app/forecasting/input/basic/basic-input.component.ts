@@ -1,24 +1,25 @@
 import { Component, OnInit, OnChanges, SimpleChanges, Input, Output, EventEmitter } from '@angular/core';
-import { FormGroup, FormControl, FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormGroup, FormControl, UntypedFormBuilder, Validators } from '@angular/forms';
 import { timer } from 'rxjs';
 import { debounce } from 'rxjs/operators';
 
 import { CalculateInput } from '../../models/calculate-input.model';
 
 @Component({
-  selector: 'app-basic-input',
-  templateUrl: 'basic-input.component.html'
+    selector: 'app-basic-input',
+    templateUrl: 'basic-input.component.html',
+    standalone: false
 })
 
 export class BasicInputComponent implements OnInit, OnChanges {
   @Input() calculateInput: CalculateInput;
   @Output() calculateInputChange = new EventEmitter<CalculateInput>();
 
-  basicInputForm: FormGroup;
+  basicInputForm: UntypedFormGroup;
 
   private currentFormValues = '';
 
-  constructor(private formBuilder: FormBuilder) {
+  constructor(private formBuilder: UntypedFormBuilder) {
     this.basicInputForm = this.formBuilder.group({
       netWorth: [0, [Validators.required]],
       annualExpenses: [0, [Validators.required]],

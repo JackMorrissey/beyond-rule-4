@@ -12,8 +12,9 @@ import { CalculateInput } from '../../models/calculate-input.model';
 import { Forecast, MonthlyForecast } from '../../models/forecast.model';
 
 @Component({
-  selector: 'app-fi-text',
-  templateUrl: 'fi-text.component.html',
+    selector: 'app-fi-text',
+    templateUrl: 'fi-text.component.html',
+    standalone: false
 })
 export class FiTextComponent implements OnInit, OnChanges {
   @Input() calculateInput: CalculateInput;
