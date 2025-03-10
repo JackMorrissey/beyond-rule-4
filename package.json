@@ -50,7 +50,7 @@
     "@types/jasmine": "^5.1.6",
     "@types/jasminewd2": "^2.0.13",
     "@types/node": "^22.13.4",
-    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/eslint-plugin": "^8.26.1",
     "@typescript-eslint/parser": "^7.18.0",
     "codelyzer": "^6.0.2",
     "eslint": "^8.57.1",
