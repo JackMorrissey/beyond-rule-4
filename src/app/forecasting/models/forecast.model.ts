@@ -18,22 +18,29 @@ export class Forecast {
   }
 
   public getDistanceFromFirstMonthText(forecastDate: Date): string {
+    const inPast = forecastDate < this.month0Date;
+    const difference = this.getDistanceFromDateText(forecastDate, this.month0Date);
+    const suffix = inPast ? 'ago' : '';
+    return difference + suffix;
+  }
+
+  public getDistanceFromDateText(forecastDate: Date, fromDate: Date): string {
+    if (!forecastDate || !fromDate) {
+      return;
+    }
+
     let monthDifference =
-      ((forecastDate.getFullYear() - this.month0Date.getFullYear()) * 12)
-      + (forecastDate.getMonth() - this.month0Date.getMonth());
+      ((forecastDate.getFullYear() - fromDate.getFullYear()) * 12)
+      + (forecastDate.getMonth() - fromDate.getMonth());
 
     if (monthDifference === 0) {
       return;
     }
 
-    const inPast = monthDifference < 0;
     monthDifference = Math.abs(monthDifference);
-
     const months = monthDifference % 12;
     const years = (monthDifference - months) / 12;
-    const difference = this.getTimeString(years, 'year') + this.getTimeString(months, 'month');
-    const suffix = inPast ? 'ago' : '';
-    return difference + suffix;
+    return this.getTimeString(years, 'year') + this.getTimeString(months, 'month');
   }
 
   private getTimeString(timeDifference: number, unit: string): string {

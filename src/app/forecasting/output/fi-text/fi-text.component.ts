@@ -27,10 +27,12 @@ export class FiTextComponent implements OnInit, OnChanges {
   fiMonthForecast: MonthlyForecast;
   fiDate: string;
   dateDistance: string;
+  fiAge: string;
 
   leanFiNumber: number;
   leanFiDate: string;
   leanFiDateDistance: string;
+  leanFiAge: string;
 
   constructor() {}
 
@@ -67,12 +69,14 @@ export class FiTextComponent implements OnInit, OnChanges {
       this.fiDate = 'Never';
       this.dateDistance = 'Forever';
       this.fiMonthForecast = undefined;
+      this.fiAge = undefined;
     } else {
       this.fiDate = foundFiForecast.toDateString();
       this.dateDistance =
         this.forecast.getDistanceFromFirstMonthText(foundFiForecast.date) ||
         '0 Months';
       this.fiMonthForecast = foundFiForecast;
+        this.fiAge = this.forecast.getDistanceFromDateText(foundFiForecast.date, this.calculateInput.birthdate);
     }
 
     const foundLeanFiForecast = this.forecast.monthlyForecasts.find(
@@ -81,11 +85,13 @@ export class FiTextComponent implements OnInit, OnChanges {
     if (!foundLeanFiForecast) {
       this.leanFiDate = 'Never';
       this.leanFiDateDistance = 'Forever';
+      this.leanFiAge = undefined;
     } else {
       this.leanFiDate = foundLeanFiForecast.toDateString();
       this.leanFiDateDistance =
         this.forecast.getDistanceFromFirstMonthText(foundLeanFiForecast.date) ||
         '0 Months';
+      this.leanFiAge = this.forecast.getDistanceFromDateText(foundLeanFiForecast.date, this.calculateInput.birthdate);
     }
   }
 }

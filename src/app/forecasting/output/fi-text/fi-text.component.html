@@ -3,6 +3,7 @@
     <h4 class="fw-light">FI Date</h4>
     <h2>
       <strong>{{ fiDate }}</strong> • {{ dateDistance }}
+      <span *ngIf="fiAge !== undefined">• {{ fiAge }} old</span>
     </h2>
     <hr />
     <ul class="list-inline mb-0">
@@ -11,7 +12,9 @@
       </li>
       <li class="list-inline-item"></li>
       <li class="list-inline-item">
-        <h4>{{ leanFiDate }} • {{ leanFiDateDistance }}</h4>
+        <h4>{{ leanFiDate }} • {{ leanFiDateDistance }}
+          <span *ngIf="leanFiAge !== undefined">• {{ leanFiAge }} old</span>
+        </h4>
       </li>
     </ul>
   </div>

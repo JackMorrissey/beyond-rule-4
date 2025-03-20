@@ -12,6 +12,7 @@ export class CalculateInput {
   currencyIsoCode = 'USD';
   monthFromName = '';
   monthToName = '';
+  birthdate = new Date();
 
   public constructor(init?: Partial<CalculateInput>) {
     Object.assign(
