@@ -10,14 +10,14 @@ import { CalculateInput } from '../../models/calculate-input.model';
 import { round } from '../../utilities/number-utility';
 import CategoryUtility from './category-utility';
 import NoteUtility, { Overrides } from './note-utility';
+import { Birthdate } from './birthdate-utility';
 import { getSelectedMonths, QuickSelectMonthChoice } from './months-utility';
-import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 
 @Component({
     selector: 'app-ynab',
     templateUrl: 'ynab.component.html',
     styleUrls: ['./ynab.component.css'],
-    standalone: false
+    standalone: false,
 })
 export class YnabComponent implements OnInit {
   @Output() calculateInputChange = new EventEmitter<CalculateInput>();
@@ -58,7 +58,7 @@ export class YnabComponent implements OnInit {
   };
   public contributionCategories: any;
   public isUsingSampleData = false;
-  public birthdate : Date;
+  public birthdate: Birthdate;
 
   constructor(
     private ynabService: YnabApiService,
@@ -100,14 +100,10 @@ export class YnabComponent implements OnInit {
       this.expectedAnnualGrowthRate = expectedAnnualGrowthRateStorage;
     }
 
-    const birthdateStorage = new Date(
-      window.localStorage.getItem('br4-birthdate')
-    );
-    if (
-      !!birthdateStorage &&
-      !birthdateStorage
-    ) {
-      this.birthdate = birthdateStorage;
+    try {
+      this.birthdate = JSON.parse(window.localStorage.getItem('br4-birthdate'));
+    } catch {
+      this.birthdate = null;
     }
 
     this.budgetForm = this.formBuilder.group({
@@ -126,7 +122,7 @@ export class YnabComponent implements OnInit {
         this.expectedAnnualGrowthRate,
         [Validators.required, Validators.max(99.99), Validators.max(0.01)],
       ],
-      birthdate: ['', [Validators.required]],
+      birthdate: [this.birthdate, [Validators.required]],
     });
   }
 
@@ -341,11 +337,9 @@ export class YnabComponent implements OnInit {
 
     this.handlePercentageFormChanges();
 
-    const birthdate = this.budgetForm.value.birthdate;
-    if (this.birthdate !== birthdate) {
-      this.birthdate = birthdate;
-      window.localStorage.setItem('br4-birthdate', birthdate);
-    }
+    
+    this.birthdate = this.budgetForm.value.birthdate;
+    window.localStorage.setItem('br4-birthdate', JSON.stringify(this.birthdate));
 
     const selectedBudget = this.budgetForm.value.selectedBudget;
     if (this.budget.id !== selectedBudget) {
@@ -365,8 +359,6 @@ export class YnabComponent implements OnInit {
       );
       return;
     }
-
-
 
     this.recalculate();
   }

@@ -3,7 +3,7 @@
     <h4 class="fw-light">FI Date</h4>
     <h2>
       <strong>{{ fiDate }}</strong> • {{ dateDistance }}
-      <span *ngIf="fiAge !== undefined">• {{ fiAge }} old</span>
+      <span *ngIf="fiAge !== null" class="fst-italic">• {{ fiAge }} old</span>
     </h2>
     <hr />
     <ul class="list-inline mb-0">
@@ -13,7 +13,7 @@
       <li class="list-inline-item"></li>
       <li class="list-inline-item">
         <h4>{{ leanFiDate }} • {{ leanFiDateDistance }}
-          <span *ngIf="leanFiAge !== undefined">• {{ leanFiAge }} old</span>
+          <span *ngIf="leanFiAge !== null" class="fst-italic">• {{ leanFiAge }} old</span>
         </h4>
       </li>
     </ul>
@@ -42,6 +42,7 @@
       At <strong>{{ expectedAnnualGrowthRate }}%</strong> returns, that Net
       Worth is forecasted to be <strong>{{ fiDate }}</strong
       >; {{ dateDistance }} from the first month.
+      <span *ngIf="fiAge !== null">You'll be <strong>{{ fiAge }}</strong> old at that time.</span>
       <span *ngIf="fiMonthForecast">
         By that point, Net Worth is at
         <strong>{{

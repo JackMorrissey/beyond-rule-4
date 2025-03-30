@@ -7,14 +7,14 @@ import {
 } from '@angular/core';
 
 import { round } from '../../utilities/number-utility';
-
+import { birthdateToDate } from '../../input/ynab/birthdate-utility';
 import { CalculateInput } from '../../models/calculate-input.model';
 import { Forecast, MonthlyForecast } from '../../models/forecast.model';
 
 @Component({
-    selector: 'app-fi-text',
-    templateUrl: 'fi-text.component.html',
-    standalone: false
+  selector: 'app-fi-text',
+  templateUrl: 'fi-text.component.html',
+  standalone: false,
 })
 export class FiTextComponent implements OnInit, OnChanges {
   @Input() calculateInput: CalculateInput;
@@ -65,6 +65,8 @@ export class FiTextComponent implements OnInit, OnChanges {
     const foundFiForecast = this.forecast.monthlyForecasts.find(
       (f) => f.netWorth >= fiNumber
     );
+    const birthdate = birthdateToDate(this.calculateInput.birthdate);
+
     if (!foundFiForecast) {
       this.fiDate = 'Never';
       this.dateDistance = 'Forever';
@@ -76,7 +78,9 @@ export class FiTextComponent implements OnInit, OnChanges {
         this.forecast.getDistanceFromFirstMonthText(foundFiForecast.date) ||
         '0 Months';
       this.fiMonthForecast = foundFiForecast;
-        this.fiAge = this.forecast.getDistanceFromDateText(foundFiForecast.date, this.calculateInput.birthdate);
+      this.fiAge = birthdate && !isNaN(birthdate.getTime())
+        ? this.forecast.getDistanceFromDateText(foundFiForecast.date, birthdate)
+        : null;
     }
 
     const foundLeanFiForecast = this.forecast.monthlyForecasts.find(
@@ -91,7 +95,12 @@ export class FiTextComponent implements OnInit, OnChanges {
       this.leanFiDateDistance =
         this.forecast.getDistanceFromFirstMonthText(foundLeanFiForecast.date) ||
         '0 Months';
-      this.leanFiAge = this.forecast.getDistanceFromDateText(foundLeanFiForecast.date, this.calculateInput.birthdate);
+      this.leanFiAge = birthdate && !isNaN(birthdate.getTime())
+        ? this.forecast.getDistanceFromDateText(
+            foundLeanFiForecast.date,
+            birthdate
+          )
+        : null;
     }
   }
 }

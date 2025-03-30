@@ -178,9 +178,19 @@
                 <label for="birthdate" class="col-sm-12 col-md-5 col-form-label">Birthdate</label>
                 <div class="col">
                   <div class="input-group">
-                    <input type="date" class="form-control" id="birthdate"
-                    formControlName="birthdate"
-                    aria-describedby="birthdateHelp" />
+                    <input
+                      class="form-control"
+                      id="ngBirthDate"
+                      formControlName="birthdate"
+                      ngbDatepicker
+                      #d="ngbDatepicker"
+                      [minDate]="{ year: 1900, month: 1, date: 1 }"
+                      placeholder="yyyy-mm-dd"
+                      [readonly]="false"
+                    />
+                    <div class="input-group-append">
+                      <button class="btn btn-outline-secondary bi bi-calendar3" (click)="d.toggle()" type="button"></button>
+                    </div>
                   </div>
                 </div>
               </div>

@@ -1,3 +1,4 @@
+import { Birthdate } from '../input/ynab/birthdate-utility';
 import { round } from '../utilities/number-utility';
 
 export class CalculateInput {
@@ -12,7 +13,7 @@ export class CalculateInput {
   currencyIsoCode = 'USD';
   monthFromName = '';
   monthToName = '';
-  birthdate = new Date();
+  birthdate: Birthdate = null;
 
   public constructor(init?: Partial<CalculateInput>) {
     Object.assign(
