@@ -44,7 +44,7 @@ export class ImpactComponent implements OnInit, OnChanges {
         });
 
         this.spendingCategoriesWithImpact = categoriesWithSpending.map((category) => {
-            const isFi = !this.forecast.getDistanceFromFirstMonthText(currentFiForecast.date);
+            const isFi = currentFiForecast.date < new Date();
 
             let impactDate = 'Achieved FI!';
             if (isFi) {

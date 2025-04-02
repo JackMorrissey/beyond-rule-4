@@ -3,6 +3,7 @@ import { Component, OnInit, Input, OnChanges, SimpleChanges, } from '@angular/co
 import { CalculateInput } from '../../../models/calculate-input.model';
 import { Forecast, MonthlyForecast } from '../../../models/forecast.model';
 import { Milestones } from '../milestone.model';
+import { birthdateToDate } from '../../../input/ynab/birthdate-utility';
 
 @Component({
     selector: 'app-milestones-text',
@@ -55,12 +56,14 @@ export class TextComponent implements OnInit, OnChanges {
       const forecast = forecastSearch[foundIndex];
       const forecastDate = this.getDateString(forecast.date);
       const distance = this.getDistanceText(forecast.date);
+      const age = this.forecast.getDistanceFromDateText(forecast.date, birthdateToDate(this.forecast.birthdate));
       const completed = distance === this.completeText;
       return {
         milestone,
         forecast,
         forecastDate,
         distance,
+        age,
         completed
       };
     });
@@ -76,10 +79,6 @@ export class TextComponent implements OnInit, OnChanges {
   }
 
   getDistanceText(forecastDate: Date) {
-    const text = this.forecast.getDistanceFromFirstMonthText(forecastDate);
-    if (!text) {
-      return this.completeText;
-    }
-    return text;
+    return this.forecast.getDistanceFromFirstMonthText(forecastDate) ?? this.completeText;
   }
 }

@@ -10,13 +10,14 @@ import { CalculateInput } from '../../models/calculate-input.model';
 import { round } from '../../utilities/number-utility';
 import CategoryUtility from './category-utility';
 import NoteUtility, { Overrides } from './note-utility';
+import { Birthdate } from './birthdate-utility';
 import { getSelectedMonths, QuickSelectMonthChoice } from './months-utility';
 
 @Component({
     selector: 'app-ynab',
     templateUrl: 'ynab.component.html',
     styleUrls: ['./ynab.component.css'],
-    standalone: false
+    standalone: false,
 })
 export class YnabComponent implements OnInit {
   @Output() calculateInputChange = new EventEmitter<CalculateInput>();
@@ -57,6 +58,7 @@ export class YnabComponent implements OnInit {
   };
   public contributionCategories: any;
   public isUsingSampleData = false;
+  public birthdate: Birthdate;
 
   constructor(
     private ynabService: YnabApiService,
@@ -98,6 +100,12 @@ export class YnabComponent implements OnInit {
       this.expectedAnnualGrowthRate = expectedAnnualGrowthRateStorage;
     }
 
+    try {
+      this.birthdate = JSON.parse(window.localStorage.getItem('br4-birthdate'));
+    } catch {
+      this.birthdate = null;
+    }
+
     this.budgetForm = this.formBuilder.group({
       selectedBudget: ['', [Validators.required]],
       selectedMonthA: ['', [Validators.required]],
@@ -114,6 +122,7 @@ export class YnabComponent implements OnInit {
         this.expectedAnnualGrowthRate,
         [Validators.required, Validators.max(99.99), Validators.max(0.01)],
       ],
+      birthdate: [this.birthdate, [Validators.required]],
     });
   }
 
@@ -181,6 +190,7 @@ export class YnabComponent implements OnInit {
     result.currencyIsoCode = this.currencyIsoCode;
     result.monthFromName = this.selectedMonthA.month;
     result.monthToName = this.selectedMonthB.month;
+    result.birthdate = this.birthdate;
 
     result.annualSafeWithdrawalRate = Math.max(
       0,
@@ -326,6 +336,10 @@ export class YnabComponent implements OnInit {
     }
 
     this.handlePercentageFormChanges();
+
+    
+    this.birthdate = this.budgetForm.value.birthdate;
+    window.localStorage.setItem('br4-birthdate', JSON.stringify(this.birthdate));
 
     const selectedBudget = this.budgetForm.value.selectedBudget;
     if (this.budget.id !== selectedBudget) {
@@ -522,6 +536,7 @@ export class YnabComponent implements OnInit {
       monthlyContribution,
       expectedAnnualGrowthRate: this.expectedAnnualGrowthRate,
       safeWithdrawalRatePercentage: this.safeWithdrawalRatePercentage,
+      birthdate: this.birthdate, 
     });
 
     const categoryGroupFormGroups = categoriesDisplay.map((cg) =>

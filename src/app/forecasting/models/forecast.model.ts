@@ -1,9 +1,11 @@
 import { CalculateInput } from './calculate-input.model';
 import { round } from '../utilities/number-utility';
+import { Birthdate } from '../input/ynab/birthdate-utility';
 
 export class Forecast {
   monthlyForecasts: MonthlyForecast[];
   month0Date: Date;
+  birthdate: Birthdate;
 
   public constructor(calculateInput: CalculateInput, month0Date?: Date) {
     if (!calculateInput) {
@@ -12,28 +14,36 @@ export class Forecast {
     if (!this.month0Date) {
       this.month0Date = new Date();
     }
+    this.birthdate = calculateInput.birthdate;
     this.month0Date.setDate(1); // make it the first of the month
     this.computeForecast(calculateInput);
     this.setDates();
   }
 
   public getDistanceFromFirstMonthText(forecastDate: Date): string {
+    const inPast = forecastDate < this.month0Date;
+    const difference = this.getDistanceFromDateText(forecastDate, this.month0Date);
+    const suffix = inPast ? 'ago' : '';
+    return difference ? difference + suffix: undefined;
+  }
+
+  public getDistanceFromDateText(forecastDate: Date, fromDate: Date): string {
+    if (!forecastDate || !fromDate) {
+      return;
+    }
+
     let monthDifference =
-      ((forecastDate.getFullYear() - this.month0Date.getFullYear()) * 12)
-      + (forecastDate.getMonth() - this.month0Date.getMonth());
+      ((forecastDate.getFullYear() - fromDate.getFullYear()) * 12)
+      + (forecastDate.getMonth() - fromDate.getMonth());
 
     if (monthDifference === 0) {
       return;
     }
 
-    const inPast = monthDifference < 0;
     monthDifference = Math.abs(monthDifference);
-
     const months = monthDifference % 12;
     const years = (monthDifference - months) / 12;
-    const difference = this.getTimeString(years, 'year') + this.getTimeString(months, 'month');
-    const suffix = inPast ? 'ago' : '';
-    return difference + suffix;
+    return this.getTimeString(years, 'year') + this.getTimeString(months, 'month');
   }
 
   private getTimeString(timeDifference: number, unit: string): string {
@@ -102,6 +112,7 @@ export class Forecast {
 export class MonthlyForecast {
   monthIndex: number;
   date: Date;
+  age: Date;
   netWorth: number;
   lastMonthNetWorth: number;
   contribution: number;
