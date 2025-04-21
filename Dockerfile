@@ -20,7 +20,7 @@ RUN npm run build
 
 ### STAGE 2: Setup ###
 
-FROM nginx:1.27.4-alpine
+FROM nginx:1.27.5-alpine
 
 ## Copy our default nginx config
 COPY nginx/default.conf /etc/nginx/conf.d/
