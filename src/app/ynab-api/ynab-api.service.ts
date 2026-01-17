@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { Cookie } from 'ng2-cookies';
 
 import * as ynab from 'ynab';
 import { environment } from '../../environments/environment';
@@ -8,6 +7,20 @@ import { environment } from '../../environments/environment';
 import { SampleData } from './sample-data.values';
 
 const tokenName = 'ynab_access_token';
+
+function getCookie(name: string): string | null {
+  const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+  return match ? decodeURIComponent(match[2]) : null;
+}
+
+function setCookie(name: string, value: string, days: number): void {
+  const expires = new Date(Date.now() + days * 864e5).toUTCString();
+  document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`;
+}
+
+function deleteCookie(name: string): void {
+  document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
+}
 
 @Injectable()
 export class YnabApiService {
@@ -29,11 +42,11 @@ export class YnabApiService {
   }
 
   getToken() {
-    return Cookie.get(tokenName);
+    return getCookie(tokenName);
   }
 
   clearToken() {
-    Cookie.delete(tokenName);
+    deleteCookie(tokenName);
     this.useSampleData = true;
     this.isAuthorized$.next(false);
   }
@@ -66,7 +79,7 @@ export class YnabApiService {
         return key === '' ? value : decodeURIComponent(value);
       });
       token = params.access_token;
-      Cookie.set(tokenName, token, 0.08); // 2 hrs (7200) comes back
+      setCookie(tokenName, token, 0.08); // 2 hrs (7200) comes back
       window.location.hash = '';
     }
     this.setApiAccess();
