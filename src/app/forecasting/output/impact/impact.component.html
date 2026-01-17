@@ -3,20 +3,27 @@
     spending to savings contributions, and you can reduce your FI Date by the amount under <strong>Impact on FI
         Date</strong>.
 </p>
+<div class="text-center mb-3">
+    <div class="btn-group" role="group">
+        <button type="button" class="btn btn-sm" [ngClass]="{'btn-primary': !showLeanFi, 'btn-outline-primary': showLeanFi}" (click)="toggleLeanFi(false)">FI Budget</button>
+        <button type="button" class="btn btn-sm" [ngClass]="{'btn-primary': showLeanFi, 'btn-outline-primary': !showLeanFi}" (click)="toggleLeanFi(true)">Lean FI Budget</button>
+    </div>
+</div>
 <div class="table-responsive">
     <table class="table table-striped">
         <thead>
             <tr>
                 <th>Category</th>
-                <th>FI Budget</th>
-                <th>Impact on FI Date</th>
+                <th>{{ showLeanFi ? 'Lean FI Budget' : 'FI Budget' }}</th>
+                <th>Impact on {{ showLeanFi ? 'Lean FI' : 'FI' }} Date</th>
             </tr>
         </thead>
         <tbody>
             <tr *ngFor="let c of spendingCategoriesWithImpact">
                 <td>{{ c.category.name }}</td>
-                <td>{{ c.category.fiBudget | currency:calculateInput.currencyIsoCode }}</td>
-                <td>
+                <td *ngIf="!showLeanFi">{{ c.category.fiBudget | currency:calculateInput.currencyIsoCode }}</td>
+                <td *ngIf="showLeanFi">{{ c.category.leanFiBudget | currency:calculateInput.currencyIsoCode }}</td>
+                <td *ngIf="!showLeanFi">
                     <span [ngClass]="{'d-none': c.isFi === true}">
                         <fa-icon [icon]="['fas', 'plus-circle']"></fa-icon>
                     </span>
@@ -24,6 +31,18 @@
                         <fa-icon [icon]="['fas', 'check-circle']"></fa-icon>
                     </span>
                     {{ c.impactDate }}
+                </td>
+                <td *ngIf="showLeanFi">
+                    <span *ngIf="c.leanImpactDate">
+                        <span [ngClass]="{'d-none': c.isLeanFi === true}">
+                            <fa-icon [icon]="['fas', 'plus-circle']"></fa-icon>
+                        </span>
+                        <span [ngClass]="{'d-none': c.isLeanFi !== true}">
+                            <fa-icon [icon]="['fas', 'check-circle']"></fa-icon>
+                        </span>
+                        {{ c.leanImpactDate }}
+                    </span>
+                    <span *ngIf="!c.leanImpactDate">-</span>
                 </td>
             </tr>
         </tbody>
