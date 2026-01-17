@@ -382,9 +382,10 @@
       <h2 ngbAccordionHeader>
         <button ngbAccordionButton>
           <span class="float-start">Contributions</span>
-          <span class="ms-auto">{{
-            budgetForm.value.monthlyContribution | currency : currencyIsoCode
-          }}</span>
+          <span class="ms-auto text-end">
+            {{ budgetForm.value.monthlyContribution * 12 | currency : currencyIsoCode }} per year
+            <small class="opacity-75 d-block mt-1">{{ budgetForm.value.monthlyContribution | currency : currencyIsoCode }} per month</small>
+          </span>
         </button>
       </h2>
 
@@ -519,9 +520,10 @@
       <h2 ngbAccordionHeader>
         <button ngbAccordionButton>
           <span class="float-start">Expenses</span>
-          <span class="ms-auto">
-            {{ expenses.fi.annual | currency : currencyIsoCode }}</span
-          >
+          <span class="ms-auto text-end">
+            {{ expenses.fi.annual | currency : currencyIsoCode }} per year
+            <small class="opacity-75 d-block mt-1">{{ expenses.fi.monthly | currency : currencyIsoCode }} per month</small>
+          </span>
         </button>
       </h2>
       <div ngbAccordionCollapse>
