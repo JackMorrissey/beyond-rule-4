@@ -13,7 +13,11 @@
     </thead>
     <tbody>
       <tr *ngFor="let m of milestonesWithForecast" [ngClass]="{'table-success' : m.completed}">
-        <td>{{ m.milestone.label }}</td>
+        <td
+          [ngbTooltip]="getMilestoneTooltip(m.milestone.label)"
+          placement="top"
+          container="body"
+        >{{ m.milestone.label }}</td>
         <td>{{ m.milestone.value | currency:currencyIsoCode:'symbol':'1.0'}}</td>
         <td>{{ m.forecastDate }}</td>
         <td>{{ m.distance }}</td>
