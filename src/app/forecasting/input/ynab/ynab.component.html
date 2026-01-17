@@ -36,6 +36,19 @@
                         {{ budget.name }}
                       </option>
                     </select>
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary"
+                      (click)="reloadBudget()"
+                      [disabled]="isReloadingBudget || !budget"
+                      ngbTooltip="Reload budget and reset adjustments"
+                      placement="top"
+                    >
+                      <fa-icon
+                        [icon]="['fas', 'sync']"
+                        [animation]="isReloadingBudget ? 'spin' : undefined"
+                      ></fa-icon>
+                    </button>
                   </div>
                 </div>
               </div>

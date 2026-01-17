@@ -58,6 +58,7 @@ export class YnabComponent implements OnInit {
   };
   public contributionCategories: any;
   public isUsingSampleData = false;
+  public isReloadingBudget = false;
   public birthdate: Birthdate;
 
   constructor(
@@ -235,6 +236,20 @@ export class YnabComponent implements OnInit {
       'previousChoice'
     );
     await this.selectMonths(selectedMonths.from.month, selectedMonths.to.month);
+  }
+
+  async reloadBudget(): Promise<void> {
+    if (!this.budget || this.isReloadingBudget) {
+      return;
+    }
+    this.isReloadingBudget = true;
+    try {
+      await this.selectBudget(this.budget.id);
+    } catch (error) {
+      console.error('Failed to reload budget:', error);
+    } finally {
+      this.isReloadingBudget = false;
+    }
   }
 
   toggleIncludeHiddenYnabCategories(newValue: boolean) {
