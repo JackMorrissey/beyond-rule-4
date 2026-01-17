@@ -1,8 +1,22 @@
+export interface ScheduledValue {
+  effectiveDate: string;
+  value: number;
+}
+
+export interface TimeVaryingOverride {
+  baseline: number | undefined;
+  schedule: ScheduledValue[];
+}
+
 export interface Overrides {
   contributionBudget: number;
   computedLeanFiBudget: number;
   computedFiBudget: number;
   monthlyContribution: number;
+  contributionBudgetSchedule: TimeVaryingOverride;
+  computedFiBudgetSchedule: TimeVaryingOverride;
+  computedLeanFiBudgetSchedule: TimeVaryingOverride;
+  monthlyContributionSchedule: TimeVaryingOverride;
 }
 
 export default class NoteUtility {
@@ -10,11 +24,15 @@ export default class NoteUtility {
     note: string,
     originalValue: number
   ): Overrides {
-    const override = {
+    const override: Overrides = {
       contributionBudget: undefined,
       computedLeanFiBudget: undefined,
       computedFiBudget: undefined,
       monthlyContribution: undefined, // used on accounts to implicitly add a contribution
+      contributionBudgetSchedule: { baseline: undefined, schedule: [] },
+      computedFiBudgetSchedule: { baseline: undefined, schedule: [] },
+      computedLeanFiBudgetSchedule: { baseline: undefined, schedule: [] },
+      monthlyContributionSchedule: { baseline: undefined, schedule: [] },
     };
 
     if (!note) {
@@ -28,19 +46,51 @@ export default class NoteUtility {
         case '+':
         case 'c':
         case 'contribution':
-          override.contributionBudget = c.value;
+          if (c.effectiveDate) {
+            override.contributionBudgetSchedule.schedule.push({
+              effectiveDate: c.effectiveDate,
+              value: c.value,
+            });
+          } else {
+            override.contributionBudget = c.value;
+            override.contributionBudgetSchedule.baseline = c.value;
+          }
           break;
         case 'l':
         case 'lfi':
         case 'lean':
-          override.computedLeanFiBudget = c.value;
+          if (c.effectiveDate) {
+            override.computedLeanFiBudgetSchedule.schedule.push({
+              effectiveDate: c.effectiveDate,
+              value: c.value,
+            });
+          } else {
+            override.computedLeanFiBudget = c.value;
+            override.computedLeanFiBudgetSchedule.baseline = c.value;
+          }
           break;
         case 'f':
         case 'fi':
-          override.computedFiBudget = c.value;
+          if (c.effectiveDate) {
+            override.computedFiBudgetSchedule.schedule.push({
+              effectiveDate: c.effectiveDate,
+              value: c.value,
+            });
+          } else {
+            override.computedFiBudget = c.value;
+            override.computedFiBudgetSchedule.baseline = c.value;
+          }
           break;
         case '+m':
-          override.monthlyContribution = c.value;
+          if (c.effectiveDate) {
+            override.monthlyContributionSchedule.schedule.push({
+              effectiveDate: c.effectiveDate,
+              value: c.value,
+            });
+          } else {
+            override.monthlyContribution = c.value;
+            override.monthlyContributionSchedule.baseline = c.value;
+          }
           break;
         default:
           break;
@@ -62,15 +112,29 @@ export default class NoteUtility {
       return [];
     }
 
+    // Date prefix regex: matches "YYYY-MM" at the start of a command
+    const dateRegex = /^\s*(\d{4}-\d{2})\s*/;
+
     return lines
       .map((line) => {
-        const cleaned = line.replace(/\:/g, ' ').replace(/\s+/g, ' ').trim();
+        let cleaned = line.replace(/\:/g, ' ').replace(/\s+/g, ' ').trim();
+
+        // Check for date prefix
+        let effectiveDate: string | null = null;
+        const dateMatch = dateRegex.exec(cleaned);
+        if (dateMatch) {
+          effectiveDate = dateMatch[1];
+          // Remove the date from the line for further processing
+          cleaned = cleaned.substring(dateMatch[0].length).trim();
+        }
+
         const numRegex = /[+-]?\d+(?:\.\d+)?/g;
         const match = numRegex.exec(cleaned);
         if (!match || !match.length) {
           return {
             key: cleaned,
             value: originValue,
+            effectiveDate,
           };
         }
         const foundValue = match[0];
@@ -79,6 +143,7 @@ export default class NoteUtility {
         return {
           key,
           value,
+          effectiveDate,
         };
       })
       .filter((l) => l.key);

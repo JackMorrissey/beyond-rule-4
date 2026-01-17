@@ -107,7 +107,13 @@ export default class CategoryUtility {
       retrievedBudgeted
     );
 
-    let computedFiBudget = ignore ? 0 : retrievedBudgeted;
+    // Calculate original values (without BR4 baseline overrides)
+    const originalFiBudget = ignore ? 0 : retrievedBudgeted;
+    const originalLeanFiBudget = leanFiIgnore ? 0 : originalFiBudget;
+    const originalContributionBudget = isContribution ? retrievedBudgeted : 0;
+
+    // Apply BR4 baseline overrides
+    let computedFiBudget = originalFiBudget;
     if (overrides.computedFiBudget !== undefined) {
       computedFiBudget = overrides.computedFiBudget;
     }
@@ -117,20 +123,41 @@ export default class CategoryUtility {
       computedLeanFiBudget = overrides.computedLeanFiBudget;
     }
 
-    let contributionBudget = isContribution ? retrievedBudgeted : 0;
+    let contributionBudget = originalContributionBudget;
     if (overrides.contributionBudget !== undefined) {
       contributionBudget = overrides.contributionBudget;
     }
+
+    // Build schedule data for time-varying values
+    const contributionBudgetSchedule = {
+      baseline: contributionBudget,
+      schedule: overrides.contributionBudgetSchedule.schedule,
+    };
+    const computedFiBudgetSchedule = {
+      baseline: computedFiBudget,
+      schedule: overrides.computedFiBudgetSchedule.schedule,
+    };
+    const computedLeanFiBudgetSchedule = {
+      baseline: computedLeanFiBudget,
+      schedule: overrides.computedLeanFiBudgetSchedule.schedule,
+    };
+
     return Object.assign({
       name: category.name,
       ignore,
       hidden: isCategoryDirectlyHidden,
       id: category.id,
       retrievedBudgeted,
+      originalFiBudget,
+      originalLeanFiBudget,
+      originalContributionBudget,
       computedFiBudget,
       computedLeanFiBudget,
       contributionBudget,
       info: categoryBudgetInfo,
+      contributionBudgetSchedule,
+      computedFiBudgetSchedule,
+      computedLeanFiBudgetSchedule,
     });
   }
 }

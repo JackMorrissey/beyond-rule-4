@@ -1,4 +1,5 @@
 import { Birthdate } from '../input/ynab/birthdate-utility';
+import { TimeSeries } from './time-series.model';
 import { round } from '../utilities/number-utility';
 
 export class CalculateInput {
@@ -14,6 +15,11 @@ export class CalculateInput {
   monthFromName = '';
   monthToName = '';
   birthdate: Birthdate = null;
+
+  // Time series for dynamic values
+  monthlyContributionSeries: TimeSeries | null = null;
+  annualExpensesSeries: TimeSeries | null = null;
+  leanAnnualExpensesSeries: TimeSeries | null = null;
 
   public constructor(init?: Partial<CalculateInput>) {
     Object.assign(
@@ -52,5 +58,68 @@ export class CalculateInput {
       leanFiNumber = this.safeWithdrawalTimes * this.leanAnnualExpenses;
     }
     return leanFiNumber;
+  }
+
+  /**
+   * Get the monthly contribution at a specific month.
+   * Falls back to the static value if no time series is available.
+   */
+  getMonthlyContributionAt(month: string): number {
+    if (this.monthlyContributionSeries) {
+      return this.monthlyContributionSeries.getValueAt(month);
+    }
+    return this.monthlyContribution;
+  }
+
+  /**
+   * Get the annual expenses at a specific month.
+   * Falls back to the static value if no time series is available.
+   */
+  getAnnualExpensesAt(month: string): number {
+    if (this.annualExpensesSeries) {
+      return this.annualExpensesSeries.getValueAt(month) * 12;
+    }
+    return this.annualExpenses;
+  }
+
+  /**
+   * Get the lean annual expenses at a specific month.
+   * Falls back to the static value if no time series is available.
+   */
+  getLeanAnnualExpensesAt(month: string): number {
+    if (this.leanAnnualExpensesSeries) {
+      return this.leanAnnualExpensesSeries.getValueAt(month) * 12;
+    }
+    return this.leanAnnualExpenses;
+  }
+
+  /**
+   * Get the FI number at a specific month based on dynamic expenses.
+   */
+  getFiNumberAt(month: string): number {
+    const annualExpenses = this.getAnnualExpensesAt(month);
+    return this.safeWithdrawalTimes * annualExpenses;
+  }
+
+  /**
+   * Get the lean FI number at a specific month based on dynamic expenses.
+   */
+  getLeanFiNumberAt(month: string): number {
+    const leanAnnualExpenses = this.getLeanAnnualExpensesAt(month);
+    if (leanAnnualExpenses > 0) {
+      return this.safeWithdrawalTimes * leanAnnualExpenses;
+    }
+    return this.getFiNumberAt(month) * this.leanFiPercentage;
+  }
+
+  /**
+   * Check if there are any time-varying changes scheduled.
+   */
+  hasTimeVaryingValues(): boolean {
+    return (
+      (this.monthlyContributionSeries?.hasFutureChanges() ?? false) ||
+      (this.annualExpensesSeries?.hasFutureChanges() ?? false) ||
+      (this.leanAnnualExpensesSeries?.hasFutureChanges() ?? false)
+    );
   }
 }
