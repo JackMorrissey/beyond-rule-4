@@ -81,4 +81,18 @@ export class TextComponent implements OnInit, OnChanges {
   getDistanceText(forecastDate: Date) {
     return this.forecast.getDistanceFromFirstMonthText(forecastDate) ?? this.completeText;
   }
+
+  getMilestoneTooltip(label: string): string {
+    const tooltips: { [key: string]: string } = {
+      'FU$': 'F-You Money: 10% of your FI number (2.5x annual expenses)',
+      'Half FI': 'Halfway to Financial Independence (12.5x annual expenses)',
+      'Lean FI': 'Financially independent with a lean budget',
+      'Flex FI': 'Flexible FI: 80% of your FI number (20x annual expenses)',
+      'FI': 'Financial Independence: 25x annual expenses using the 4% rule',
+      'Fat FI': 'Fat FI: 120% of your FI number (30x annual expenses)',
+      '1.5x FI': '1.5 times your FI number for extra security',
+      'Contribution / Returns Eclipse': 'The point where investment returns exceed your contributions'
+    };
+    return tooltips[label] || '';
+  }
 }
