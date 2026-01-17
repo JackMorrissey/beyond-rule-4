@@ -7,6 +7,8 @@ import * as ynab from 'ynab';
 
 import { YnabApiService } from '../../../ynab-api/ynab-api.service';
 import { CalculateInput } from '../../models/calculate-input.model';
+import { TimeSeries, aggregateTimeSeries } from '../../models/time-series.model';
+import { ScheduledChange, ScheduledChangesState, SCHEDULED_CHANGES_STORAGE_KEY } from '../../models/scheduled-change.model';
 import { round } from '../../utilities/number-utility';
 import CategoryUtility from './category-utility';
 import NoteUtility, { Overrides } from './note-utility';
@@ -60,6 +62,11 @@ export class YnabComponent implements OnInit {
   public isUsingSampleData = false;
   public birthdate: Birthdate;
 
+  // Scheduled changes state
+  public scheduledChanges: ScheduledChange[] = [];
+  public scheduledChangesEnabled = true;
+  private disabledChangeIds: Set<string> = new Set();
+
   constructor(
     private ynabService: YnabApiService,
     private formBuilder: UntypedFormBuilder,
@@ -104,6 +111,17 @@ export class YnabComponent implements OnInit {
       this.birthdate = JSON.parse(window.localStorage.getItem('br4-birthdate'));
     } catch {
       this.birthdate = null;
+    }
+
+    // Load scheduled changes state from localStorage
+    try {
+      const storedState = JSON.parse(window.localStorage.getItem(SCHEDULED_CHANGES_STORAGE_KEY)) as ScheduledChangesState;
+      if (storedState) {
+        this.scheduledChangesEnabled = storedState.globalEnabled;
+        this.disabledChangeIds = new Set(storedState.disabledChangeIds || []);
+      }
+    } catch {
+      // Ignore parse errors, use defaults
     }
 
     this.budgetForm = this.formBuilder.group({
@@ -151,6 +169,9 @@ export class YnabComponent implements OnInit {
   }
 
   recalculate() {
+    // Collect scheduled changes for UI display
+    this.collectScheduledChanges();
+
     const fiMonthlyExpenses = this.getMonthlyExpenses(
       this.budgetForm.value.categoryGroups,
       'fiBudget'
@@ -162,6 +183,26 @@ export class YnabComponent implements OnInit {
     const retrievedBudgetedMonthlyExpenses = this.getMonthlyExpenses(
       this.budgetForm.value.categoryGroups,
       'retrievedBudgeted'
+    );
+
+    // Build time series for expenses (respecting enabled state)
+    const fiExpensesSeries = this.getExpensesTimeSeries(
+      this.budgetForm.value.categoryGroups,
+      'computedFiBudgetSchedule',
+      'fiBudget',
+      'fiBudget'
+    );
+    const leanFiExpensesSeries = this.getExpensesTimeSeries(
+      this.budgetForm.value.categoryGroups,
+      'computedLeanFiBudgetSchedule',
+      'leanFiBudget',
+      'leanFiBudget'
+    );
+
+    // Get contribution with series (respecting enabled state)
+    const contributionData = this.getMonthlyContribution(
+      this.budgetForm.value.categoryGroups,
+      this.accounts.controls
     );
 
     this.setNetWorth();
@@ -191,6 +232,11 @@ export class YnabComponent implements OnInit {
     result.monthFromName = this.selectedMonthA.month;
     result.monthToName = this.selectedMonthB.month;
     result.birthdate = this.birthdate;
+
+    // Add time series data
+    result.monthlyContributionSeries = contributionData.series;
+    result.annualExpensesSeries = fiExpensesSeries;
+    result.leanAnnualExpensesSeries = leanFiExpensesSeries;
 
     result.annualSafeWithdrawalRate = Math.max(
       0,
@@ -363,6 +409,127 @@ export class YnabComponent implements OnInit {
     this.recalculate();
   }
 
+  /**
+   * Collect all scheduled changes from the form data for display in the UI.
+   */
+  collectScheduledChanges(): void {
+    const changes: ScheduledChange[] = [];
+    const categoryGroups = this.budgetForm.value.categoryGroups || [];
+
+    for (const categoryGroup of categoryGroups) {
+      if (!categoryGroup.categories) continue;
+
+      for (const category of categoryGroup.categories) {
+        // Check contribution schedules
+        const contributionSchedule = category.contributionBudgetSchedule;
+        if (contributionSchedule?.schedule?.length > 0) {
+          for (const point of contributionSchedule.schedule) {
+            const id = `${category.name}-contribution-${point.effectiveDate}`;
+            changes.push({
+              id,
+              categoryName: category.name,
+              categoryId: category.name, // Using name as ID since it's more stable
+              type: 'contribution',
+              baselineValue: category.contributionBudget || 0,
+              scheduledValue: point.value,
+              effectiveDate: point.effectiveDate,
+              enabled: !this.disabledChangeIds.has(id),
+            });
+          }
+        }
+
+        // Check FI budget schedules
+        const fiBudgetSchedule = category.computedFiBudgetSchedule;
+        if (fiBudgetSchedule?.schedule?.length > 0) {
+          for (const point of fiBudgetSchedule.schedule) {
+            const id = `${category.name}-fiBudget-${point.effectiveDate}`;
+            changes.push({
+              id,
+              categoryName: category.name,
+              categoryId: category.name,
+              type: 'fiBudget',
+              baselineValue: category.fiBudget || category.computedFiBudget || 0,
+              scheduledValue: point.value,
+              effectiveDate: point.effectiveDate,
+              enabled: !this.disabledChangeIds.has(id),
+            });
+          }
+        }
+
+        // Check Lean FI budget schedules
+        const leanFiBudgetSchedule = category.computedLeanFiBudgetSchedule;
+        if (leanFiBudgetSchedule?.schedule?.length > 0) {
+          for (const point of leanFiBudgetSchedule.schedule) {
+            const id = `${category.name}-leanFiBudget-${point.effectiveDate}`;
+            changes.push({
+              id,
+              categoryName: category.name,
+              categoryId: category.name,
+              type: 'leanFiBudget',
+              baselineValue: category.leanFiBudget || category.computedLeanFiBudget || 0,
+              scheduledValue: point.value,
+              effectiveDate: point.effectiveDate,
+              enabled: !this.disabledChangeIds.has(id),
+            });
+          }
+        }
+      }
+    }
+
+    // Sort by effective date
+    changes.sort((a, b) => a.effectiveDate.localeCompare(b.effectiveDate));
+    this.scheduledChanges = changes;
+  }
+
+  /**
+   * Toggle an individual scheduled change on/off.
+   * Note: change.enabled is already updated by ngModel binding before this is called.
+   */
+  toggleScheduledChange(change: ScheduledChange): void {
+    if (change.enabled) {
+      this.disabledChangeIds.delete(change.id);
+    } else {
+      this.disabledChangeIds.add(change.id);
+    }
+    this.saveScheduledChangesState();
+    this.recalculate();
+  }
+
+  /**
+   * Toggle all scheduled changes on/off via master switch.
+   */
+  toggleAllScheduledChanges(enabled: boolean): void {
+    this.scheduledChangesEnabled = enabled;
+    this.saveScheduledChangesState();
+    this.recalculate();
+  }
+
+  /**
+   * Get scheduled changes filtered by type.
+   */
+  getScheduledChangesByType(type: 'contribution' | 'fiBudget' | 'leanFiBudget'): ScheduledChange[] {
+    return this.scheduledChanges.filter(c => c.type === type);
+  }
+
+  /**
+   * Get the count of enabled scheduled changes.
+   */
+  getEnabledScheduleCount(): number {
+    if (!this.scheduledChangesEnabled) return 0;
+    return this.scheduledChanges.filter(c => c.enabled).length;
+  }
+
+  /**
+   * Save scheduled changes state to localStorage.
+   */
+  private saveScheduledChangesState(): void {
+    const state: ScheduledChangesState = {
+      globalEnabled: this.scheduledChangesEnabled,
+      disabledChangeIds: Array.from(this.disabledChangeIds),
+    };
+    window.localStorage.setItem(SCHEDULED_CHANGES_STORAGE_KEY, JSON.stringify(state));
+  }
+
   private setInitialSelectedBudget(): string {
     let selectedBudget = 'last-used';
 
@@ -418,6 +585,49 @@ export class YnabComponent implements OnInit {
       .reduce((prev, next) => prev + next, 0);
 
     return round(expenses);
+  }
+
+  /**
+   * Build a TimeSeries for expenses from category groups.
+   * @param categoryGroups The category groups from the form
+   * @param schedulePropertyName The property name for the schedule (e.g., 'computedFiBudgetSchedule')
+   * @param budgetPropertyName The property name for baseline value (e.g., 'fiBudget')
+   * @param scheduleType The type of schedule for checking enabled state
+   */
+  private getExpensesTimeSeries(
+    categoryGroups: any[],
+    schedulePropertyName: string,
+    budgetPropertyName: string,
+    scheduleType: 'fiBudget' | 'leanFiBudget'
+  ): TimeSeries {
+    const seriesList: TimeSeries[] = [];
+
+    for (const categoryGroup of categoryGroups) {
+      if (!categoryGroup.categories || !categoryGroup.categories.length) {
+        continue;
+      }
+      for (const category of categoryGroup.categories) {
+        const baseline = category[budgetPropertyName] || 0;
+        const schedule = category[schedulePropertyName];
+
+        const series = new TimeSeries(baseline);
+        if (schedule && schedule.schedule && schedule.schedule.length > 0) {
+          for (const point of schedule.schedule) {
+            // Only add the point if scheduled changes are globally enabled
+            // and this specific change is not disabled
+            if (this.scheduledChangesEnabled) {
+              const changeId = `${category.name}-${scheduleType}-${point.effectiveDate}`;
+              if (!this.disabledChangeIds.has(changeId)) {
+                series.addPoint(point.effectiveDate, point.value);
+              }
+            }
+          }
+        }
+        seriesList.push(series);
+      }
+    }
+
+    return aggregateTimeSeries(seriesList);
   }
 
   private setNetWorth() {
@@ -482,6 +692,7 @@ export class YnabComponent implements OnInit {
   private getMonthlyContribution(categoryGroups, accounts) {
     let contribution = 0;
     const categories = [];
+    const seriesList: TimeSeries[] = [];
 
     if (categoryGroups) {
       categoryGroups.forEach((cg) => {
@@ -494,6 +705,23 @@ export class YnabComponent implements OnInit {
               info: c.info,
               hidden: c.hidden,
             });
+
+            // Build TimeSeries for this category
+            const series = new TimeSeries(c.contributionBudget);
+            const schedule = c.contributionBudgetSchedule;
+            if (schedule && schedule.schedule && schedule.schedule.length > 0) {
+              for (const point of schedule.schedule) {
+                // Only add the point if scheduled changes are globally enabled
+                // and this specific change is not disabled
+                if (this.scheduledChangesEnabled) {
+                  const changeId = `${c.name}-contribution-${point.effectiveDate}`;
+                  if (!this.disabledChangeIds.has(changeId)) {
+                    series.addPoint(point.effectiveDate, point.value);
+                  }
+                }
+              }
+            }
+            seriesList.push(series);
           }
         });
       });
@@ -517,6 +745,8 @@ export class YnabComponent implements OnInit {
               },
             },
           });
+          // For accounts, just use the static value (no schedule support for accounts yet)
+          seriesList.push(new TimeSeries(monthlyContribution));
         }
       });
     }
@@ -524,6 +754,7 @@ export class YnabComponent implements OnInit {
     return {
       value: round(contribution),
       categories,
+      series: aggregateTimeSeries(seriesList),
     };
   }
 
@@ -556,6 +787,10 @@ export class YnabComponent implements OnInit {
               info: c.info,
               ignore: c.ignore,
               hidden: c.hidden,
+              contributionBudget: c.contributionBudget,
+              contributionBudgetSchedule: c.contributionBudgetSchedule,
+              computedFiBudgetSchedule: c.computedFiBudgetSchedule,
+              computedLeanFiBudgetSchedule: c.computedLeanFiBudgetSchedule,
             })
           )
         ),

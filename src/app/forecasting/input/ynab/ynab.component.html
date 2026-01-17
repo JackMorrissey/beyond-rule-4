@@ -372,6 +372,11 @@
                   Or, add <code>BR4 +</code> without an amount to override with
                   the YNAB balance regardless of the account type.
                 </p>
+                <p>
+                  <strong>Scheduled Changes:</strong> You can specify future changes using a date prefix.
+                  For example, <code>BR4 + 50000 BR4 2025-06 + 75000</code> starts at $50,000 and
+                  increases to $75,000 in June 2025.
+                </p>
               </div>
             </div>
           </ng-template>
@@ -475,6 +480,12 @@
                     Add <code>BR4 +</code> without an amount to override with
                     the YNAB balance as a contribution regardless of the
                     category group name.
+                  </p>
+                  <p>
+                    <strong>Scheduled Changes:</strong> Use a date prefix to schedule
+                    contribution changes. For example, <code>BR4 + 500 BR4 2025-06 + 1000</code>
+                    contributes $500 now and increases to $1,000 starting June 2025.
+                    This is useful for planning increased savings after a debt is paid off.
                   </p>
                 </div>
               </div>
@@ -710,6 +721,13 @@
                   amount to override with the YNAB balance regardless of the
                   category group name.
                 </p>
+                <p>
+                  <strong>Scheduled Changes:</strong> Use a date prefix to schedule
+                  expense changes. For example, <code>BR4 FI 500 BR4 2030-01 FI 0</code>
+                  budgets $500/month for FI expenses until January 2030, then drops to $0.
+                  This is perfect for expenses that will end in the future, like a mortgage
+                  or car payment.
+                </p>
               </div>
             </div>
             <div class="row">
@@ -733,6 +751,156 @@
                   <kbd>shift + enter</kbd> or <kbd>shift + return</kbd> to
                   create a new line.)
                 </p>
+              </div>
+            </div>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+    <div ngbAccordionItem id="pScheduledChanges" *ngIf="scheduledChanges.length > 0">
+      <h2 ngbAccordionHeader>
+        <button ngbAccordionButton>
+          <span class="float-start">Scheduled Changes</span>
+          <span class="ms-auto">{{ getEnabledScheduleCount() }} of {{ scheduledChanges.length }}</span>
+        </button>
+      </h2>
+      <div ngbAccordionCollapse>
+        <div ngbAccordionBody>
+          <ng-template>
+            <!-- Master toggle -->
+            <div class="form-check mb-3">
+              <input
+                type="checkbox"
+                class="form-check-input"
+                id="scheduledChangesEnabled"
+                [(ngModel)]="scheduledChangesEnabled"
+                [ngModelOptions]="{standalone: true}"
+                (change)="toggleAllScheduledChanges(scheduledChangesEnabled)"
+              />
+              <label class="form-check-label" for="scheduledChangesEnabled"
+                >Apply scheduled changes to forecast</label
+              >
+            </div>
+
+            <!-- Contribution changes -->
+            <div
+              *ngIf="getScheduledChangesByType('contribution').length > 0"
+              class="mb-3"
+            >
+              <h6>Contributions</h6>
+              <div
+                *ngFor="let change of getScheduledChangesByType('contribution')"
+                class="form-check"
+              >
+                <input
+                  type="checkbox"
+                  class="form-check-input"
+                  [id]="'scheduled-' + change.id"
+                  [(ngModel)]="change.enabled"
+                  [ngModelOptions]="{standalone: true}"
+                  [disabled]="!scheduledChangesEnabled"
+                  (change)="toggleScheduledChange(change)"
+                />
+                <label
+                  class="form-check-label"
+                  [for]="'scheduled-' + change.id"
+                  [class.text-muted]="!scheduledChangesEnabled"
+                >
+                  {{ change.categoryName }}:
+                  {{ change.baselineValue | currency : currencyIsoCode }} →
+                  {{ change.scheduledValue | currency : currencyIsoCode }}
+                  starting {{ change.effectiveDate }}
+                </label>
+              </div>
+            </div>
+
+            <!-- FI Expense changes -->
+            <div
+              *ngIf="getScheduledChangesByType('fiBudget').length > 0"
+              class="mb-3"
+            >
+              <h6>FI Expenses</h6>
+              <div
+                *ngFor="let change of getScheduledChangesByType('fiBudget')"
+                class="form-check"
+              >
+                <input
+                  type="checkbox"
+                  class="form-check-input"
+                  [id]="'scheduled-' + change.id"
+                  [(ngModel)]="change.enabled"
+                  [ngModelOptions]="{standalone: true}"
+                  [disabled]="!scheduledChangesEnabled"
+                  (change)="toggleScheduledChange(change)"
+                />
+                <label
+                  class="form-check-label"
+                  [for]="'scheduled-' + change.id"
+                  [class.text-muted]="!scheduledChangesEnabled"
+                >
+                  {{ change.categoryName }}:
+                  {{ change.baselineValue | currency : currencyIsoCode }} →
+                  {{ change.scheduledValue | currency : currencyIsoCode }}
+                  starting {{ change.effectiveDate }}
+                </label>
+              </div>
+            </div>
+
+            <!-- Lean FI Expense changes -->
+            <div
+              *ngIf="getScheduledChangesByType('leanFiBudget').length > 0"
+              class="mb-3"
+            >
+              <h6>Lean FI Expenses</h6>
+              <div
+                *ngFor="let change of getScheduledChangesByType('leanFiBudget')"
+                class="form-check"
+              >
+                <input
+                  type="checkbox"
+                  class="form-check-input"
+                  [id]="'scheduled-' + change.id"
+                  [(ngModel)]="change.enabled"
+                  [ngModelOptions]="{standalone: true}"
+                  [disabled]="!scheduledChangesEnabled"
+                  (change)="toggleScheduledChange(change)"
+                />
+                <label
+                  class="form-check-label"
+                  [for]="'scheduled-' + change.id"
+                  [class.text-muted]="!scheduledChangesEnabled"
+                >
+                  {{ change.categoryName }}:
+                  {{ change.baselineValue | currency : currencyIsoCode }} →
+                  {{ change.scheduledValue | currency : currencyIsoCode }}
+                  starting {{ change.effectiveDate }}
+                </label>
+              </div>
+            </div>
+
+            <div class="row mt-3">
+              <div class="col-12">
+                <p class="mb-2"><strong>How to add scheduled changes</strong></p>
+                <p class="mb-1">
+                  Add a date prefix to any BR4 note in YNAB category notes:
+                </p>
+                <ul class="small mb-2">
+                  <li>
+                    <strong>Contributions:</strong> <code>BR4 + 500 BR4 2027-01 + 1000</code>
+                    — contributes $500/month now, increases to $1,000 starting Jan 2027
+                  </li>
+                  <li>
+                    <strong>FI Expenses:</strong> <code>BR4 FI 800 BR4 2029-07 FI 0</code>
+                    — $800/month FI expense now, drops to $0 when paid off in Jul 2029
+                  </li>
+                  <li>
+                    <strong>Lean FI Expenses:</strong> <code>BR4 LFI 400 BR4 2035-01 LFI 0</code>
+                    — $400/month Lean FI expense, ends Jan 2035
+                  </li>
+                </ul>
+                <small class="text-muted">
+                  The date format is <code>YYYY-MM</code>. Multiple scheduled changes can be added to a single category.
+                </small>
               </div>
             </div>
           </ng-template>

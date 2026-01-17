@@ -1,6 +1,24 @@
 import * as ynab from 'ynab';
 import { YnabSampleData } from './sample-data.model';
 
+/**
+ * Generate a YYYY-MM date string relative to current month.
+ * @param monthsFromNow Number of months from current month (can be negative for past)
+ */
+function getRelativeMonth(monthsFromNow: number): string {
+    const now = new Date();
+    const target = new Date(now.getFullYear(), now.getMonth() + monthsFromNow, 1);
+    const year = target.getFullYear();
+    const month = String(target.getMonth() + 1).padStart(2, '0');
+    return `${year}-${month}`;
+}
+
+// Scheduled change dates (relative to current month)
+const contributionIncreaseDate = getRelativeMonth(12);  // +$1000/month contribution in 1 year
+const studentLoanPayoffDate = getRelativeMonth(42);     // Student loans paid off in 3.5 years
+const carPaidOffDate = getRelativeMonth(48);            // Car paid off in 4 years
+const mortgagePayoffDate = getRelativeMonth(108);       // Mortgage paid off in 9 years
+
 const sampleBudgets: ynab.BudgetSummary[] = [
     {
         'id': '2fa4e8e8-93cd-4651-9fac-cf2c5110efd9',
@@ -241,7 +259,7 @@ const sampleMonth: ynab.MonthDetail = {
             'category_group_id': '22fa4e7b-8de3-46a1-b7f6-76f5d4e3de41',
             'name': '401k',
             'hidden': false,
-            'note': 'BR4:+:  1000.00',
+            'note': `BR4:+:1541.66\nBR4 ${contributionIncreaseDate} + 2541.66`,
             'budgeted': 0,
             'activity': 0,
             'balance': 0,
@@ -252,7 +270,7 @@ const sampleMonth: ynab.MonthDetail = {
             'category_group_id': '22fa4e8a-bb82-4688-be21-46bba7c0b385',
             'name': 'Student Loans',
             'hidden': false,
-            'note': '',
+            'note': `BR4 FI 800 BR4 ${studentLoanPayoffDate} FI 0`,
             'budgeted': 1000000,
             'activity': -1000000,
             'balance': 0,
@@ -274,7 +292,7 @@ const sampleMonth: ynab.MonthDetail = {
             'category_group_id': '22fa4e30-a44e-464d-ba99-bc5953c2584d',
             'name': 'Mortgage, PMI, Taxes',
             'hidden': false,
-            'note': 'BR4:F:1100\nBR4:L:400',
+            'note': `BR4:F:1100\nBR4:L:400\nBR4 ${mortgagePayoffDate} FI 400\nBR4 ${mortgagePayoffDate} LFI 100`,
             'budgeted': 1500000,
             'activity': -1500000,
             'balance': 10,
@@ -516,7 +534,7 @@ const sampleMonth: ynab.MonthDetail = {
             'category_group_id': '22fa4e90-3797-4646-b26b-dfbfbe2dde62',
             'name': 'Auto Insurance',
             'hidden': false,
-            'note': '',
+            'note': `BR4 FI 142 BR4 LFI 100\nBR4 ${carPaidOffDate} FI 80\nBR4 ${carPaidOffDate} LFI 60`,
             'budgeted': 142000,
             'activity': 0,
             'balance': 654150,
@@ -601,7 +619,7 @@ const sampleCategoryGroupsWithCategories: ynab.CategoryGroupWithCategories[] = [
                 'category_group_id': '22fa4e30-a44e-464d-ba99-bc5953c2584d',
                 'name': 'Mortgage, PMI, Taxes',
                 'hidden': false,
-                'note': 'BR4:F:1100\nBR4:L:800',
+                'note': `BR4:F:1100\nBR4:L:400\nBR4 ${mortgagePayoffDate} FI 400\nBR4 ${mortgagePayoffDate} LFI 100`,
                 'budgeted': 1500000,
                 'activity': -1500000,
                 'balance': 10,
@@ -653,7 +671,7 @@ const sampleCategoryGroupsWithCategories: ynab.CategoryGroupWithCategories[] = [
                 'category_group_id': '22fa4e90-3797-4646-b26b-dfbfbe2dde62',
                 'name': 'Auto Insurance',
                 'hidden': false,
-                'note': '',
+                'note': `BR4 FI 142 BR4 LFI 100\nBR4 ${carPaidOffDate} FI 80\nBR4 ${carPaidOffDate} LFI 60`,
                 'budgeted': 142000,
                 'activity': 0,
                 'balance': 654150,
@@ -746,7 +764,7 @@ const sampleCategoryGroupsWithCategories: ynab.CategoryGroupWithCategories[] = [
                 'category_group_id': '22fa4e8a-bb82-4688-be21-46bba7c0b385',
                 'name': 'Student Loans',
                 'hidden': false,
-                'note': '',
+                'note': `BR4 FI 800 BR4 ${studentLoanPayoffDate} FI 0`,
                 'budgeted': 800000,
                 'activity': -800000,
                 'balance': 0,
@@ -957,7 +975,7 @@ const sampleCategoryGroupsWithCategories: ynab.CategoryGroupWithCategories[] = [
                 'category_group_id': '22fa4e7b-8de3-46a1-b7f6-76f5d4e3de41',
                 'name': '401k',
                 'hidden': false,
-                'note': '18.5k 2018\n\nBR4:+:  1541.66',
+                'note': `BR4:+:1541.66\nBR4 ${contributionIncreaseDate} + 2541.66`,
                 'budgeted': 0,
                 'activity': 0,
                 'balance': 0,

@@ -1,0 +1,130 @@
+export interface TimePoint {
+  effectiveDate: string | null; // "YYYY-MM" or null for baseline
+  value: number;
+}
+
+export class TimeSeries {
+  private points: TimePoint[] = [];
+
+  constructor(baselineValue: number = 0) {
+    this.points.push({ effectiveDate: null, value: baselineValue });
+  }
+
+  /**
+   * Add a time point with a value that becomes effective on the given date.
+   * Points are automatically sorted by date.
+   */
+  addPoint(effectiveDate: string | null, value: number): void {
+    if (effectiveDate === null) {
+      // Update baseline
+      const baselineIndex = this.points.findIndex(p => p.effectiveDate === null);
+      if (baselineIndex >= 0) {
+        this.points[baselineIndex].value = value;
+      } else {
+        this.points.unshift({ effectiveDate: null, value });
+      }
+    } else {
+      // Check if point already exists for this date
+      const existingIndex = this.points.findIndex(p => p.effectiveDate === effectiveDate);
+      if (existingIndex >= 0) {
+        this.points[existingIndex].value = value;
+      } else {
+        this.points.push({ effectiveDate, value });
+      }
+    }
+    this.sortPoints();
+  }
+
+  /**
+   * Get the value applicable at a given month (YYYY-MM format).
+   * Returns the most recent value that has taken effect by that month.
+   */
+  getValueAt(month: string): number {
+    let result = this.getBaselineValue();
+
+    for (const point of this.points) {
+      if (point.effectiveDate === null) {
+        continue;
+      }
+      // If the effective date is <= the query month, use this value
+      if (point.effectiveDate <= month) {
+        result = point.value;
+      } else {
+        // Points are sorted, so we can stop once we pass the query month
+        break;
+      }
+    }
+
+    return result;
+  }
+
+  /**
+   * Get the baseline (initial) value.
+   */
+  getBaselineValue(): number {
+    const baseline = this.points.find(p => p.effectiveDate === null);
+    return baseline ? baseline.value : 0;
+  }
+
+  /**
+   * Check if there are any future scheduled changes.
+   */
+  hasFutureChanges(): boolean {
+    return this.points.some(p => p.effectiveDate !== null);
+  }
+
+  /**
+   * Get all points (for debugging or aggregation).
+   */
+  getPoints(): ReadonlyArray<TimePoint> {
+    return this.points;
+  }
+
+  /**
+   * Get all unique dates in this series (excluding null/baseline).
+   */
+  getScheduledDates(): string[] {
+    return this.points
+      .filter(p => p.effectiveDate !== null)
+      .map(p => p.effectiveDate as string);
+  }
+
+  private sortPoints(): void {
+    this.points.sort((a, b) => {
+      if (a.effectiveDate === null) return -1;
+      if (b.effectiveDate === null) return 1;
+      return a.effectiveDate.localeCompare(b.effectiveDate);
+    });
+  }
+}
+
+/**
+ * Aggregate multiple time series into a single series by summing values at each point.
+ * The resulting series has the union of all dates from input series.
+ */
+export function aggregateTimeSeries(seriesList: TimeSeries[]): TimeSeries {
+  if (!seriesList || seriesList.length === 0) {
+    return new TimeSeries(0);
+  }
+
+  // Collect all unique dates across all series
+  const allDates = new Set<string>();
+  for (const series of seriesList) {
+    for (const date of series.getScheduledDates()) {
+      allDates.add(date);
+    }
+  }
+
+  // Sum baseline values
+  const baselineSum = seriesList.reduce((sum, series) => sum + series.getBaselineValue(), 0);
+  const result = new TimeSeries(baselineSum);
+
+  // For each date, calculate the sum of all series' values at that date
+  const sortedDates = Array.from(allDates).sort();
+  for (const date of sortedDates) {
+    const sumAtDate = seriesList.reduce((sum, series) => sum + series.getValueAt(date), 0);
+    result.addPoint(date, sumAtDate);
+  }
+
+  return result;
+}

@@ -11,11 +11,10 @@ export class Forecast {
     if (!calculateInput) {
       return;
     }
-    if (!this.month0Date) {
-      this.month0Date = new Date();
-    }
-    this.birthdate = calculateInput.birthdate;
+    // Set month0Date first since computeForecast needs it for time-varying values
+    this.month0Date = month0Date || new Date();
     this.month0Date.setDate(1); // make it the first of the month
+    this.birthdate = calculateInput.birthdate;
     this.computeForecast(calculateInput);
     this.setDates();
   }
@@ -59,28 +58,43 @@ export class Forecast {
   private computeForecast(calculateInput: CalculateInput) {
     const stopForecastingAmount = calculateInput.fiNumber * 1.6; // default to a bit more than Fat FI.
 
-    const annualExpenses = calculateInput.annualExpenses;
+    const baseAnnualExpenses = calculateInput.annualExpenses;
     const monthlyAverageGrowth = 1 + calculateInput.expectedAnnualGrowthRate / 12;
     const startingNetWorth = calculateInput.netWorth;
     let currentNetWorth = startingNetWorth;
     let totalContributions = currentNetWorth; // can't yet delve into the past
     let month = 0;
+
+    // Get the initial month string for time-varying values
+    const initialMonthString = this.getMonthString(0);
+    const initialAnnualExpenses = calculateInput.getAnnualExpensesAt(initialMonthString);
+    const initialLeanAnnualExpenses = calculateInput.getLeanAnnualExpensesAt(initialMonthString);
+
     const monthlyForecasts = [new MonthlyForecast({
       monthIndex: 0,
       netWorth: startingNetWorth,
       lastMonthNetWorth: 0,
       contribution: 0,
       interestGains: 0,
-      timesAnnualExpenses: round(startingNetWorth / annualExpenses),
+      timesAnnualExpenses: round(startingNetWorth / (initialAnnualExpenses || baseAnnualExpenses || 1)),
       totalContributions: totalContributions,
-      totalReturns: 0
+      totalReturns: 0,
+      annualExpenses: initialAnnualExpenses,
+      leanAnnualExpenses: initialLeanAnnualExpenses,
     })];
+
     while (currentNetWorth < stopForecastingAmount && month < 1000) {
-      const contribution = calculateInput.monthlyContribution;
+      month++;
+      const monthString = this.getMonthString(month);
+
+      // Get time-varying contribution and expenses for this month
+      const contribution = calculateInput.getMonthlyContributionAt(monthString);
+      const annualExpenses = calculateInput.getAnnualExpensesAt(monthString);
+      const leanAnnualExpenses = calculateInput.getLeanAnnualExpensesAt(monthString);
+
       const newNetWorth = round(((currentNetWorth + contribution) * 100 * monthlyAverageGrowth) / 100);
       const interestGain = round(newNetWorth - currentNetWorth - contribution);
-      const timesAnnualExpenses = round(newNetWorth / annualExpenses);
-      month++;
+      const timesAnnualExpenses = round(newNetWorth / (annualExpenses || baseAnnualExpenses || 1));
       totalContributions += contribution;
       const totalReturns = round(newNetWorth - totalContributions);
       monthlyForecasts.push(new MonthlyForecast({
@@ -91,11 +105,24 @@ export class Forecast {
         interestGains: interestGain,
         timesAnnualExpenses: timesAnnualExpenses,
         totalContributions: totalContributions,
-        totalReturns: totalReturns
+        totalReturns: totalReturns,
+        annualExpenses: annualExpenses,
+        leanAnnualExpenses: leanAnnualExpenses,
       }));
       currentNetWorth = newNetWorth;
     }
     this.monthlyForecasts = monthlyForecasts;
+  }
+
+  /**
+   * Convert a month index to a YYYY-MM string based on month0Date.
+   */
+  private getMonthString(monthIndex: number): string {
+    const date = new Date(this.month0Date);
+    date.setMonth(date.getMonth() + monthIndex);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    return `${year}-${month}`;
   }
 
   private setDates() {
@@ -120,6 +147,8 @@ export class MonthlyForecast {
   timesAnnualExpenses: number;
   totalContributions: number;
   totalReturns: number;
+  annualExpenses: number;
+  leanAnnualExpenses: number;
 
   public constructor(init?: Partial<MonthlyForecast>) {
     Object.assign(this, init);

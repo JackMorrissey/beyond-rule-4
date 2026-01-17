@@ -121,6 +121,21 @@ export default class CategoryUtility {
     if (overrides.contributionBudget !== undefined) {
       contributionBudget = overrides.contributionBudget;
     }
+
+    // Build schedule data for time-varying values
+    const contributionBudgetSchedule = {
+      baseline: contributionBudget,
+      schedule: overrides.contributionBudgetSchedule.schedule,
+    };
+    const computedFiBudgetSchedule = {
+      baseline: computedFiBudget,
+      schedule: overrides.computedFiBudgetSchedule.schedule,
+    };
+    const computedLeanFiBudgetSchedule = {
+      baseline: computedLeanFiBudget,
+      schedule: overrides.computedLeanFiBudgetSchedule.schedule,
+    };
+
     return Object.assign({
       name: category.name,
       ignore,
@@ -131,6 +146,9 @@ export default class CategoryUtility {
       computedLeanFiBudget,
       contributionBudget,
       info: categoryBudgetInfo,
+      contributionBudgetSchedule,
+      computedFiBudgetSchedule,
+      computedLeanFiBudgetSchedule,
     });
   }
 }
