@@ -34,6 +34,10 @@ export class FiTextComponent implements OnInit, OnChanges {
   leanFiDateDistance: string;
   leanFiAge: string;
 
+  externalContributions: number;
+  externalContributionReduction: number;
+  additionalLumpSum: number;
+
   constructor() {}
 
   ngOnInit() {}
@@ -57,6 +61,10 @@ export class FiTextComponent implements OnInit, OnChanges {
 
     const leanFiNumber = Math.max(0, round(this.calculateInput.leanFiNumber));
     this.leanFiNumber = leanFiNumber;
+
+    this.externalContributions = round(this.calculateInput.expectedExternalAnnualContributions);
+    this.externalContributionReduction = round(this.calculateInput.externalContributionReduction);
+    this.additionalLumpSum = round(this.calculateInput.additionalLumpSumNeeded);
 
     if (!this.forecast) {
       return;

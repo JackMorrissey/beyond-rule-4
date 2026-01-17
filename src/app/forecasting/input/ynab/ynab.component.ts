@@ -1,5 +1,10 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { UntypedFormGroup, UntypedFormArray, UntypedFormBuilder, Validators } from '@angular/forms';
+import {
+  UntypedFormGroup,
+  UntypedFormArray,
+  UntypedFormBuilder,
+  Validators,
+} from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { timer } from 'rxjs';
 import { debounce } from 'rxjs/operators';
@@ -7,8 +12,18 @@ import * as ynab from 'ynab';
 
 import { YnabApiService } from '../../../ynab-api/ynab-api.service';
 import { CalculateInput } from '../../models/calculate-input.model';
-import { TimeSeries, aggregateTimeSeries } from '../../models/time-series.model';
-import { ScheduledChange, ScheduledChangesState, SCHEDULED_CHANGES_STORAGE_KEY, BaselineOverride, BaselineOverridesState, BASELINE_OVERRIDES_STORAGE_KEY } from '../../models/scheduled-change.model';
+import {
+  TimeSeries,
+  aggregateTimeSeries,
+} from '../../models/time-series.model';
+import {
+  ScheduledChange,
+  ScheduledChangesState,
+  SCHEDULED_CHANGES_STORAGE_KEY,
+  BaselineOverride,
+  BaselineOverridesState,
+  BASELINE_OVERRIDES_STORAGE_KEY,
+} from '../../models/scheduled-change.model';
 import { round } from '../../utilities/number-utility';
 import CategoryUtility from './category-utility';
 import NoteUtility, { Overrides } from './note-utility';
@@ -16,10 +31,10 @@ import { Birthdate } from './birthdate-utility';
 import { getSelectedMonths, QuickSelectMonthChoice } from './months-utility';
 
 @Component({
-    selector: 'app-ynab',
-    templateUrl: 'ynab.component.html',
-    styleUrls: ['./ynab.component.css'],
-    standalone: false,
+  selector: 'app-ynab',
+  templateUrl: 'ynab.component.html',
+  styleUrls: ['./ynab.component.css'],
+  standalone: false,
 })
 export class YnabComponent implements OnInit {
   @Output() calculateInputChange = new EventEmitter<CalculateInput>();
@@ -29,6 +44,8 @@ export class YnabComponent implements OnInit {
   currencyIsoCode = 'USD';
   public safeWithdrawalRatePercentage = 4.0;
   public expectedAnnualGrowthRate = 7.0;
+  public expectedExternalAnnualContributions = 0;
+  public additionalLumpSumNeeded = 0;
 
   public budgets: ynab.BudgetSummary[];
   public budget: ynab.BudgetDetail;
@@ -76,7 +93,7 @@ export class YnabComponent implements OnInit {
   constructor(
     private ynabService: YnabApiService,
     private formBuilder: UntypedFormBuilder,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
   ) {
     this.expenses = {
       ynab: {
@@ -94,7 +111,7 @@ export class YnabComponent implements OnInit {
     };
 
     const safeWithdrawalRatePercentageStorage = parseFloat(
-      window.localStorage.getItem('br4-safe-withdrawal-rate')
+      window.localStorage.getItem('br4-safe-withdrawal-rate'),
     );
     if (
       !!safeWithdrawalRatePercentageStorage &&
@@ -104,7 +121,7 @@ export class YnabComponent implements OnInit {
     }
 
     const expectedAnnualGrowthRateStorage = parseFloat(
-      window.localStorage.getItem('br4-expect-annual-growth-rate')
+      window.localStorage.getItem('br4-expect-annual-growth-rate'),
     );
     if (
       !!expectedAnnualGrowthRateStorage &&
@@ -121,7 +138,9 @@ export class YnabComponent implements OnInit {
 
     // Load scheduled changes state from localStorage
     try {
-      const storedState = JSON.parse(window.localStorage.getItem(SCHEDULED_CHANGES_STORAGE_KEY)) as ScheduledChangesState;
+      const storedState = JSON.parse(
+        window.localStorage.getItem(SCHEDULED_CHANGES_STORAGE_KEY),
+      ) as ScheduledChangesState;
       if (storedState) {
         this.scheduledChangesEnabled = storedState.globalEnabled;
         this.disabledChangeIds = new Set(storedState.disabledChangeIds || []);
@@ -132,13 +151,34 @@ export class YnabComponent implements OnInit {
 
     // Load baseline overrides state from localStorage
     try {
-      const storedBaselineState = JSON.parse(window.localStorage.getItem(BASELINE_OVERRIDES_STORAGE_KEY)) as BaselineOverridesState;
+      const storedBaselineState = JSON.parse(
+        window.localStorage.getItem(BASELINE_OVERRIDES_STORAGE_KEY),
+      ) as BaselineOverridesState;
       if (storedBaselineState) {
         this.baselineOverridesEnabled = storedBaselineState.globalEnabled;
-        this.disabledBaselineIds = new Set(storedBaselineState.disabledOverrideIds || []);
+        this.disabledBaselineIds = new Set(
+          storedBaselineState.disabledOverrideIds || [],
+        );
       }
     } catch {
       // Ignore parse errors, use defaults
+    }
+
+    const externalContributionsStorage = parseFloat(
+      window.localStorage.getItem('br4-external-annual-contributions'),
+    );
+    if (
+      !!externalContributionsStorage &&
+      !isNaN(externalContributionsStorage)
+    ) {
+      this.expectedExternalAnnualContributions = externalContributionsStorage;
+    }
+
+    const additionalLumpSumStorage = parseFloat(
+      window.localStorage.getItem('br4-additional-lump-sum'),
+    );
+    if (!!additionalLumpSumStorage && !isNaN(additionalLumpSumStorage)) {
+      this.additionalLumpSumNeeded = additionalLumpSumStorage;
     }
 
     this.budgetForm = this.formBuilder.group({
@@ -158,6 +198,10 @@ export class YnabComponent implements OnInit {
         [Validators.required, Validators.max(99.99), Validators.max(0.01)],
       ],
       birthdate: [this.birthdate, [Validators.required]],
+      expectedExternalAnnualContributions: [
+        this.expectedExternalAnnualContributions,
+      ],
+      additionalLumpSumNeeded: [this.additionalLumpSumNeeded],
     });
   }
 
@@ -173,7 +217,7 @@ export class YnabComponent implements OnInit {
     this.isUsingSampleData = this.ynabService.isUsingSampleData();
 
     const formChanges = this.budgetForm.valueChanges.pipe(
-      debounce(() => timer(500))
+      debounce(() => timer(500)),
     );
     formChanges.subscribe(() => {
       this.handleFormChanges();
@@ -192,15 +236,15 @@ export class YnabComponent implements OnInit {
 
     const fiMonthlyExpenses = this.getMonthlyExpenses(
       this.budgetForm.value.categoryGroups,
-      'fiBudget'
+      'fiBudget',
     );
     const leanMonthlyExpenses = this.getMonthlyExpenses(
       this.budgetForm.value.categoryGroups,
-      'leanFiBudget'
+      'leanFiBudget',
     );
     const retrievedBudgetedMonthlyExpenses = this.getMonthlyExpenses(
       this.budgetForm.value.categoryGroups,
-      'retrievedBudgeted'
+      'retrievedBudgeted',
     );
 
     // Build time series for expenses (respecting enabled state)
@@ -208,19 +252,19 @@ export class YnabComponent implements OnInit {
       this.budgetForm.value.categoryGroups,
       'computedFiBudgetSchedule',
       'fiBudget',
-      'fiBudget'
+      'fiBudget',
     );
     const leanFiExpensesSeries = this.getExpensesTimeSeries(
       this.budgetForm.value.categoryGroups,
       'computedLeanFiBudgetSchedule',
       'leanFiBudget',
-      'leanFiBudget'
+      'leanFiBudget',
     );
 
     // Get contribution with series (respecting enabled state)
     const contributionData = this.getMonthlyContribution(
       this.budgetForm.value.categoryGroups,
-      this.accounts.controls
+      this.accounts.controls,
     );
 
     this.setNetWorth();
@@ -258,12 +302,17 @@ export class YnabComponent implements OnInit {
 
     result.annualSafeWithdrawalRate = Math.max(
       0,
-      this.safeWithdrawalRatePercentage / 100
+      this.safeWithdrawalRatePercentage / 100,
     );
     result.expectedAnnualGrowthRate = Math.max(
       0,
-      this.expectedAnnualGrowthRate / 100
+      this.expectedAnnualGrowthRate / 100,
     );
+    result.expectedExternalAnnualContributions = Math.max(
+      0,
+      this.expectedExternalAnnualContributions,
+    );
+    result.additionalLumpSumNeeded = Math.max(0, this.additionalLumpSumNeeded);
 
     result.roundAll();
     this.calculateInputChange.emit(result);
@@ -290,13 +339,13 @@ export class YnabComponent implements OnInit {
       : 'USD';
 
     this.includeHiddenYnabCategories = !!window.localStorage.getItem(
-      'br4-include-hidden-ynab-categories'
+      'br4-include-hidden-ynab-categories',
     );
 
     const selectedMonths = getSelectedMonths(
       this.currentMonth,
       this.months,
-      'previousChoice'
+      'previousChoice',
     );
     await this.selectMonths(selectedMonths.from.month, selectedMonths.to.month);
   }
@@ -320,7 +369,7 @@ export class YnabComponent implements OnInit {
     if (newValue) {
       window.localStorage.setItem(
         'br4-include-hidden-ynab-categories',
-        newValue.toString()
+        newValue.toString(),
       );
     } else {
       window.localStorage.removeItem('br4-include-hidden-ynab-categories');
@@ -341,18 +390,18 @@ export class YnabComponent implements OnInit {
     const mappedCategoryGroups = CategoryUtility.mapCategoryGroups(
       this.categoryGroupsWithCategories,
       months,
-      this.includeHiddenYnabCategories
+      this.includeHiddenYnabCategories,
     );
     const monthlyContribution = this.getMonthlyContribution(
       mappedCategoryGroups,
-      mappedAccounts
+      mappedAccounts,
     );
     this.contributionCategories = monthlyContribution.categories;
 
     this.resetForm(
       mappedCategoryGroups,
       monthlyContribution.value,
-      mappedAccounts
+      mappedAccounts,
     );
 
     this.recalculate();
@@ -375,7 +424,7 @@ export class YnabComponent implements OnInit {
 
   handlePercentageFormChanges() {
     const parsedSafeWithdrawalRatePercentage = Number.parseFloat(
-      this.budgetForm.value.safeWithdrawalRatePercentage
+      this.budgetForm.value.safeWithdrawalRatePercentage,
     );
     if (
       !Number.isNaN(parsedSafeWithdrawalRatePercentage) &&
@@ -385,18 +434,40 @@ export class YnabComponent implements OnInit {
       // local storage
       window.localStorage.setItem(
         'br4-safe-withdrawal-rate',
-        parsedSafeWithdrawalRatePercentage.toString()
+        parsedSafeWithdrawalRatePercentage.toString(),
       );
     }
     const parsedExpectedAnnualGrowthRate = Number.parseFloat(
-      this.budgetForm.value.expectedAnnualGrowthRate
+      this.budgetForm.value.expectedAnnualGrowthRate,
     );
     if (!Number.isNaN(parsedExpectedAnnualGrowthRate)) {
       this.expectedAnnualGrowthRate = parsedExpectedAnnualGrowthRate;
       // local storage
       window.localStorage.setItem(
         'br4-expect-annual-growth-rate',
-        parsedExpectedAnnualGrowthRate.toString()
+        parsedExpectedAnnualGrowthRate.toString(),
+      );
+    }
+
+    const parsedExternalContributions = Number.parseFloat(
+      this.budgetForm.value.expectedExternalAnnualContributions,
+    );
+    if (!Number.isNaN(parsedExternalContributions)) {
+      this.expectedExternalAnnualContributions = parsedExternalContributions;
+      window.localStorage.setItem(
+        'br4-external-annual-contributions',
+        parsedExternalContributions.toString(),
+      );
+    }
+
+    const parsedAdditionalLumpSum = Number.parseFloat(
+      this.budgetForm.value.additionalLumpSumNeeded,
+    );
+    if (!Number.isNaN(parsedAdditionalLumpSum)) {
+      this.additionalLumpSumNeeded = parsedAdditionalLumpSum;
+      window.localStorage.setItem(
+        'br4-additional-lump-sum',
+        parsedAdditionalLumpSum.toString(),
       );
     }
   }
@@ -409,15 +480,17 @@ export class YnabComponent implements OnInit {
     ) {
       toggledHidden = true;
       this.toggleIncludeHiddenYnabCategories(
-        this.budgetForm.value.includeHiddenYnabCategories
+        this.budgetForm.value.includeHiddenYnabCategories,
       );
     }
 
     this.handlePercentageFormChanges();
 
-    
     this.birthdate = this.budgetForm.value.birthdate;
-    window.localStorage.setItem('br4-birthdate', JSON.stringify(this.birthdate));
+    window.localStorage.setItem(
+      'br4-birthdate',
+      JSON.stringify(this.birthdate),
+    );
 
     const selectedBudget = this.budgetForm.value.selectedBudget;
     if (this.budget.id !== selectedBudget) {
@@ -433,7 +506,7 @@ export class YnabComponent implements OnInit {
     ) {
       this.selectMonths(
         this.budgetForm.value.selectedMonthA,
-        this.budgetForm.value.selectedMonthB
+        this.budgetForm.value.selectedMonthB,
       );
       return;
     }
@@ -480,7 +553,8 @@ export class YnabComponent implements OnInit {
               categoryName: category.name,
               categoryId: category.name,
               type: 'fiBudget',
-              baselineValue: category.fiBudget || category.computedFiBudget || 0,
+              baselineValue:
+                category.fiBudget || category.computedFiBudget || 0,
               scheduledValue: point.value,
               effectiveDate: point.effectiveDate,
               enabled: !this.disabledChangeIds.has(id),
@@ -498,7 +572,8 @@ export class YnabComponent implements OnInit {
               categoryName: category.name,
               categoryId: category.name,
               type: 'leanFiBudget',
-              baselineValue: category.leanFiBudget || category.computedLeanFiBudget || 0,
+              baselineValue:
+                category.leanFiBudget || category.computedLeanFiBudget || 0,
               scheduledValue: point.value,
               effectiveDate: point.effectiveDate,
               enabled: !this.disabledChangeIds.has(id),
@@ -539,8 +614,10 @@ export class YnabComponent implements OnInit {
   /**
    * Get scheduled changes filtered by type.
    */
-  getScheduledChangesByType(type: 'contribution' | 'fiBudget' | 'leanFiBudget'): ScheduledChange[] {
-    return this.scheduledChanges.filter(c => c.type === type);
+  getScheduledChangesByType(
+    type: 'contribution' | 'fiBudget' | 'leanFiBudget',
+  ): ScheduledChange[] {
+    return this.scheduledChanges.filter((c) => c.type === type);
   }
 
   /**
@@ -548,7 +625,7 @@ export class YnabComponent implements OnInit {
    */
   getEnabledScheduleCount(): number {
     if (!this.scheduledChangesEnabled) return 0;
-    return this.scheduledChanges.filter(c => c.enabled).length;
+    return this.scheduledChanges.filter((c) => c.enabled).length;
   }
 
   /**
@@ -559,7 +636,10 @@ export class YnabComponent implements OnInit {
       globalEnabled: this.scheduledChangesEnabled,
       disabledChangeIds: Array.from(this.disabledChangeIds),
     };
-    window.localStorage.setItem(SCHEDULED_CHANGES_STORAGE_KEY, JSON.stringify(state));
+    window.localStorage.setItem(
+      SCHEDULED_CHANGES_STORAGE_KEY,
+      JSON.stringify(state),
+    );
   }
 
   /**
@@ -574,8 +654,10 @@ export class YnabComponent implements OnInit {
 
       for (const category of categoryGroup.categories) {
         // Check contribution override
-        if (category.originalContributionBudget !== undefined &&
-            category.contributionBudget !== category.originalContributionBudget) {
+        if (
+          category.originalContributionBudget !== undefined &&
+          category.contributionBudget !== category.originalContributionBudget
+        ) {
           const id = `${category.name}-contribution-baseline`;
           overrides.push({
             id,
@@ -590,8 +672,10 @@ export class YnabComponent implements OnInit {
         }
 
         // Check FI budget override
-        if (category.originalFiBudget !== undefined &&
-            category.computedFiBudget !== category.originalFiBudget) {
+        if (
+          category.originalFiBudget !== undefined &&
+          category.computedFiBudget !== category.originalFiBudget
+        ) {
           const id = `${category.name}-fiBudget-baseline`;
           overrides.push({
             id,
@@ -606,8 +690,10 @@ export class YnabComponent implements OnInit {
         }
 
         // Check Lean FI budget override
-        if (category.originalLeanFiBudget !== undefined &&
-            category.computedLeanFiBudget !== category.originalLeanFiBudget) {
+        if (
+          category.originalLeanFiBudget !== undefined &&
+          category.computedLeanFiBudget !== category.originalLeanFiBudget
+        ) {
           const id = `${category.name}-leanFiBudget-baseline`;
           overrides.push({
             id,
@@ -630,7 +716,12 @@ export class YnabComponent implements OnInit {
       const monthlyContribution = account.value.monthlyContribution;
 
       // Check starting portfolio override (balance differs from ynabBalance)
-      if (typeof balance === 'number' && !isNaN(balance) && balance !== 0 && balance !== ynabBalance) {
+      if (
+        typeof balance === 'number' &&
+        !isNaN(balance) &&
+        balance !== 0 &&
+        balance !== ynabBalance
+      ) {
         const id = `${account.value.name}-startingPortfolio-baseline`;
         overrides.push({
           id,
@@ -645,7 +736,11 @@ export class YnabComponent implements OnInit {
       }
 
       // Check monthly contribution override from account
-      if (typeof monthlyContribution === 'number' && !isNaN(monthlyContribution) && monthlyContribution !== 0) {
+      if (
+        typeof monthlyContribution === 'number' &&
+        !isNaN(monthlyContribution) &&
+        monthlyContribution !== 0
+      ) {
         const id = `${account.value.name}-monthlyContribution-baseline`;
         overrides.push({
           id,
@@ -691,8 +786,15 @@ export class YnabComponent implements OnInit {
   /**
    * Get baseline overrides filtered by type.
    */
-  getBaselineOverridesByType(type: 'contribution' | 'fiBudget' | 'leanFiBudget' | 'startingPortfolio' | 'monthlyContribution'): BaselineOverride[] {
-    return this.baselineOverrides.filter(o => o.type === type);
+  getBaselineOverridesByType(
+    type:
+      | 'contribution'
+      | 'fiBudget'
+      | 'leanFiBudget'
+      | 'startingPortfolio'
+      | 'monthlyContribution',
+  ): BaselineOverride[] {
+    return this.baselineOverrides.filter((o) => o.type === type);
   }
 
   /**
@@ -700,7 +802,7 @@ export class YnabComponent implements OnInit {
    */
   getEnabledBaselineCount(): number {
     if (!this.baselineOverridesEnabled) return 0;
-    return this.baselineOverrides.filter(o => o.enabled).length;
+    return this.baselineOverrides.filter((o) => o.enabled).length;
   }
 
   /**
@@ -711,7 +813,10 @@ export class YnabComponent implements OnInit {
       globalEnabled: this.baselineOverridesEnabled,
       disabledOverrideIds: Array.from(this.disabledBaselineIds),
     };
-    window.localStorage.setItem(BASELINE_OVERRIDES_STORAGE_KEY, JSON.stringify(state));
+    window.localStorage.setItem(
+      BASELINE_OVERRIDES_STORAGE_KEY,
+      JSON.stringify(state),
+    );
   }
 
   /**
@@ -723,7 +828,8 @@ export class YnabComponent implements OnInit {
 
     for (let i = 0; i < categoryGroups.length; i++) {
       const categoryGroup = categoryGroups[i];
-      const categories = (categoryGroup.get('categories') as UntypedFormArray).controls;
+      const categories = (categoryGroup.get('categories') as UntypedFormArray)
+        .controls;
 
       for (let j = 0; j < categories.length; j++) {
         const category = categories[j];
@@ -731,22 +837,32 @@ export class YnabComponent implements OnInit {
 
         // Handle FI budget
         const fiBudgetId = `${name}-fiBudget-baseline`;
-        const fiBudgetOverrideEnabled = this.baselineOverridesEnabled && !this.disabledBaselineIds.has(fiBudgetId);
+        const fiBudgetOverrideEnabled =
+          this.baselineOverridesEnabled &&
+          !this.disabledBaselineIds.has(fiBudgetId);
         const fiBudgetValue = fiBudgetOverrideEnabled
           ? category.value.computedFiBudget
           : category.value.originalFiBudget;
         if (fiBudgetValue !== undefined) {
-          category.patchValue({ fiBudget: fiBudgetValue }, { emitEvent: false });
+          category.patchValue(
+            { fiBudget: fiBudgetValue },
+            { emitEvent: false },
+          );
         }
 
         // Handle Lean FI budget
         const leanFiBudgetId = `${name}-leanFiBudget-baseline`;
-        const leanFiBudgetOverrideEnabled = this.baselineOverridesEnabled && !this.disabledBaselineIds.has(leanFiBudgetId);
+        const leanFiBudgetOverrideEnabled =
+          this.baselineOverridesEnabled &&
+          !this.disabledBaselineIds.has(leanFiBudgetId);
         const leanFiBudgetValue = leanFiBudgetOverrideEnabled
           ? category.value.computedLeanFiBudget
           : category.value.originalLeanFiBudget;
         if (leanFiBudgetValue !== undefined) {
-          category.patchValue({ leanFiBudget: leanFiBudgetValue }, { emitEvent: false });
+          category.patchValue(
+            { leanFiBudget: leanFiBudgetValue },
+            { emitEvent: false },
+          );
         }
       }
     }
@@ -757,7 +873,9 @@ export class YnabComponent implements OnInit {
 
       // Handle starting portfolio
       const portfolioId = `${name}-startingPortfolio-baseline`;
-      const portfolioOverrideEnabled = this.baselineOverridesEnabled && !this.disabledBaselineIds.has(portfolioId);
+      const portfolioOverrideEnabled =
+        this.baselineOverridesEnabled &&
+        !this.disabledBaselineIds.has(portfolioId);
       const portfolioValue = portfolioOverrideEnabled
         ? account.value.balance
         : account.value.ynabBalance;
@@ -834,7 +952,7 @@ export class YnabComponent implements OnInit {
     categoryGroups: any[],
     schedulePropertyName: string,
     budgetPropertyName: string,
-    scheduleType: 'fiBudget' | 'leanFiBudget'
+    scheduleType: 'fiBudget' | 'leanFiBudget',
   ): TimeSeries {
     const seriesList: TimeSeries[] = [];
 
@@ -889,11 +1007,11 @@ export class YnabComponent implements OnInit {
       .filter((a) => !(a.closed || a.deleted))
       .map((account) => {
         const ynabBalance = ynab.utils.convertMilliUnitsToCurrencyAmount(
-          account.balance
+          account.balance,
         );
         const overrides = NoteUtility.getNoteOverrides(
           account.note,
-          ynabBalance
+          ynabBalance,
         );
 
         return this.formBuilder.group(
@@ -901,7 +1019,7 @@ export class YnabComponent implements OnInit {
             balance: this.getAccountBalance(account, ynabBalance, overrides),
             ynabBalance,
             monthlyContribution: overrides.monthlyContribution,
-          })
+          }),
         );
       });
     return mapped;
@@ -910,15 +1028,13 @@ export class YnabComponent implements OnInit {
   private getAccountBalance(
     account: ynab.Account,
     ynabBalance: number,
-    overrides: Overrides
+    overrides: Overrides,
   ) {
     if (overrides.contributionBudget !== undefined) {
       return overrides.contributionBudget;
     }
 
-    if (
-      account.type === ynab.AccountType.OtherAsset
-    ) {
+    if (account.type === ynab.AccountType.OtherAsset) {
       return ynabBalance;
     }
 
@@ -1003,7 +1119,10 @@ export class YnabComponent implements OnInit {
       monthlyContribution,
       expectedAnnualGrowthRate: this.expectedAnnualGrowthRate,
       safeWithdrawalRatePercentage: this.safeWithdrawalRatePercentage,
-      birthdate: this.birthdate, 
+      birthdate: this.birthdate,
+      expectedExternalAnnualContributions:
+        this.expectedExternalAnnualContributions,
+      additionalLumpSumNeeded: this.additionalLumpSumNeeded,
     });
 
     const categoryGroupFormGroups = categoriesDisplay.map((cg) =>
@@ -1030,19 +1149,19 @@ export class YnabComponent implements OnInit {
               contributionBudgetSchedule: c.contributionBudgetSchedule,
               computedFiBudgetSchedule: c.computedFiBudgetSchedule,
               computedLeanFiBudgetSchedule: c.computedLeanFiBudgetSchedule,
-            })
-          )
+            }),
+          ),
         ),
-      })
+      }),
     );
 
     this.budgetForm.setControl(
       'categoryGroups',
-      this.formBuilder.array(categoryGroupFormGroups)
+      this.formBuilder.array(categoryGroupFormGroups),
     );
     this.budgetForm.setControl(
       'accounts',
-      this.formBuilder.array(mappedAccounts)
+      this.formBuilder.array(mappedAccounts),
     );
   }
 }

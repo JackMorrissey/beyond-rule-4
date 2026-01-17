@@ -228,6 +228,64 @@
             <div class="form-group">
               <div class="row">
                 <label
+                  for="expectedExternalAnnualContributions"
+                  class="col-sm-12 col-md-5 col-form-label"
+                  >Expected External Annual Contributions</label
+                >
+                <div class="col">
+                  <div class="input-group">
+                    <input
+                      type="number"
+                      class="form-control"
+                      id="expectedExternalAnnualContributions"
+                      formControlName="expectedExternalAnnualContributions"
+                      step="100"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col">
+                  <small
+                    >Annual income expected in retirement from external sources
+                    (e.g., pension, social security). This reduces your FI
+                    target.</small
+                  >
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="row">
+                <label
+                  for="additionalLumpSumNeeded"
+                  class="col-sm-12 col-md-5 col-form-label"
+                  >Additional Lump Sum Needed</label
+                >
+                <div class="col">
+                  <div class="input-group">
+                    <input
+                      type="number"
+                      class="form-control"
+                      id="additionalLumpSumNeeded"
+                      formControlName="additionalLumpSumNeeded"
+                      step="1000"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col">
+                  <small
+                    >One-time amount needed at retirement (e.g., pay off
+                    mortgage, major purchase). This increases your FI
+                    target.</small
+                  >
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="row">
+                <label
                   for="expectedAnnualGrowthRate"
                   class="col-sm-12 col-md-5 col-form-label"
                   >Expected Annual Rate of Return</label
