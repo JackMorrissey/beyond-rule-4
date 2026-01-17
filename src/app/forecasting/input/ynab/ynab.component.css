@@ -13,6 +13,7 @@
 
 .budgetForm {
   word-break: break-word;
+  container-type: inline-size;
 }
 .budgetForm td {
   min-width: 60px;
@@ -25,4 +26,24 @@
 
 table.expenses {
   font-size: 0.8rem;
+}
+
+/* Mobile currency display */
+.mobile-currency,
+.mobile-only {
+  display: none;
+}
+
+@container (max-width: 450px) {
+  .mobile-currency {
+    display: block;
+    font-size: 0.75em;
+    font-weight: normal;
+  }
+  .mobile-only {
+    display: inline;
+  }
+  .desktop-only {
+    display: none;
+  }
 }

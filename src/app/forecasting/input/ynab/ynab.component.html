@@ -532,14 +532,14 @@
                 <thead class="table-dark">
                   <tr>
                     <th>Calculated</th>
-                    <th>YNAB</th>
+                    <th>YNAB<span class="mobile-currency"> ({{ currencyIsoCode }})</span></th>
                     <th
                       placement="top"
                       triggers="click:blur hover"
                       container="body"
                       ngbTooltip="FI budget includes all expenses to maintain your current lifestyle."
                     >
-                      FI &nbsp;
+                      FI<span class="mobile-currency"> ({{ currencyIsoCode }})</span> &nbsp;
                       <fa-icon [icon]="['fas', 'info-circle']"></fa-icon>
                     </th>
                     <th
@@ -548,7 +548,7 @@
                       container="body"
                       ngbTooltip="Lean FI budget includes all expenses to just get by. Think FI but without any fun."
                     >
-                      Lean FI &nbsp;
+                      Lean FI<span class="mobile-currency"> ({{ currencyIsoCode }})</span> &nbsp;
                       <fa-icon [icon]="['fas', 'info-circle']"></fa-icon>
                     </th>
                   </tr>
@@ -557,34 +557,40 @@
                   <tr>
                     <th>Monthly Expenses</th>
                     <td>
-                      {{ expenses.ynab.monthly | currency : currencyIsoCode }}
+                      <span class="desktop-only">{{ expenses.ynab.monthly | currency : currencyIsoCode }}</span>
+                      <span class="mobile-only">{{ expenses.ynab.monthly | number : '1.0-0' }}</span>
                     </td>
                     <td>
-                      {{ expenses.fi.monthly | currency : currencyIsoCode }}
+                      <span class="desktop-only">{{ expenses.fi.monthly | currency : currencyIsoCode }}</span>
+                      <span class="mobile-only">{{ expenses.fi.monthly | number : '1.0-0' }}</span>
                     </td>
                     <td>
-                      {{ expenses.leanFi.monthly | currency : currencyIsoCode }}
+                      <span class="desktop-only">{{ expenses.leanFi.monthly | currency : currencyIsoCode }}</span>
+                      <span class="mobile-only">{{ expenses.leanFi.monthly | number : '1.0-0' }}</span>
                     </td>
                   </tr>
                   <tr>
                     <th>Estimated Annual Expenses</th>
                     <td>
-                      {{ expenses.ynab.annual | currency : currencyIsoCode }}
+                      <span class="desktop-only">{{ expenses.ynab.annual | currency : currencyIsoCode }}</span>
+                      <span class="mobile-only">{{ expenses.ynab.annual | number : '1.0-0' }}</span>
                     </td>
                     <td>
-                      {{ expenses.fi.annual | currency : currencyIsoCode }}
+                      <span class="desktop-only">{{ expenses.fi.annual | currency : currencyIsoCode }}</span>
+                      <span class="mobile-only">{{ expenses.fi.annual | number : '1.0-0' }}</span>
                     </td>
                     <td>
-                      {{ expenses.leanFi.annual | currency : currencyIsoCode }}
+                      <span class="desktop-only">{{ expenses.leanFi.annual | currency : currencyIsoCode }}</span>
+                      <span class="mobile-only">{{ expenses.leanFi.annual | number : '1.0-0' }}</span>
                     </td>
                   </tr>
                 </tbody>
                 <thead class="table-dark">
                   <tr>
                     <th>Category</th>
-                    <th>YNAB Budget</th>
-                    <th>FI Budget</th>
-                    <th>Lean FI Budget</th>
+                    <th>YNAB Budget<span class="mobile-currency"> ({{ currencyIsoCode }})</span></th>
+                    <th>FI Budget<span class="mobile-currency"> ({{ currencyIsoCode }})</span></th>
+                    <th>Lean FI Budget<span class="mobile-currency"> ({{ currencyIsoCode }})</span></th>
                   </tr>
                 </thead>
                 <tbody formArrayName="categoryGroups">
@@ -627,10 +633,14 @@
                               }} "
                               triggers="mouseenter:mouseleave"
                             >
-                              {{
+                              <span class="desktop-only">{{
                                 category.value.retrievedBudgeted
                                   | currency : currencyIsoCode
-                              }}
+                              }}</span>
+                              <span class="mobile-only">{{
+                                category.value.retrievedBudgeted
+                                  | number : '1.0-0'
+                              }}</span>
                             </span>
                           </td>
                           <td>
