@@ -1,4 +1,14 @@
+.chart-wrapper {
+  container-type: inline-size;
+}
+
 .milestones-chart {
   height: 60vh;
-  margin-bottom: 20px;
+}
+
+/* Extra margin when legend is below the chart (container < 750px) */
+@container (max-width: 749px) {
+  .milestones-chart {
+    margin-bottom: 8vh;
+  }
 }

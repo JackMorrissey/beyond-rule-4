@@ -3,10 +3,12 @@
 </h3>
 <div class="text-secondary"><a href="https://choosefi.com/podcast-episode/032-milestones-fi" target="_blank">The Milestones Of FI | Joel FI180 <fa-icon [icon]="['fas', 'external-link-square-alt']" size="sm"></fa-icon></a></div>
 
-<div class="row">
-  <app-milestones-chart class="milestones-chart col-sm" [forecast]="forecast" [milestones]="milestones"
-    [currencyIsoCode]="calculateInput?.currencyIsoCode">
-  </app-milestones-chart>
+<div class="chart-wrapper">
+  <div class="row">
+    <app-milestones-chart class="milestones-chart col-sm" [forecast]="forecast" [milestones]="milestones"
+      [currencyIsoCode]="calculateInput?.currencyIsoCode">
+    </app-milestones-chart>
+  </div>
 </div>
 
 <div class="row">

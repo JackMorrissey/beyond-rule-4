@@ -31,6 +31,7 @@ export class ChartComponent implements OnInit, AfterContentInit, OnChanges {
   showYAxis = true;
   gradient = true;
   showLegend = true;
+  legendPosition: 'right' | 'below' = 'right';
   showXAxisLabel = true;
   timeline = false;
   xAxisLabel = 'Date';
@@ -63,7 +64,8 @@ export class ChartComponent implements OnInit, AfterContentInit, OnChanges {
   }
 
   ngAfterContentInit() {
-    this.setViewDimensions();
+    // Defer to allow layout to complete before measuring container width
+    setTimeout(() => this.setViewDimensions(), 0);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -77,6 +79,8 @@ export class ChartComponent implements OnInit, AfterContentInit, OnChanges {
   setViewDimensions() {
     if (!this.elementView) { return; }
     this.view = [this.elementView.nativeElement.offsetWidth, this.elementView.nativeElement.offsetHeight];
+    // Use container width (not viewport) to account for sidebar
+    this.legendPosition = this.elementView.nativeElement.offsetWidth < 750 ? 'below' : 'right';
   }
 
   getToolTipDate(tooltipItem: any) {
