@@ -8,7 +8,7 @@ import * as ynab from 'ynab';
 import { YnabApiService } from '../../../ynab-api/ynab-api.service';
 import { CalculateInput } from '../../models/calculate-input.model';
 import { TimeSeries, aggregateTimeSeries } from '../../models/time-series.model';
-import { ScheduledChange, ScheduledChangesState, SCHEDULED_CHANGES_STORAGE_KEY } from '../../models/scheduled-change.model';
+import { ScheduledChange, ScheduledChangesState, SCHEDULED_CHANGES_STORAGE_KEY, BaselineOverride, BaselineOverridesState, BASELINE_OVERRIDES_STORAGE_KEY } from '../../models/scheduled-change.model';
 import { round } from '../../utilities/number-utility';
 import CategoryUtility from './category-utility';
 import NoteUtility, { Overrides } from './note-utility';
@@ -67,6 +67,11 @@ export class YnabComponent implements OnInit {
   public scheduledChangesEnabled = true;
   private disabledChangeIds: Set<string> = new Set();
 
+  // Baseline overrides state
+  public baselineOverrides: BaselineOverride[] = [];
+  public baselineOverridesEnabled = true;
+  private disabledBaselineIds: Set<string> = new Set();
+
   constructor(
     private ynabService: YnabApiService,
     private formBuilder: UntypedFormBuilder,
@@ -124,6 +129,17 @@ export class YnabComponent implements OnInit {
       // Ignore parse errors, use defaults
     }
 
+    // Load baseline overrides state from localStorage
+    try {
+      const storedBaselineState = JSON.parse(window.localStorage.getItem(BASELINE_OVERRIDES_STORAGE_KEY)) as BaselineOverridesState;
+      if (storedBaselineState) {
+        this.baselineOverridesEnabled = storedBaselineState.globalEnabled;
+        this.disabledBaselineIds = new Set(storedBaselineState.disabledOverrideIds || []);
+      }
+    } catch {
+      // Ignore parse errors, use defaults
+    }
+
     this.budgetForm = this.formBuilder.group({
       selectedBudget: ['', [Validators.required]],
       selectedMonthA: ['', [Validators.required]],
@@ -169,8 +185,9 @@ export class YnabComponent implements OnInit {
   }
 
   recalculate() {
-    // Collect scheduled changes for UI display
+    // Collect scheduled changes and baseline overrides for UI display
     this.collectScheduledChanges();
+    this.collectBaselineOverrides();
 
     const fiMonthlyExpenses = this.getMonthlyExpenses(
       this.budgetForm.value.categoryGroups,
@@ -530,6 +547,210 @@ export class YnabComponent implements OnInit {
     window.localStorage.setItem(SCHEDULED_CHANGES_STORAGE_KEY, JSON.stringify(state));
   }
 
+  /**
+   * Collect all baseline overrides from categories and accounts for display in the UI.
+   */
+  collectBaselineOverrides(): void {
+    const overrides: BaselineOverride[] = [];
+    const categoryGroups = this.budgetForm.value.categoryGroups || [];
+
+    for (const categoryGroup of categoryGroups) {
+      if (!categoryGroup.categories) continue;
+
+      for (const category of categoryGroup.categories) {
+        // Check contribution override
+        if (category.originalContributionBudget !== undefined &&
+            category.contributionBudget !== category.originalContributionBudget) {
+          const id = `${category.name}-contribution-baseline`;
+          overrides.push({
+            id,
+            categoryName: category.name,
+            categoryId: category.name,
+            source: 'category',
+            type: 'contribution',
+            originalValue: category.originalContributionBudget,
+            overriddenValue: category.contributionBudget,
+            enabled: !this.disabledBaselineIds.has(id),
+          });
+        }
+
+        // Check FI budget override
+        if (category.originalFiBudget !== undefined &&
+            category.computedFiBudget !== category.originalFiBudget) {
+          const id = `${category.name}-fiBudget-baseline`;
+          overrides.push({
+            id,
+            categoryName: category.name,
+            categoryId: category.name,
+            source: 'category',
+            type: 'fiBudget',
+            originalValue: category.originalFiBudget,
+            overriddenValue: category.computedFiBudget,
+            enabled: !this.disabledBaselineIds.has(id),
+          });
+        }
+
+        // Check Lean FI budget override
+        if (category.originalLeanFiBudget !== undefined &&
+            category.computedLeanFiBudget !== category.originalLeanFiBudget) {
+          const id = `${category.name}-leanFiBudget-baseline`;
+          overrides.push({
+            id,
+            categoryName: category.name,
+            categoryId: category.name,
+            source: 'category',
+            type: 'leanFiBudget',
+            originalValue: category.originalLeanFiBudget,
+            overriddenValue: category.computedLeanFiBudget,
+            enabled: !this.disabledBaselineIds.has(id),
+          });
+        }
+      }
+    }
+
+    // Check accounts for portfolio and monthly contribution overrides
+    for (const account of this.accounts.controls) {
+      const ynabBalance = account.value.ynabBalance || 0;
+      const balance = account.value.balance || 0;
+      const monthlyContribution = account.value.monthlyContribution;
+
+      // Check starting portfolio override (balance differs from ynabBalance)
+      if (typeof balance === 'number' && !isNaN(balance) && balance !== 0 && balance !== ynabBalance) {
+        const id = `${account.value.name}-startingPortfolio-baseline`;
+        overrides.push({
+          id,
+          categoryName: account.value.name,
+          categoryId: account.value.name,
+          source: 'account',
+          type: 'startingPortfolio',
+          originalValue: ynabBalance,
+          overriddenValue: balance,
+          enabled: !this.disabledBaselineIds.has(id),
+        });
+      }
+
+      // Check monthly contribution override from account
+      if (typeof monthlyContribution === 'number' && !isNaN(monthlyContribution) && monthlyContribution !== 0) {
+        const id = `${account.value.name}-monthlyContribution-baseline`;
+        overrides.push({
+          id,
+          categoryName: account.value.name,
+          categoryId: account.value.name,
+          source: 'account',
+          type: 'monthlyContribution',
+          originalValue: 0,
+          overriddenValue: monthlyContribution,
+          enabled: !this.disabledBaselineIds.has(id),
+        });
+      }
+    }
+
+    this.baselineOverrides = overrides;
+  }
+
+  /**
+   * Toggle an individual baseline override on/off.
+   * Note: override.enabled is already updated by ngModel binding before this is called.
+   */
+  toggleBaselineOverride(override: BaselineOverride): void {
+    if (override.enabled) {
+      this.disabledBaselineIds.delete(override.id);
+    } else {
+      this.disabledBaselineIds.add(override.id);
+    }
+    this.saveBaselineOverridesState();
+    this.applyBaselineOverridesToForm();
+    this.recalculate();
+  }
+
+  /**
+   * Toggle all baseline overrides on/off via master switch.
+   */
+  toggleAllBaselineOverrides(enabled: boolean): void {
+    this.baselineOverridesEnabled = enabled;
+    this.saveBaselineOverridesState();
+    this.applyBaselineOverridesToForm();
+    this.recalculate();
+  }
+
+  /**
+   * Get baseline overrides filtered by type.
+   */
+  getBaselineOverridesByType(type: 'contribution' | 'fiBudget' | 'leanFiBudget' | 'startingPortfolio' | 'monthlyContribution'): BaselineOverride[] {
+    return this.baselineOverrides.filter(o => o.type === type);
+  }
+
+  /**
+   * Get the count of enabled baseline overrides.
+   */
+  getEnabledBaselineCount(): number {
+    if (!this.baselineOverridesEnabled) return 0;
+    return this.baselineOverrides.filter(o => o.enabled).length;
+  }
+
+  /**
+   * Save baseline overrides state to localStorage.
+   */
+  private saveBaselineOverridesState(): void {
+    const state: BaselineOverridesState = {
+      globalEnabled: this.baselineOverridesEnabled,
+      disabledOverrideIds: Array.from(this.disabledBaselineIds),
+    };
+    window.localStorage.setItem(BASELINE_OVERRIDES_STORAGE_KEY, JSON.stringify(state));
+  }
+
+  /**
+   * Apply current baseline override state to form values.
+   * When an override is disabled, use the original value instead of the overridden value.
+   */
+  private applyBaselineOverridesToForm(): void {
+    const categoryGroups = this.categoryGroups.controls;
+
+    for (let i = 0; i < categoryGroups.length; i++) {
+      const categoryGroup = categoryGroups[i];
+      const categories = (categoryGroup.get('categories') as UntypedFormArray).controls;
+
+      for (let j = 0; j < categories.length; j++) {
+        const category = categories[j];
+        const name = category.value.name;
+
+        // Handle FI budget
+        const fiBudgetId = `${name}-fiBudget-baseline`;
+        const fiBudgetOverrideEnabled = this.baselineOverridesEnabled && !this.disabledBaselineIds.has(fiBudgetId);
+        const fiBudgetValue = fiBudgetOverrideEnabled
+          ? category.value.computedFiBudget
+          : category.value.originalFiBudget;
+        if (fiBudgetValue !== undefined) {
+          category.patchValue({ fiBudget: fiBudgetValue }, { emitEvent: false });
+        }
+
+        // Handle Lean FI budget
+        const leanFiBudgetId = `${name}-leanFiBudget-baseline`;
+        const leanFiBudgetOverrideEnabled = this.baselineOverridesEnabled && !this.disabledBaselineIds.has(leanFiBudgetId);
+        const leanFiBudgetValue = leanFiBudgetOverrideEnabled
+          ? category.value.computedLeanFiBudget
+          : category.value.originalLeanFiBudget;
+        if (leanFiBudgetValue !== undefined) {
+          category.patchValue({ leanFiBudget: leanFiBudgetValue }, { emitEvent: false });
+        }
+      }
+    }
+
+    // Handle account overrides
+    for (const account of this.accounts.controls) {
+      const name = account.value.name;
+
+      // Handle starting portfolio
+      const portfolioId = `${name}-startingPortfolio-baseline`;
+      const portfolioOverrideEnabled = this.baselineOverridesEnabled && !this.disabledBaselineIds.has(portfolioId);
+      const portfolioValue = portfolioOverrideEnabled
+        ? account.value.balance
+        : account.value.ynabBalance;
+      // Note: We don't patch balance here because it's the user-editable field
+      // and the override is already reflected in the collected data
+    }
+  }
+
   private setInitialSelectedBudget(): string {
     let selectedBudget = 'last-used';
 
@@ -780,6 +1001,9 @@ export class YnabComponent implements OnInit {
             this.formBuilder.group({
               name: c.name,
               retrievedBudgeted: c.retrievedBudgeted,
+              originalFiBudget: c.originalFiBudget,
+              originalLeanFiBudget: c.originalLeanFiBudget,
+              originalContributionBudget: c.originalContributionBudget,
               computedFiBudget: c.computedFiBudget,
               computedLeanFiBudget: c.computedLeanFiBudget,
               fiBudget: c.computedFiBudget,

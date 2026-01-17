@@ -757,6 +757,203 @@
         </div>
       </div>
     </div>
+    <!-- Overwritten Categories Accordion -->
+    <div ngbAccordionItem id="pOverwrittenCategories" *ngIf="baselineOverrides.length > 0">
+      <h2 ngbAccordionHeader>
+        <button ngbAccordionButton>
+          <span class="float-start">Overwritten Categories</span>
+          <span class="ms-auto">
+            {{ getEnabledBaselineCount() }} of {{ baselineOverrides.length }}
+          </span>
+        </button>
+      </h2>
+      <div ngbAccordionCollapse>
+        <div ngbAccordionBody>
+          <ng-template>
+            <!-- Master toggle -->
+            <div class="form-check mb-3">
+              <input
+                type="checkbox"
+                class="form-check-input"
+                id="baselineOverridesEnabled"
+                [(ngModel)]="baselineOverridesEnabled"
+                [ngModelOptions]="{standalone: true}"
+                (change)="toggleAllBaselineOverrides(baselineOverridesEnabled)"
+              />
+              <label class="form-check-label" for="baselineOverridesEnabled"
+                >Apply BR4 overrides to calculations</label
+              >
+            </div>
+
+            <!-- Contributions -->
+            <div
+              *ngIf="getBaselineOverridesByType('contribution').length > 0"
+              class="mb-3"
+            >
+              <h6>Contributions</h6>
+              <div
+                *ngFor="let override of getBaselineOverridesByType('contribution')"
+                class="form-check"
+              >
+                <input
+                  type="checkbox"
+                  class="form-check-input"
+                  [id]="'baseline-' + override.id"
+                  [(ngModel)]="override.enabled"
+                  [ngModelOptions]="{standalone: true}"
+                  [disabled]="!baselineOverridesEnabled"
+                  (change)="toggleBaselineOverride(override)"
+                />
+                <label
+                  class="form-check-label"
+                  [for]="'baseline-' + override.id"
+                  [class.text-muted]="!baselineOverridesEnabled"
+                >
+                  {{ override.categoryName }}:
+                  {{ override.originalValue | currency : currencyIsoCode }} →
+                  {{ override.overriddenValue | currency : currencyIsoCode }}
+                </label>
+              </div>
+            </div>
+
+            <!-- FI Expenses -->
+            <div
+              *ngIf="getBaselineOverridesByType('fiBudget').length > 0"
+              class="mb-3"
+            >
+              <h6>FI Expenses</h6>
+              <div
+                *ngFor="let override of getBaselineOverridesByType('fiBudget')"
+                class="form-check"
+              >
+                <input
+                  type="checkbox"
+                  class="form-check-input"
+                  [id]="'baseline-' + override.id"
+                  [(ngModel)]="override.enabled"
+                  [ngModelOptions]="{standalone: true}"
+                  [disabled]="!baselineOverridesEnabled"
+                  (change)="toggleBaselineOverride(override)"
+                />
+                <label
+                  class="form-check-label"
+                  [for]="'baseline-' + override.id"
+                  [class.text-muted]="!baselineOverridesEnabled"
+                >
+                  {{ override.categoryName }}:
+                  {{ override.originalValue | currency : currencyIsoCode }} →
+                  {{ override.overriddenValue | currency : currencyIsoCode }}
+                </label>
+              </div>
+            </div>
+
+            <!-- Lean FI Expenses -->
+            <div
+              *ngIf="getBaselineOverridesByType('leanFiBudget').length > 0"
+              class="mb-3"
+            >
+              <h6>Lean FI Expenses</h6>
+              <div
+                *ngFor="let override of getBaselineOverridesByType('leanFiBudget')"
+                class="form-check"
+              >
+                <input
+                  type="checkbox"
+                  class="form-check-input"
+                  [id]="'baseline-' + override.id"
+                  [(ngModel)]="override.enabled"
+                  [ngModelOptions]="{standalone: true}"
+                  [disabled]="!baselineOverridesEnabled"
+                  (change)="toggleBaselineOverride(override)"
+                />
+                <label
+                  class="form-check-label"
+                  [for]="'baseline-' + override.id"
+                  [class.text-muted]="!baselineOverridesEnabled"
+                >
+                  {{ override.categoryName }}:
+                  {{ override.originalValue | currency : currencyIsoCode }} →
+                  {{ override.overriddenValue | currency : currencyIsoCode }}
+                </label>
+              </div>
+            </div>
+
+            <!-- Starting Portfolio (accounts) -->
+            <div
+              *ngIf="getBaselineOverridesByType('startingPortfolio').length > 0"
+              class="mb-3"
+            >
+              <h6>Starting Portfolio</h6>
+              <div
+                *ngFor="let override of getBaselineOverridesByType('startingPortfolio')"
+                class="form-check"
+              >
+                <input
+                  type="checkbox"
+                  class="form-check-input"
+                  [id]="'baseline-' + override.id"
+                  [(ngModel)]="override.enabled"
+                  [ngModelOptions]="{standalone: true}"
+                  [disabled]="!baselineOverridesEnabled"
+                  (change)="toggleBaselineOverride(override)"
+                />
+                <label
+                  class="form-check-label"
+                  [for]="'baseline-' + override.id"
+                  [class.text-muted]="!baselineOverridesEnabled"
+                >
+                  {{ override.categoryName }}:
+                  {{ override.originalValue | currency : currencyIsoCode }} →
+                  {{ override.overriddenValue | currency : currencyIsoCode }}
+                </label>
+              </div>
+            </div>
+
+            <!-- Monthly Contributions (accounts) -->
+            <div
+              *ngIf="getBaselineOverridesByType('monthlyContribution').length > 0"
+              class="mb-3"
+            >
+              <h6>Monthly Contributions</h6>
+              <div
+                *ngFor="let override of getBaselineOverridesByType('monthlyContribution')"
+                class="form-check"
+              >
+                <input
+                  type="checkbox"
+                  class="form-check-input"
+                  [id]="'baseline-' + override.id"
+                  [(ngModel)]="override.enabled"
+                  [ngModelOptions]="{standalone: true}"
+                  [disabled]="!baselineOverridesEnabled"
+                  (change)="toggleBaselineOverride(override)"
+                />
+                <label
+                  class="form-check-label"
+                  [for]="'baseline-' + override.id"
+                  [class.text-muted]="!baselineOverridesEnabled"
+                >
+                  {{ override.categoryName }}:
+                  {{ override.originalValue | currency : currencyIsoCode }} →
+                  {{ override.overriddenValue | currency : currencyIsoCode }}
+                </label>
+              </div>
+            </div>
+
+            <!-- Help text -->
+            <div class="row mt-3">
+              <div class="col-12">
+                <p class="mb-2"><strong>About overwritten categories</strong></p>
+                <p class="mb-1">
+                  These categories have customized values via BR4 commands in their YNAB notes.
+                  Toggle off to temporarily revert to original YNAB values.
+                </p>
+              </div>
+            </div>
+          </ng-template>
+        </div>
+      </div>
+    </div>
     <div ngbAccordionItem id="pScheduledChanges" *ngIf="scheduledChanges.length > 0">
       <h2 ngbAccordionHeader>
         <button ngbAccordionButton>
