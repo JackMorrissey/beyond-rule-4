@@ -14,6 +14,18 @@ export class ImpactComponent implements OnInit, OnChanges {
     @Input() forecast: Forecast;
 
     spendingCategoriesWithImpact;
+    showLeanFi = false;
+
+    toggleLeanFi(showLean: boolean) {
+        this.showLeanFi = showLean;
+        if (this.spendingCategoriesWithImpact) {
+            this.spendingCategoriesWithImpact.sort((a, b) => {
+                const aValue = showLean ? a.category.leanFiBudget : a.category.fiBudget;
+                const bValue = showLean ? b.category.leanFiBudget : b.category.fiBudget;
+                return bValue - aValue;
+            });
+        }
+    }
 
     ngOnInit() {
         this.calculateData();
@@ -29,6 +41,7 @@ export class ImpactComponent implements OnInit, OnChanges {
         }
 
         const currentFiForecast = this.getFiForecast(this.forecast, this.calculateInput.fiNumber);
+        const currentLeanFiForecast = this.getFiForecast(this.forecast, this.calculateInput.leanFiNumber);
 
         if (!currentFiForecast) {
             return;
@@ -38,21 +51,25 @@ export class ImpactComponent implements OnInit, OnChanges {
             return group.categories;
         }));
         const categoriesWithSpending = categories.filter((category) => {
-            return category.fiBudget > 0;
+            return category.fiBudget > 0 || category.leanFiBudget > 0;
         }).sort((a, b) => {
             return b.fiBudget - a.fiBudget;
         });
 
         this.spendingCategoriesWithImpact = categoriesWithSpending.map((category) => {
             const isFi = currentFiForecast.date < new Date();
+            const isLeanFi = currentLeanFiForecast && currentLeanFiForecast.date < new Date();
 
             let impactDate = 'Achieved FI!';
-            if (isFi) {
+            let leanImpactDate = null;
 
+            if (isFi) {
                 return {
                     category,
                     impactDate,
-                    isFi
+                    isFi,
+                    leanImpactDate: isLeanFi ? 'Achieved Lean FI!' : null,
+                    isLeanFi
                 };
             }
 
@@ -62,10 +79,26 @@ export class ImpactComponent implements OnInit, OnChanges {
 
             impactDate = this.getImpactDateText(currentFiForecast.date, modifiedFiForecast.date);
 
+            // Calculate Lean FI impact
+            if (category.leanFiBudget > 0 && currentLeanFiForecast) {
+                if (isLeanFi) {
+                    leanImpactDate = 'Achieved Lean FI!';
+                } else {
+                    const modifiedLeanCalcInput = this.getModifiedCalculateInputForLeanFi(category.leanFiBudget);
+                    const modifiedLeanForecast = new Forecast(modifiedLeanCalcInput);
+                    const modifiedLeanFiForecast = this.getFiForecast(modifiedLeanForecast, modifiedLeanCalcInput.leanFiNumber);
+                    if (modifiedLeanFiForecast) {
+                        leanImpactDate = this.getImpactDateText(currentLeanFiForecast.date, modifiedLeanFiForecast.date);
+                    }
+                }
+            }
+
             return {
                 category,
                 impactDate,
-                isFi
+                isFi,
+                leanImpactDate,
+                isLeanFi
             };
         });
     }
@@ -77,6 +110,17 @@ export class ImpactComponent implements OnInit, OnChanges {
         calcInput.expectedAnnualGrowthRate = this.calculateInput.expectedAnnualGrowthRate;
         calcInput.netWorth = this.calculateInput.netWorth;
         calcInput.monthlyContribution = this.calculateInput.monthlyContribution + fiSpendingReductionPerMonth;
+        return calcInput;
+    }
+
+    private getModifiedCalculateInputForLeanFi(leanFiSpendingReductionPerMonth: number): CalculateInput {
+        const calcInput = new CalculateInput();
+        calcInput.annualExpenses = this.calculateInput.annualExpenses;
+        calcInput.leanAnnualExpenses = this.calculateInput.leanAnnualExpenses - leanFiSpendingReductionPerMonth * 12;
+        calcInput.annualSafeWithdrawalRate = this.calculateInput.annualSafeWithdrawalRate;
+        calcInput.expectedAnnualGrowthRate = this.calculateInput.expectedAnnualGrowthRate;
+        calcInput.netWorth = this.calculateInput.netWorth;
+        calcInput.monthlyContribution = this.calculateInput.monthlyContribution + leanFiSpendingReductionPerMonth;
         return calcInput;
     }
 
