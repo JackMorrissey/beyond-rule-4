@@ -29,11 +29,21 @@
       <strong>{{
         calculateInput.annualExpenses | currency: calculateInput.currencyIsoCode
       }}</strong
+      ><span *ngIf="calculateInput.monthFromName != calculateInput.monthToName"
+        >, between {{ calculateInput.monthFromName }} and
+        {{ calculateInput.monthToName }}</span
+      ><span *ngIf="externalContributions > 0"
+        >, and expected external contributions of
+        <strong>{{
+          externalContributions | currency: calculateInput.currencyIsoCode
+        }}</strong
+        >/year</span
+      ><span *ngIf="additionalLumpSum > 0"
+        >, plus an additional lump sum of
+        <strong>{{
+          additionalLumpSum | currency: calculateInput.currencyIsoCode
+        }}</strong></span
       >,
-      <span *ngIf="calculateInput.monthFromName != calculateInput.monthToName"
-        >between {{ calculateInput.monthFromName }} and
-        {{ calculateInput.monthToName }},
-      </span>
       we're aiming for a Net Worth of
       <strong>{{ fiNumber | currency: calculateInput.currencyIsoCode }}</strong
       >.

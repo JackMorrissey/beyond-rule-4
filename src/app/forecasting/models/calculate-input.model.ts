@@ -15,6 +15,8 @@ export class CalculateInput {
   monthFromName = '';
   monthToName = '';
   birthdate: Birthdate = null;
+  expectedExternalAnnualContributions = 0;
+  additionalLumpSumNeeded = 0;
 
   // Time series for dynamic values
   monthlyContributionSeries: TimeSeries | null = null;
@@ -42,22 +44,30 @@ export class CalculateInput {
     this.monthlyContribution = round(this.monthlyContribution);
     this.leanFiPercentage = round(this.leanFiPercentage);
     this.leanAnnualExpenses = round(this.leanAnnualExpenses);
+    this.expectedExternalAnnualContributions = round(this.expectedExternalAnnualContributions);
+    this.additionalLumpSumNeeded = round(this.additionalLumpSumNeeded);
   }
 
   get safeWithdrawalTimes() {
     return 1 / this.annualSafeWithdrawalRate;
   }
 
+  get externalContributionReduction() {
+    return this.safeWithdrawalTimes * this.expectedExternalAnnualContributions;
+  }
+
   get fiNumber() {
-    return this.safeWithdrawalTimes * this.annualExpenses;
+    const baseFi = this.safeWithdrawalTimes * this.annualExpenses;
+    return baseFi - this.externalContributionReduction + this.additionalLumpSumNeeded;
   }
 
   get leanFiNumber() {
-    let leanFiNumber = this.fiNumber * this.leanFiPercentage;
+    let baseLeanFi = this.fiNumber * this.leanFiPercentage;
     if (this.leanAnnualExpenses) {
-      leanFiNumber = this.safeWithdrawalTimes * this.leanAnnualExpenses;
+      baseLeanFi = this.safeWithdrawalTimes * this.leanAnnualExpenses;
+      baseLeanFi = baseLeanFi - this.externalContributionReduction + this.additionalLumpSumNeeded;
     }
-    return leanFiNumber;
+    return baseLeanFi;
   }
 
   /**
