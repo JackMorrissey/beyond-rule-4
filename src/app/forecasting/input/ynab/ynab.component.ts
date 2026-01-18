@@ -46,6 +46,7 @@ export class YnabComponent implements OnInit {
   public expectedAnnualGrowthRate = 7.0;
   public expectedExternalAnnualContributions = 0;
   public additionalLumpSumNeeded = 0;
+  public targetRetirementAge = 65;
 
   public budgets: ynab.BudgetSummary[];
   public budget: ynab.BudgetDetail;
@@ -136,6 +137,16 @@ export class YnabComponent implements OnInit {
       this.birthdate = null;
     }
 
+    const targetRetirementAgeStorage = parseFloat(
+      window.localStorage.getItem('br4-target-retirement-age'),
+    );
+    if (
+      !!targetRetirementAgeStorage &&
+      !isNaN(targetRetirementAgeStorage)
+    ) {
+      this.targetRetirementAge = targetRetirementAgeStorage;
+    }
+
     // Load scheduled changes state from localStorage
     try {
       const storedState = JSON.parse(
@@ -202,6 +213,10 @@ export class YnabComponent implements OnInit {
         this.expectedExternalAnnualContributions,
       ],
       additionalLumpSumNeeded: [this.additionalLumpSumNeeded],
+      targetRetirementAge: [
+        this.targetRetirementAge,
+        [Validators.required, Validators.min(18), Validators.max(120)],
+      ],
     });
   }
 
@@ -313,6 +328,7 @@ export class YnabComponent implements OnInit {
       this.expectedExternalAnnualContributions,
     );
     result.additionalLumpSumNeeded = Math.max(0, this.additionalLumpSumNeeded);
+    result.targetRetirementAge = Math.max(18, Math.min(120, this.targetRetirementAge));
 
     result.roundAll();
     this.calculateInputChange.emit(result);
@@ -468,6 +484,17 @@ export class YnabComponent implements OnInit {
       window.localStorage.setItem(
         'br4-additional-lump-sum',
         parsedAdditionalLumpSum.toString(),
+      );
+    }
+
+    const parsedTargetRetirementAge = Number.parseFloat(
+      this.budgetForm.value.targetRetirementAge,
+    );
+    if (!Number.isNaN(parsedTargetRetirementAge)) {
+      this.targetRetirementAge = parsedTargetRetirementAge;
+      window.localStorage.setItem(
+        'br4-target-retirement-age',
+        parsedTargetRetirementAge.toString(),
       );
     }
   }
@@ -1123,6 +1150,7 @@ export class YnabComponent implements OnInit {
       expectedExternalAnnualContributions:
         this.expectedExternalAnnualContributions,
       additionalLumpSumNeeded: this.additionalLumpSumNeeded,
+      targetRetirementAge: this.targetRetirementAge,
     });
 
     const categoryGroupFormGroups = categoriesDisplay.map((cg) =>

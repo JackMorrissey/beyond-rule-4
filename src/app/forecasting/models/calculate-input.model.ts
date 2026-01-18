@@ -17,6 +17,7 @@ export class CalculateInput {
   birthdate: Birthdate = null;
   expectedExternalAnnualContributions = 0;
   additionalLumpSumNeeded = 0;
+  targetRetirementAge = 65;
 
   // Time series for dynamic values
   monthlyContributionSeries: TimeSeries | null = null;
@@ -68,6 +69,54 @@ export class CalculateInput {
       baseLeanFi = baseLeanFi - this.externalContributionReduction + this.additionalLumpSumNeeded;
     }
     return baseLeanFi;
+  }
+
+  /**
+   * Get the Coast FI number at a specific date.
+   * Coast FI is the amount needed today where, with zero future contributions,
+   * investment growth alone reaches your FI number by a target retirement age.
+   *
+   * Formula: coastFiNumber = fiNumber / (1 + annualGrowthRate)^yearsToTarget
+   *
+   * @param atDate The date to calculate Coast FI at
+   * @returns The Coast FI number, or null if birthdate is not set
+   */
+  getCoastFiNumberAt(atDate: Date): number | null {
+    if (!this.birthdate) {
+      return null;
+    }
+
+    const birthdate = new Date(
+      this.birthdate.year,
+      this.birthdate.month - 1,
+      this.birthdate.day
+    );
+
+    // Calculate current age in years
+    const ageInMs = atDate.getTime() - birthdate.getTime();
+    const ageInYears = ageInMs / (1000 * 60 * 60 * 24 * 365.25);
+
+    // Calculate years to target retirement age
+    const yearsToTarget = this.targetRetirementAge - ageInYears;
+
+    // If already at or past target age, Coast FI equals FI number
+    if (yearsToTarget <= 0) {
+      return this.fiNumber;
+    }
+
+    // Coast FI = FI Number / (1 + growth rate)^years
+    const coastFi =
+      this.fiNumber / Math.pow(1 + this.expectedAnnualGrowthRate, yearsToTarget);
+
+    return round(coastFi);
+  }
+
+  /**
+   * Get the Coast FI number based on current date.
+   * Returns null if birthdate is not set.
+   */
+  get coastFiNumber(): number | null {
+    return this.getCoastFiNumberAt(new Date());
   }
 
   /**

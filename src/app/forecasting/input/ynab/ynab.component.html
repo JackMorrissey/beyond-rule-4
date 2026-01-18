@@ -365,6 +365,35 @@
                   </div>
                 </div>
               </div>
+              <div class="row">
+                <label
+                  for="targetRetirementAge"
+                  class="col-sm-12 col-md-5 col-form-label"
+                  >Target Retirement Age</label
+                >
+                <div class="col">
+                  <div class="input-group">
+                    <input
+                      type="number"
+                      class="form-control"
+                      id="targetRetirementAge"
+                      formControlName="targetRetirementAge"
+                      min="18"
+                      max="120"
+                      step="1"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col">
+                  <small
+                    >Used for Coast FI calculation. Coast FI is the amount
+                    needed today where investment growth alone reaches your FI
+                    number by your target retirement age.</small
+                  >
+                </div>
+              </div>
             </div>
           </ng-template>
         </div>

@@ -87,6 +87,7 @@ export class TextComponent implements OnInit, OnChanges {
       'FU$': 'F-You Money: 10% of your FI number (2.5x annual expenses)',
       'Half FI': 'Halfway to Financial Independence (12.5x annual expenses)',
       'Lean FI': 'Financially independent with a lean budget',
+      'Coast FI': 'The amount where investment growth alone reaches FI by your target retirement age',
       'Flex FI': 'Flexible FI: 80% of your FI number (20x annual expenses)',
       'FI': 'Financial Independence: 25x annual expenses using the 4% rule',
       'Fat FI': 'Fat FI: 120% of your FI number (30x annual expenses)',
