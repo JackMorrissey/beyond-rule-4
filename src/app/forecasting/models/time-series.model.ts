@@ -89,6 +89,20 @@ export class TimeSeries {
       .map(p => p.effectiveDate as string);
   }
 
+  /**
+   * Create a new TimeSeries with all values offset by a given amount.
+   * Useful for applying a manual adjustment while preserving scheduled changes.
+   */
+  offset(amount: number): TimeSeries {
+    const result = new TimeSeries(this.getBaselineValue() + amount);
+    for (const point of this.points) {
+      if (point.effectiveDate !== null) {
+        result.addPoint(point.effectiveDate, point.value + amount);
+      }
+    }
+    return result;
+  }
+
   private sortPoints(): void {
     this.points.sort((a, b) => {
       if (a.effectiveDate === null) return -1;

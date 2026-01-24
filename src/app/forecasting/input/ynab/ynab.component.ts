@@ -314,9 +314,11 @@ export class YnabComponent implements OnInit {
     result.birthdate = this.birthdate;
 
     // Add time series data
-    // If user manually changed the contribution, use their value as a flat series
+    // If user manually changed the contribution, apply the difference as an offset
+    // This preserves any enabled scheduled changes while adjusting the baseline
     if (userContribution !== this.ynabCalculatedContribution) {
-      result.monthlyContributionSeries = new TimeSeries(userContribution);
+      const offsetAmount = userContribution - this.ynabCalculatedContribution;
+      result.monthlyContributionSeries = contributionData.series.offset(offsetAmount);
     } else {
       result.monthlyContributionSeries = contributionData.series;
     }
