@@ -90,6 +90,23 @@ export class YnabComponent implements OnInit {
   public baselineOverridesEnabled = true;
   private disabledBaselineIds: Set<string> = new Set();
 
+  // Track YNAB-calculated contribution to detect manual edits
+  public ynabCalculatedContribution: number = 0;
+
+  /**
+   * Check if the monthly contribution has been manually modified from the YNAB-calculated value.
+   */
+  isContributionManuallyModified(): boolean {
+    return this.budgetForm.value.monthlyContribution !== this.ynabCalculatedContribution;
+  }
+
+  /**
+   * Reset the monthly contribution to the original YNAB-calculated value.
+   */
+  resetContribution(): void {
+    this.budgetForm.patchValue({ monthlyContribution: this.ynabCalculatedContribution });
+  }
+
   constructor(
     private ynabService: YnabApiService,
     private formBuilder: UntypedFormBuilder,
@@ -262,6 +279,7 @@ export class YnabComponent implements OnInit {
     );
 
     // Get contribution with series (respecting enabled state)
+    const userContribution = this.budgetForm.value.monthlyContribution;
     const contributionData = this.getMonthlyContribution(
       this.budgetForm.value.categoryGroups,
       this.accounts.controls,
@@ -296,7 +314,12 @@ export class YnabComponent implements OnInit {
     result.birthdate = this.birthdate;
 
     // Add time series data
-    result.monthlyContributionSeries = contributionData.series;
+    // If user manually changed the contribution, use their value as a flat series
+    if (userContribution !== this.ynabCalculatedContribution) {
+      result.monthlyContributionSeries = new TimeSeries(userContribution);
+    } else {
+      result.monthlyContributionSeries = contributionData.series;
+    }
     result.annualExpensesSeries = fiExpensesSeries;
     result.leanAnnualExpensesSeries = leanFiExpensesSeries;
 
@@ -396,6 +419,7 @@ export class YnabComponent implements OnInit {
       mappedCategoryGroups,
       mappedAccounts,
     );
+    this.ynabCalculatedContribution = monthlyContribution.value;
     this.contributionCategories = monthlyContribution.categories;
 
     this.resetForm(
