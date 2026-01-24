@@ -482,6 +482,14 @@
                   formControlName="monthlyContribution"
                   step="100"
                 />
+                <a
+                  *ngIf="isContributionManuallyModified()"
+                  href="javascript:void(0)"
+                  class="small"
+                  (click)="resetContribution()"
+                >
+                  Reset to YNAB value ({{ ynabCalculatedContribution | currency : currencyIsoCode }})
+                </a>
               </div>
               <!-- <div class="col-sm-1">
               <button type="button" class="btn btn-link" (click)="displayContributionInfo = !displayContributionInfo">
