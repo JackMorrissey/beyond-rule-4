@@ -365,6 +365,47 @@
                   </div>
                 </div>
               </div>
+              <div class="row">
+                <label
+                  for="targetRetirementAge"
+                  class="col-sm-12 col-md-5 col-form-label"
+                  >Target Retirement Age</label
+                >
+                <div class="col">
+                  <div class="input-group">
+                    <input
+                      type="number"
+                      class="form-control"
+                      id="targetRetirementAge"
+                      formControlName="targetRetirementAge"
+                      min="18"
+                      max="120"
+                      step="1"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col">
+                  <small
+                    >Used for Coast FI calculation. Coast FI is the amount
+                    needed today where investment growth alone reaches your FI
+                    number by your target retirement age.</small
+                  >
+                  <br />
+                  <small>
+                    <a
+                      target="_blank"
+                      href="https://www.financialsamurai.com/what-is-coast-fire-financial-independence-retire-early/"
+                      >What Is Coast FIRE And Is It The Right Retirement Path For You? - Financial Samurai
+                      <fa-icon
+                        [icon]="['fas', 'external-link-square-alt']"
+                        size="sm"
+                      ></fa-icon>
+                    </a>
+                  </small>
+                </div>
+              </div>
             </div>
           </ng-template>
         </div>

@@ -32,12 +32,24 @@ export class MilestonesComponent implements OnInit, OnChanges {
     const eclipseForecast = this.forecast.monthlyForecasts.find(m => {
       return m.totalContributions <= m.totalReturns;
     });
+    const coastFiNumber = this.calculateInput.coastFiNumber;
+
     if (!eclipseForecast) {
-      this.milestones = new Milestones(this.calculateInput.fiNumber, this.calculateInput.leanFiNumber, 0);
+      this.milestones = new Milestones(
+        this.calculateInput.fiNumber,
+        this.calculateInput.leanFiNumber,
+        0,
+        coastFiNumber
+      );
       return;
     }
 
     const eclipseMarker = Math.min(eclipseForecast.totalContributions, eclipseForecast.totalReturns);
-    this.milestones = new Milestones(this.calculateInput.fiNumber, this.calculateInput.leanFiNumber, eclipseMarker * 2);
+    this.milestones = new Milestones(
+      this.calculateInput.fiNumber,
+      this.calculateInput.leanFiNumber,
+      eclipseMarker * 2,
+      coastFiNumber
+    );
   }
 }

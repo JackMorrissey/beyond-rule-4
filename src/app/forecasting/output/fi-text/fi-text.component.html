@@ -17,6 +17,18 @@
         </h4>
       </li>
     </ul>
+    <hr *ngIf="coastFiNumber !== null" />
+    <ul class="list-inline mb-0" *ngIf="coastFiNumber !== null">
+      <li class="list-inline-item">
+        <h5 class="fw-light">Coast FI</h5>
+      </li>
+      <li class="list-inline-item"></li>
+      <li class="list-inline-item">
+        <h4>{{ coastFiDate }} • {{ coastFiDateDistance }}
+          <span *ngIf="coastFiAge !== null" class="fst-italic">• {{ coastFiAge }} old</span>
+        </h4>
+      </li>
+    </ul>
   </div>
   <div class="pb-1">
     <p>
@@ -69,6 +81,24 @@
             | currency: calculateInput.currencyIsoCode
         }}</strong>
         is earned returns.
+      </span>
+    </p>
+    <p *ngIf="coastFiNumber !== null">
+      <strong>Coast FI</strong> is the amount needed today where, with zero
+      future contributions, investment growth alone reaches your FI number by
+      age <strong>{{ targetRetirementAge }}</strong
+      >. Your Coast FI number is
+      <strong>{{
+        coastFiNumber | currency: calculateInput.currencyIsoCode
+      }}</strong
+      >. Once you reach Coast FI, you could theoretically stop saving and still
+      reach FI by your target retirement age.
+      <span *ngIf="coastFiDate !== 'Never'">
+        You are forecasted to reach Coast FI on <strong>{{ coastFiDate }}</strong
+        >; {{ coastFiDateDistance }} from now.
+        <span *ngIf="coastFiAge !== null"
+          >You'll be <strong>{{ coastFiAge }}</strong> old at that time.</span
+        >
       </span>
     </p>
   </div>
