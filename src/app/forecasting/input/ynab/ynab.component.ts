@@ -46,7 +46,7 @@ export class YnabComponent implements OnInit {
   public expectedAnnualGrowthRate = 7.0;
   public expectedExternalAnnualContributions = 0;
   public additionalLumpSumNeeded = 0;
-  public targetRetirementAge = 65;
+  public targetRetirementAge: number | null = 65;
 
   public budgets: ynab.BudgetSummary[];
   public budget: ynab.BudgetDetail;
@@ -137,14 +137,15 @@ export class YnabComponent implements OnInit {
       this.birthdate = null;
     }
 
-    const targetRetirementAgeStorage = parseFloat(
-      window.localStorage.getItem('br4-target-retirement-age'),
-    );
-    if (
-      !!targetRetirementAgeStorage &&
-      !isNaN(targetRetirementAgeStorage)
-    ) {
-      this.targetRetirementAge = targetRetirementAgeStorage;
+    const targetRetirementAgeRaw = window.localStorage.getItem('br4-target-retirement-age');
+    if (targetRetirementAgeRaw === '') {
+      // User explicitly cleared the value
+      this.targetRetirementAge = null;
+    } else if (targetRetirementAgeRaw !== null) {
+      const parsed = parseFloat(targetRetirementAgeRaw);
+      if (!isNaN(parsed)) {
+        this.targetRetirementAge = parsed;
+      }
     }
 
     // Load scheduled changes state from localStorage
@@ -328,7 +329,9 @@ export class YnabComponent implements OnInit {
       this.expectedExternalAnnualContributions,
     );
     result.additionalLumpSumNeeded = Math.max(0, this.additionalLumpSumNeeded);
-    result.targetRetirementAge = Math.max(18, Math.min(120, this.targetRetirementAge));
+    result.targetRetirementAge = this.targetRetirementAge !== null
+      ? Math.max(18, Math.min(120, this.targetRetirementAge))
+      : null;
 
     result.roundAll();
     this.calculateInputChange.emit(result);
@@ -496,6 +499,10 @@ export class YnabComponent implements OnInit {
         'br4-target-retirement-age',
         parsedTargetRetirementAge.toString(),
       );
+    } else {
+      this.targetRetirementAge = null;
+      // Store empty string to remember user explicitly cleared the value
+      window.localStorage.setItem('br4-target-retirement-age', '');
     }
   }
 

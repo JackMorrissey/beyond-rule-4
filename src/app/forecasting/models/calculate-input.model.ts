@@ -17,7 +17,7 @@ export class CalculateInput {
   birthdate: Birthdate = null;
   expectedExternalAnnualContributions = 0;
   additionalLumpSumNeeded = 0;
-  targetRetirementAge = 65;
+  targetRetirementAge: number | null = null;
 
   // Time series for dynamic values
   monthlyContributionSeries: TimeSeries | null = null;
@@ -82,7 +82,7 @@ export class CalculateInput {
    * @returns The Coast FI number, or null if birthdate is not set
    */
   getCoastFiNumberAt(atDate: Date): number | null {
-    if (!this.birthdate) {
+    if (!this.birthdate || this.targetRetirementAge === null) {
       return null;
     }
 
