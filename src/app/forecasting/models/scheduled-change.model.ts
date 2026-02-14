@@ -2,7 +2,7 @@ export interface ScheduledChange {
   id: string;                    // Unique ID: `${categoryId}-${type}-${date}`
   categoryName: string;
   categoryId: string;
-  type: 'contribution' | 'fiBudget' | 'leanFiBudget';
+  type: 'contribution' | 'fiBudget' | 'leanFiBudget' | 'monthlyContribution';
   baselineValue: number;
   scheduledValue: number;
   effectiveDate: string;         // YYYY-MM
