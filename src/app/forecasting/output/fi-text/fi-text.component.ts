@@ -131,9 +131,12 @@ export class FiTextComponent implements OnInit, OnChanges {
       const roundedCoastFi = Math.max(0, round(coastFiNumber));
       this.coastFiNumber = roundedCoastFi;
 
-      // Find first month where net worth >= Coast FI (using today's Coast FI value)
+      // Find first month where net worth >= Coast FI at that month's date
       const foundCoastFiForecast = this.forecast.monthlyForecasts.find(
-        (f) => f.netWorth >= roundedCoastFi
+        (f) => {
+          const coastFiAtMonth = this.calculateInput.getCoastFiNumberAt(f.date);
+          return coastFiAtMonth !== null && f.netWorth >= coastFiAtMonth;
+        }
       );
 
       if (!foundCoastFiForecast) {

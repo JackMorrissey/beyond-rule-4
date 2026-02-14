@@ -16,6 +16,7 @@ export class TextComponent implements OnInit, OnChanges {
   @Input() forecast: Forecast;
   @Input() milestones: Milestones;
   @Input() currencyIsoCode: string;
+  @Input() calculateInput: CalculateInput;
 
   milestonesWithForecast;
 
@@ -42,8 +43,16 @@ export class TextComponent implements OnInit, OnChanges {
     const foundForecasts = [];
     for (let i = 0; i < milestonesSearch.length; i++) {
       const milestone = milestonesSearch[i];
-      const foundIndex = forecastSearch.findIndex(f => f.netWorth >= milestone.value);
-      foundForecasts[i] = foundIndex;
+      if (milestone.label === 'Coast FI' && this.calculateInput) {
+        const foundIndex = forecastSearch.findIndex(f => {
+          const coastFiAtMonth = this.calculateInput.getCoastFiNumberAt(f.date);
+          return coastFiAtMonth !== null && f.netWorth >= coastFiAtMonth;
+        });
+        foundForecasts[i] = foundIndex;
+      } else {
+        const foundIndex = forecastSearch.findIndex(f => f.netWorth >= milestone.value);
+        foundForecasts[i] = foundIndex;
+      }
     }
     this.milestonesWithForecast = milestonesSearch.map((milestone, i) => {
       const foundIndex = foundForecasts[i];
