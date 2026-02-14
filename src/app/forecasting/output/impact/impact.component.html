@@ -5,8 +5,9 @@
 </p>
 <div class="text-center mb-3">
     <div class="btn-group" role="group">
-        <button type="button" class="btn btn-sm" [ngClass]="{'btn-primary': !showLeanFi, 'btn-outline-primary': showLeanFi}" (click)="toggleLeanFi(false)">FI Budget</button>
-        <button type="button" class="btn btn-sm" [ngClass]="{'btn-primary': showLeanFi, 'btn-outline-primary': !showLeanFi}" (click)="toggleLeanFi(true)">Lean FI Budget</button>
+        <button type="button" class="btn btn-sm" [ngClass]="{'btn-primary': activeMode === 'fi', 'btn-outline-primary': activeMode !== 'fi'}" (click)="setMode('fi')">FI Budget</button>
+        <button type="button" class="btn btn-sm" [ngClass]="{'btn-primary': activeMode === 'leanFi', 'btn-outline-primary': activeMode !== 'leanFi'}" (click)="setMode('leanFi')">Lean FI Budget</button>
+        <button *ngIf="hasCoastFi" type="button" class="btn btn-sm" [ngClass]="{'btn-primary': activeMode === 'coastFi', 'btn-outline-primary': activeMode !== 'coastFi'}" (click)="setMode('coastFi')">Coast FI</button>
     </div>
 </div>
 <div class="table-responsive">
@@ -14,16 +15,19 @@
         <thead>
             <tr>
                 <th>Category</th>
-                <th>{{ showLeanFi ? 'Lean FI Budget' : 'FI Budget' }}</th>
-                <th>Impact on {{ showLeanFi ? 'Lean FI' : 'FI' }} Date</th>
+                <th *ngIf="activeMode === 'leanFi'">Lean FI Budget</th>
+                <th *ngIf="activeMode !== 'leanFi'">FI Budget</th>
+                <th *ngIf="activeMode === 'fi'">Impact on FI Date</th>
+                <th *ngIf="activeMode === 'leanFi'">Impact on Lean FI Date</th>
+                <th *ngIf="activeMode === 'coastFi'">Impact on Coast FI Date</th>
             </tr>
         </thead>
         <tbody>
             <tr *ngFor="let c of spendingCategoriesWithImpact">
                 <td>{{ c.category.name }}</td>
-                <td *ngIf="!showLeanFi">{{ c.category.fiBudget | currency:calculateInput.currencyIsoCode }}</td>
-                <td *ngIf="showLeanFi">{{ c.category.leanFiBudget | currency:calculateInput.currencyIsoCode }}</td>
-                <td *ngIf="!showLeanFi">
+                <td *ngIf="activeMode === 'leanFi'">{{ c.category.leanFiBudget | currency:calculateInput.currencyIsoCode }}</td>
+                <td *ngIf="activeMode !== 'leanFi'">{{ c.category.fiBudget | currency:calculateInput.currencyIsoCode }}</td>
+                <td *ngIf="activeMode === 'fi'">
                     <span [ngClass]="{'d-none': c.isFi === true}">
                         <fa-icon [icon]="['fas', 'plus-circle']"></fa-icon>
                     </span>
@@ -32,7 +36,7 @@
                     </span>
                     {{ c.impactDate }}
                 </td>
-                <td *ngIf="showLeanFi">
+                <td *ngIf="activeMode === 'leanFi'">
                     <span *ngIf="c.leanImpactDate">
                         <span [ngClass]="{'d-none': c.isLeanFi === true}">
                             <fa-icon [icon]="['fas', 'plus-circle']"></fa-icon>
@@ -43,6 +47,18 @@
                         {{ c.leanImpactDate }}
                     </span>
                     <span *ngIf="!c.leanImpactDate">-</span>
+                </td>
+                <td *ngIf="activeMode === 'coastFi'">
+                    <span *ngIf="c.coastFiImpactDate">
+                        <span [ngClass]="{'d-none': c.isCoastFi === true}">
+                            <fa-icon [icon]="['fas', 'plus-circle']"></fa-icon>
+                        </span>
+                        <span [ngClass]="{'d-none': c.isCoastFi !== true}">
+                            <fa-icon [icon]="['fas', 'check-circle']"></fa-icon>
+                        </span>
+                        {{ c.coastFiImpactDate }}
+                    </span>
+                    <span *ngIf="!c.coastFiImpactDate">-</span>
                 </td>
             </tr>
         </tbody>
