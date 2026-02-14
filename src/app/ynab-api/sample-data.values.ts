@@ -47,7 +47,7 @@ const sampleAccounts: ynab.Account[] = [
         
         'on_budget': false,
         'closed': false,
-        'note': '7%',
+        'note': `7%\nBR4 +m 300 BR4 ${contributionIncreaseDate} +m 500`,
         'balance': 10000000,
         'cleared_balance': 10000000,
         'uncleared_balance': 0,
