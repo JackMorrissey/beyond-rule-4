@@ -68,19 +68,14 @@ export class YnabApiService {
 
   // thanks Ynab Starter!
   findYnabToken(): boolean {
-    let token = null;
-    const search = window.location.hash
-      .substring(1)
-      .replace(/&/g, '","')
-      .replace(/=/g, '":"');
-    if (search && search !== '') {
-      // Try to get access_token from the hash returned by OAuth
-      const params = JSON.parse('{"' + search + '"}', function (key, value) {
-        return key === '' ? value : decodeURIComponent(value);
-      });
-      token = params.access_token;
-      setCookie(tokenName, token, 0.08); // 2 hrs (7200) comes back
-      window.location.hash = '';
+    const hash = window.location.hash.substring(1);
+    if (hash) {
+      const params = new URLSearchParams(hash);
+      const token = params.get('access_token');
+      if (token) {
+        setCookie(tokenName, token, 0.08); // 2 hrs (7200) comes back
+        window.location.hash = '';
+      }
     }
     this.setApiAccess();
     return !this.useSampleData;
