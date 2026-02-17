@@ -1143,6 +1143,38 @@
               </div>
             </div>
 
+            <!-- Account Monthly Contribution changes -->
+            <div
+              *ngIf="getScheduledChangesByType('monthlyContribution').length > 0"
+              class="mb-3"
+            >
+              <h6>Account Contributions</h6>
+              <div
+                *ngFor="let change of getScheduledChangesByType('monthlyContribution')"
+                class="form-check"
+              >
+                <input
+                  type="checkbox"
+                  class="form-check-input"
+                  [id]="'scheduled-' + change.id"
+                  [(ngModel)]="change.enabled"
+                  [ngModelOptions]="{standalone: true}"
+                  [disabled]="!scheduledChangesEnabled"
+                  (change)="toggleScheduledChange(change)"
+                />
+                <label
+                  class="form-check-label"
+                  [for]="'scheduled-' + change.id"
+                  [class.text-muted]="!scheduledChangesEnabled"
+                >
+                  {{ change.categoryName }}:
+                  {{ change.baselineValue | currency : currencyIsoCode }} →
+                  {{ change.scheduledValue | currency : currencyIsoCode }}
+                  starting {{ change.effectiveDate }}
+                </label>
+              </div>
+            </div>
+
             <!-- FI Expense changes -->
             <div
               *ngIf="getScheduledChangesByType('fiBudget').length > 0"

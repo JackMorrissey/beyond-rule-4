@@ -643,6 +643,27 @@ export class YnabComponent implements OnInit {
       }
     }
 
+    // Check account monthly contribution schedules
+    const accounts = this.budgetForm.value.accounts || [];
+    for (const account of accounts) {
+      const mcSchedule = account.monthlyContributionSchedule;
+      if (mcSchedule?.schedule?.length > 0) {
+        for (const point of mcSchedule.schedule) {
+          const id = `${account.name}-monthlyContribution-${point.effectiveDate}`;
+          changes.push({
+            id,
+            categoryName: account.name,
+            categoryId: account.name,
+            type: 'monthlyContribution',
+            baselineValue: account.monthlyContribution || 0,
+            scheduledValue: point.value,
+            effectiveDate: point.effectiveDate,
+            enabled: !this.disabledChangeIds.has(id),
+          });
+        }
+      }
+    }
+
     // Sort by effective date
     changes.sort((a, b) => a.effectiveDate.localeCompare(b.effectiveDate));
     this.scheduledChanges = changes;
@@ -1079,6 +1100,7 @@ export class YnabComponent implements OnInit {
             balance: this.getAccountBalance(account, ynabBalance, overrides),
             ynabBalance,
             monthlyContribution: overrides.monthlyContribution,
+            monthlyContributionSchedule: overrides.monthlyContributionSchedule,
           }),
         );
       });
@@ -1157,8 +1179,20 @@ export class YnabComponent implements OnInit {
               },
             },
           });
-          // For accounts, just use the static value (no schedule support for accounts yet)
-          seriesList.push(new TimeSeries(monthlyContribution));
+          // Build TimeSeries for this account
+          const series = new TimeSeries(monthlyContribution);
+          const schedule = a.value.monthlyContributionSchedule;
+          if (schedule && schedule.schedule && schedule.schedule.length > 0) {
+            for (const point of schedule.schedule) {
+              if (this.scheduledChangesEnabled) {
+                const changeId = `${a.value.name}-monthlyContribution-${point.effectiveDate}`;
+                if (!this.disabledChangeIds.has(changeId)) {
+                  series.addPoint(point.effectiveDate, point.value);
+                }
+              }
+            }
+          }
+          seriesList.push(series);
         }
       });
     }
