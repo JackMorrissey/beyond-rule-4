@@ -14,14 +14,18 @@ export class ImpactComponent implements OnInit, OnChanges {
     @Input() forecast: Forecast;
 
     spendingCategoriesWithImpact;
-    showLeanFi = false;
+    activeMode: 'fi' | 'leanFi' | 'coastFi' = 'fi';
 
-    toggleLeanFi(showLean: boolean) {
-        this.showLeanFi = showLean;
+    get hasCoastFi(): boolean {
+        return this.calculateInput?.coastFiNumber !== null;
+    }
+
+    setMode(mode: 'fi' | 'leanFi' | 'coastFi') {
+        this.activeMode = mode;
         if (this.spendingCategoriesWithImpact) {
             this.spendingCategoriesWithImpact.sort((a, b) => {
-                const aValue = showLean ? a.category.leanFiBudget : a.category.fiBudget;
-                const bValue = showLean ? b.category.leanFiBudget : b.category.fiBudget;
+                const aValue = mode === 'leanFi' ? a.category.leanFiBudget : a.category.fiBudget;
+                const bValue = mode === 'leanFi' ? b.category.leanFiBudget : b.category.fiBudget;
                 return bValue - aValue;
             });
         }
@@ -42,6 +46,7 @@ export class ImpactComponent implements OnInit, OnChanges {
 
         const currentFiForecast = this.getFiForecast(this.forecast, this.calculateInput.fiNumber);
         const currentLeanFiForecast = this.getFiForecast(this.forecast, this.calculateInput.leanFiNumber);
+        const currentCoastFiForecast = this.getCoastFiForecast(this.forecast, this.calculateInput);
 
         if (!currentFiForecast) {
             return;
@@ -59,9 +64,25 @@ export class ImpactComponent implements OnInit, OnChanges {
         this.spendingCategoriesWithImpact = categoriesWithSpending.map((category) => {
             const isFi = currentFiForecast.date < new Date();
             const isLeanFi = currentLeanFiForecast && currentLeanFiForecast.date < new Date();
+            const isCoastFi = currentCoastFiForecast && currentCoastFiForecast.date < new Date();
 
             let impactDate = 'Achieved FI!';
             let leanImpactDate = null;
+            let coastFiImpactDate = null;
+
+            // Calculate Coast FI impact
+            if (currentCoastFiForecast && category.fiBudget > 0) {
+                if (isCoastFi) {
+                    coastFiImpactDate = 'Achieved Coast FI!';
+                } else {
+                    const modifiedCoastCalcInput = this.getModifiedCalculateInputForCoastFi(category.fiBudget);
+                    const modifiedCoastForecast = new Forecast(modifiedCoastCalcInput);
+                    const modifiedCoastFiForecast = this.getCoastFiForecast(modifiedCoastForecast, modifiedCoastCalcInput);
+                    if (modifiedCoastFiForecast) {
+                        coastFiImpactDate = this.getImpactDateText(currentCoastFiForecast.date, modifiedCoastFiForecast.date);
+                    }
+                }
+            }
 
             if (isFi) {
                 return {
@@ -69,7 +90,9 @@ export class ImpactComponent implements OnInit, OnChanges {
                     impactDate,
                     isFi,
                     leanImpactDate: isLeanFi ? 'Achieved Lean FI!' : null,
-                    isLeanFi
+                    isLeanFi,
+                    coastFiImpactDate,
+                    isCoastFi
                 };
             }
 
@@ -98,7 +121,9 @@ export class ImpactComponent implements OnInit, OnChanges {
                 impactDate,
                 isFi,
                 leanImpactDate,
-                isLeanFi
+                isLeanFi,
+                coastFiImpactDate,
+                isCoastFi
             };
         });
     }
@@ -122,6 +147,25 @@ export class ImpactComponent implements OnInit, OnChanges {
         calcInput.netWorth = this.calculateInput.netWorth;
         calcInput.monthlyContribution = this.calculateInput.monthlyContribution + leanFiSpendingReductionPerMonth;
         return calcInput;
+    }
+
+    private getModifiedCalculateInputForCoastFi(fiSpendingReductionPerMonth: number): CalculateInput {
+        const calcInput = new CalculateInput();
+        calcInput.annualExpenses = this.calculateInput.annualExpenses - fiSpendingReductionPerMonth * 12;
+        calcInput.annualSafeWithdrawalRate = this.calculateInput.annualSafeWithdrawalRate;
+        calcInput.expectedAnnualGrowthRate = this.calculateInput.expectedAnnualGrowthRate;
+        calcInput.netWorth = this.calculateInput.netWorth;
+        calcInput.monthlyContribution = this.calculateInput.monthlyContribution + fiSpendingReductionPerMonth;
+        calcInput.birthdate = this.calculateInput.birthdate;
+        calcInput.targetRetirementAge = this.calculateInput.targetRetirementAge;
+        return calcInput;
+    }
+
+    private getCoastFiForecast(forecast: Forecast, calcInput: CalculateInput) {
+        return forecast.monthlyForecasts.find(f => {
+            const coastFi = calcInput.getCoastFiNumberAt(f.date);
+            return coastFi !== null && f.netWorth >= coastFi;
+        });
     }
 
     private getFiForecast(forecast: Forecast, fiNumber: number) {
