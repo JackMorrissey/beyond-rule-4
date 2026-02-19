@@ -1,4 +1,4 @@
-import { Birthdate } from '../input/ynab/birthdate-utility';
+import { Birthdate, birthdateToDate } from '../input/ynab/birthdate-utility';
 import { TimeSeries } from './time-series.model';
 import { round } from '../utilities/number-utility';
 
@@ -82,15 +82,10 @@ export class CalculateInput {
    * @returns The Coast FI number, or null if birthdate is not set
    */
   getCoastFiNumberAt(atDate: Date): number | null {
-    if (!this.birthdate || this.targetRetirementAge === null) {
+    const birthdate = birthdateToDate(this.birthdate)
+    if (!birthdate || this.targetRetirementAge === null) {
       return null;
     }
-
-    const birthdate = new Date(
-      this.birthdate.year,
-      this.birthdate.month - 1,
-      this.birthdate.day
-    );
 
     // Calculate current age in years
     const ageInMs = atDate.getTime() - birthdate.getTime();
@@ -109,14 +104,6 @@ export class CalculateInput {
       this.fiNumber / Math.pow(1 + this.expectedAnnualGrowthRate, yearsToTarget);
 
     return round(coastFi);
-  }
-
-  /**
-   * Get the Coast FI number based on current date.
-   * Returns null if birthdate is not set.
-   */
-  get coastFiNumber(): number | null {
-    return this.getCoastFiNumberAt(new Date());
   }
 
   /**
