@@ -1,11 +1,11 @@
 import { CalculateInput } from './calculate-input.model';
 import { round } from '../utilities/number-utility';
-import { Birthdate } from '../input/ynab/birthdate-utility';
+import { birthdateToDate } from '../input/ynab/birthdate-utility';
 
 export class Forecast {
   monthlyForecasts: MonthlyForecast[];
   month0Date: Date;
-  birthdate: Birthdate;
+  birthdate: Date;
 
   public constructor(calculateInput: CalculateInput, month0Date?: Date) {
     if (!calculateInput) {
@@ -14,7 +14,7 @@ export class Forecast {
     // Set month0Date first since computeForecast needs it for time-varying values
     this.month0Date = month0Date || new Date();
     this.month0Date.setDate(1); // make it the first of the month
-    this.birthdate = calculateInput.birthdate;
+    this.birthdate = birthdateToDate(calculateInput.birthdate);
     this.computeForecast(calculateInput);
     this.setDates();
   }

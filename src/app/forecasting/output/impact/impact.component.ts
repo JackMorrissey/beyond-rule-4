@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, OnChanges, SimpleChanges, } from '@angular/core';
 import { Forecast } from '../../models/forecast.model';
 import { CalculateInput } from '../../models/calculate-input.model';
+import { birthdateToDate } from '../../input/ynab/birthdate-utility';
 
 @Component({
     selector: 'app-expense-impact',
@@ -17,7 +18,8 @@ export class ImpactComponent implements OnInit, OnChanges {
     activeMode: 'fi' | 'leanFi' | 'coastFi' = 'fi';
 
     get hasCoastFi(): boolean {
-        return this.calculateInput?.coastFiNumber !== null;
+    return birthdateToDate(this.calculateInput?.birthdate) !== null && 
+           this.calculateInput?.targetRetirementAge !== null;
     }
 
     setMode(mode: 'fi' | 'leanFi' | 'coastFi') {
