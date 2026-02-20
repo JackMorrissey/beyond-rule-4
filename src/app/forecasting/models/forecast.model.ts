@@ -7,7 +7,7 @@ export class Forecast {
   month0Date: Date;
   birthdate: Date;
 
-  public constructor(calculateInput: CalculateInput, month0Date?: Date) {
+  public constructor(calculateInput: CalculateInput, forNumber: 'fiNumber' | 'leanFiNumber' = 'fiNumber', month0Date?: Date) {
     if (!calculateInput) {
       return;
     }
@@ -15,7 +15,7 @@ export class Forecast {
     this.month0Date = month0Date || new Date();
     this.month0Date.setDate(1); // make it the first of the month
     this.birthdate = birthdateToDate(calculateInput.birthdate);
-    this.computeForecast(calculateInput);
+    this.computeForecast(calculateInput, forNumber);
     this.setDates();
   }
 
@@ -55,8 +55,8 @@ export class Forecast {
     return `${timeDifference} ${unit}s `;
   }
 
-  private computeForecast(calculateInput: CalculateInput) {
-    const stopForecastingAmount = calculateInput.fiNumber * 1.6; // default to a bit more than Fat FI.
+  private computeForecast(calculateInput: CalculateInput, forNumber: 'fiNumber' | 'leanFiNumber' = 'fiNumber') {
+    const stopForecastingAmount = calculateInput[forNumber] * 1.6; // default to a bit more than Fat FI.
 
     const baseAnnualExpenses = calculateInput.annualExpenses;
     const monthlyAverageGrowth = 1 + calculateInput.expectedAnnualGrowthRate / 12;
@@ -83,14 +83,18 @@ export class Forecast {
       leanAnnualExpenses: initialLeanAnnualExpenses,
     })];
 
+    console.log("current ", currentNetWorth);
+    console.log("stop ", stopForecastingAmount);
+
     while (currentNetWorth < stopForecastingAmount && month < 1000) {
       month++;
       const monthString = this.getMonthString(month);
-
+      
       // Get time-varying contribution and expenses for this month
       const contribution = calculateInput.getMonthlyContributionAt(monthString);
       const annualExpenses = calculateInput.getAnnualExpensesAt(monthString);
       const leanAnnualExpenses = calculateInput.getLeanAnnualExpensesAt(monthString);
+      // console.log('Month:', month, 'Lean Annual Expenses:', leanAnnualExpenses);
 
       const newNetWorth = round(((currentNetWorth + contribution) * 100 * monthlyAverageGrowth) / 100);
       const interestGain = round(newNetWorth - currentNetWorth - contribution);
@@ -112,6 +116,8 @@ export class Forecast {
       currentNetWorth = newNetWorth;
     }
     this.monthlyForecasts = monthlyForecasts;
+    // console.log("@here: ", this.monthlyForecasts);
+    // console.log("month: ", month);
   }
 
   /**

@@ -58,17 +58,11 @@ export class CalculateInput {
   }
 
   get fiNumber() {
-    const baseFi = this.safeWithdrawalTimes * this.annualExpenses;
-    return baseFi - this.externalContributionReduction + this.additionalLumpSumNeeded;
+    return this.getFiNumberAt(this.annualExpensesSeries?.getFinalDate());
   }
 
   get leanFiNumber() {
-    let baseLeanFi = this.fiNumber * this.leanFiPercentage;
-    if (this.leanAnnualExpenses) {
-      baseLeanFi = this.safeWithdrawalTimes * this.leanAnnualExpenses;
-      baseLeanFi = baseLeanFi - this.externalContributionReduction + this.additionalLumpSumNeeded;
-    }
-    return baseLeanFi;
+    return this.getLeanFiNumberAt(this.leanAnnualExpensesSeries?.getFinalDate());
   }
 
   /**
@@ -122,7 +116,7 @@ export class CalculateInput {
    * Falls back to the static value if no time series is available.
    */
   getAnnualExpensesAt(month: string): number {
-    if (this.annualExpensesSeries) {
+    if (month != null && this.annualExpensesSeries) {
       return this.annualExpensesSeries.getValueAt(month) * 12;
     }
     return this.annualExpenses;
@@ -133,7 +127,7 @@ export class CalculateInput {
    * Falls back to the static value if no time series is available.
    */
   getLeanAnnualExpensesAt(month: string): number {
-    if (this.leanAnnualExpensesSeries) {
+    if (month != null && this.leanAnnualExpensesSeries) {
       return this.leanAnnualExpensesSeries.getValueAt(month) * 12;
     }
     return this.leanAnnualExpenses;
@@ -144,7 +138,7 @@ export class CalculateInput {
    */
   getFiNumberAt(month: string): number {
     const annualExpenses = this.getAnnualExpensesAt(month);
-    return this.safeWithdrawalTimes * annualExpenses;
+    return (this.safeWithdrawalTimes * annualExpenses) - this.externalContributionReduction + this.additionalLumpSumNeeded;;
   }
 
   /**
@@ -153,7 +147,7 @@ export class CalculateInput {
   getLeanFiNumberAt(month: string): number {
     const leanAnnualExpenses = this.getLeanAnnualExpensesAt(month);
     if (leanAnnualExpenses > 0) {
-      return this.safeWithdrawalTimes * leanAnnualExpenses;
+      return (this.safeWithdrawalTimes * leanAnnualExpenses) - this.externalContributionReduction + this.additionalLumpSumNeeded;;
     }
     return this.getFiNumberAt(month) * this.leanFiPercentage;
   }
