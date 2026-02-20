@@ -1131,7 +1131,7 @@ export class YnabComponent implements OnInit {
     if (categoryGroups) {
       categoryGroups.forEach((cg) => {
         cg.categories.forEach((c) => {
-          if (c.contributionBudget) {
+          if (c.contributionBudget != null) {
             contribution += c.contributionBudget;
             categories.push({
               name: c.name,
@@ -1164,7 +1164,7 @@ export class YnabComponent implements OnInit {
     if (accounts) {
       accounts.forEach((a) => {
         const monthlyContribution = a.value.monthlyContribution;
-        if (monthlyContribution) {
+        if (monthlyContribution != null) {
           contribution += monthlyContribution;
           categories.push({
             name: a.value.name,
