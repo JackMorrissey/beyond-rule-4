@@ -587,6 +587,8 @@ export class YnabComponent implements OnInit {
       for (const category of categoryGroup.categories) {
         // Check contribution schedules
         const contributionSchedule = category.contributionBudgetSchedule;
+        let lastContribution = category.contributionBudget || 0;
+        
         if (contributionSchedule?.schedule?.length > 0) {
           for (const point of contributionSchedule.schedule) {
             const id = `${category.name}-contribution-${point.effectiveDate}`;
@@ -595,16 +597,20 @@ export class YnabComponent implements OnInit {
               categoryName: category.name,
               categoryId: category.name, // Using name as ID since it's more stable
               type: 'contribution',
-              baselineValue: category.contributionBudget || 0,
+              baselineValue: lastContribution,
               scheduledValue: point.value,
               effectiveDate: point.effectiveDate,
               enabled: !this.disabledChangeIds.has(id),
             });
+
+            lastContribution = point.value;
           }
         }
 
         // Check FI budget schedules
         const fiBudgetSchedule = category.computedFiBudgetSchedule;
+        let lastFiExpense = category.fiBudget || category.computedFiBudget || 0;
+        
         if (fiBudgetSchedule?.schedule?.length > 0) {
           for (const point of fiBudgetSchedule.schedule) {
             const id = `${category.name}-fiBudget-${point.effectiveDate}`;
@@ -613,17 +619,20 @@ export class YnabComponent implements OnInit {
               categoryName: category.name,
               categoryId: category.name,
               type: 'fiBudget',
-              baselineValue:
-                category.fiBudget || category.computedFiBudget || 0,
+              baselineValue: lastFiExpense,
               scheduledValue: point.value,
               effectiveDate: point.effectiveDate,
               enabled: !this.disabledChangeIds.has(id),
             });
+
+            lastFiExpense = point.value;
           }
         }
 
         // Check Lean FI budget schedules
         const leanFiBudgetSchedule = category.computedLeanFiBudgetSchedule;
+        let lastLeanFiExpense = category.leanFiBudget || category.computedLeanFiBudget || 0;
+
         if (leanFiBudgetSchedule?.schedule?.length > 0) {
           for (const point of leanFiBudgetSchedule.schedule) {
             const id = `${category.name}-leanFiBudget-${point.effectiveDate}`;
@@ -632,12 +641,13 @@ export class YnabComponent implements OnInit {
               categoryName: category.name,
               categoryId: category.name,
               type: 'leanFiBudget',
-              baselineValue:
-                category.leanFiBudget || category.computedLeanFiBudget || 0,
+              baselineValue: lastLeanFiExpense,
               scheduledValue: point.value,
               effectiveDate: point.effectiveDate,
               enabled: !this.disabledChangeIds.has(id),
             });
+
+            lastLeanFiExpense = point.value;
           }
         }
       }
@@ -647,6 +657,8 @@ export class YnabComponent implements OnInit {
     const accounts = this.budgetForm.value.accounts || [];
     for (const account of accounts) {
       const mcSchedule = account.monthlyContributionSchedule;
+      let lastContribution = account.monthlyContribution || 0;
+      
       if (mcSchedule?.schedule?.length > 0) {
         for (const point of mcSchedule.schedule) {
           const id = `${account.name}-monthlyContribution-${point.effectiveDate}`;
@@ -660,6 +672,8 @@ export class YnabComponent implements OnInit {
             effectiveDate: point.effectiveDate,
             enabled: !this.disabledChangeIds.has(id),
           });
+
+          lastContribution = point.value;
         }
       }
     }
@@ -1131,7 +1145,7 @@ export class YnabComponent implements OnInit {
     if (categoryGroups) {
       categoryGroups.forEach((cg) => {
         cg.categories.forEach((c) => {
-          if (c.contributionBudget) {
+          if (c.contributionBudget != null) {
             contribution += c.contributionBudget;
             categories.push({
               name: c.name,
@@ -1164,7 +1178,7 @@ export class YnabComponent implements OnInit {
     if (accounts) {
       accounts.forEach((a) => {
         const monthlyContribution = a.value.monthlyContribution;
-        if (monthlyContribution) {
+        if (monthlyContribution != null) {
           contribution += monthlyContribution;
           categories.push({
             name: a.value.name,

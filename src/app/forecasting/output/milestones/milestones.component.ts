@@ -32,7 +32,17 @@ export class MilestonesComponent implements OnInit, OnChanges {
     const eclipseForecast = this.forecast.monthlyForecasts.find(m => {
       return m.totalContributions <= m.totalReturns;
     });
-    const coastFiNumber = this.calculateInput.coastFiNumber;
+
+    // forecast networth when coastFiNumber reached
+    let coastFiNumber = null;
+    const foundCoastFiForecast = this.forecast.monthlyForecasts.find(f => {
+      const coastFiAtMonth = this.calculateInput.getCoastFiNumberAt(f.date);
+      return coastFiAtMonth !== null && f.netWorth >= coastFiAtMonth;
+    });
+    
+    if (foundCoastFiForecast) {
+      coastFiNumber = foundCoastFiForecast.netWorth;
+    }
 
     if (!eclipseForecast) {
       this.milestones = new Milestones(

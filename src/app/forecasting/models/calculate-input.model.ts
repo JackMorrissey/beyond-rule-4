@@ -1,4 +1,4 @@
-import { Birthdate } from '../input/ynab/birthdate-utility';
+import { Birthdate, birthdateToDate } from '../input/ynab/birthdate-utility';
 import { TimeSeries } from './time-series.model';
 import { round } from '../utilities/number-utility';
 
@@ -58,17 +58,11 @@ export class CalculateInput {
   }
 
   get fiNumber() {
-    const baseFi = this.safeWithdrawalTimes * this.annualExpenses;
-    return baseFi - this.externalContributionReduction + this.additionalLumpSumNeeded;
+    return this.getFiNumberAt(this.annualExpensesSeries?.getFinalDate());
   }
 
   get leanFiNumber() {
-    let baseLeanFi = this.fiNumber * this.leanFiPercentage;
-    if (this.leanAnnualExpenses) {
-      baseLeanFi = this.safeWithdrawalTimes * this.leanAnnualExpenses;
-      baseLeanFi = baseLeanFi - this.externalContributionReduction + this.additionalLumpSumNeeded;
-    }
-    return baseLeanFi;
+    return this.getLeanFiNumberAt(this.leanAnnualExpensesSeries?.getFinalDate());
   }
 
   /**
@@ -82,15 +76,10 @@ export class CalculateInput {
    * @returns The Coast FI number, or null if birthdate is not set
    */
   getCoastFiNumberAt(atDate: Date): number | null {
-    if (!this.birthdate || this.targetRetirementAge === null) {
+    const birthdate = birthdateToDate(this.birthdate)
+    if (!birthdate || this.targetRetirementAge === null) {
       return null;
     }
-
-    const birthdate = new Date(
-      this.birthdate.year,
-      this.birthdate.month - 1,
-      this.birthdate.day
-    );
 
     // Calculate current age in years
     const ageInMs = atDate.getTime() - birthdate.getTime();
@@ -112,14 +101,6 @@ export class CalculateInput {
   }
 
   /**
-   * Get the Coast FI number based on current date.
-   * Returns null if birthdate is not set.
-   */
-  get coastFiNumber(): number | null {
-    return this.getCoastFiNumberAt(new Date());
-  }
-
-  /**
    * Get the monthly contribution at a specific month.
    * Falls back to the static value if no time series is available.
    */
@@ -135,7 +116,7 @@ export class CalculateInput {
    * Falls back to the static value if no time series is available.
    */
   getAnnualExpensesAt(month: string): number {
-    if (this.annualExpensesSeries) {
+    if (month != null && this.annualExpensesSeries) {
       return this.annualExpensesSeries.getValueAt(month) * 12;
     }
     return this.annualExpenses;
@@ -146,7 +127,7 @@ export class CalculateInput {
    * Falls back to the static value if no time series is available.
    */
   getLeanAnnualExpensesAt(month: string): number {
-    if (this.leanAnnualExpensesSeries) {
+    if (month != null && this.leanAnnualExpensesSeries) {
       return this.leanAnnualExpensesSeries.getValueAt(month) * 12;
     }
     return this.leanAnnualExpenses;
@@ -157,7 +138,7 @@ export class CalculateInput {
    */
   getFiNumberAt(month: string): number {
     const annualExpenses = this.getAnnualExpensesAt(month);
-    return this.safeWithdrawalTimes * annualExpenses;
+    return (this.safeWithdrawalTimes * annualExpenses) - this.externalContributionReduction + this.additionalLumpSumNeeded;;
   }
 
   /**
@@ -166,7 +147,7 @@ export class CalculateInput {
   getLeanFiNumberAt(month: string): number {
     const leanAnnualExpenses = this.getLeanAnnualExpensesAt(month);
     if (leanAnnualExpenses > 0) {
-      return this.safeWithdrawalTimes * leanAnnualExpenses;
+      return (this.safeWithdrawalTimes * leanAnnualExpenses) - this.externalContributionReduction + this.additionalLumpSumNeeded;;
     }
     return this.getFiNumberAt(month) * this.leanFiPercentage;
   }

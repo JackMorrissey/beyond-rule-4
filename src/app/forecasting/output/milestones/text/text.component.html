@@ -21,7 +21,7 @@
         <td>{{ m.milestone.value | currency:currencyIsoCode:'symbol':'1.0'}}</td>
         <td>{{ m.forecastDate }}</td>
         <td>{{ m.distance }}</td>
-        <td *ngIf="forecast.birthdate">{{ m.age }}</td>
+        <td *ngIf="forecast.birthdate != null">{{ m.age }}</td>
         <td>{{ m.forecast?.totalContributions | currency:currencyIsoCode:'symbol':'1.0-0'}}</td>
         <td>{{ m.forecast?.totalReturns | currency:currencyIsoCode:'symbol':'1.0-0'}}</td>
       </tr>
