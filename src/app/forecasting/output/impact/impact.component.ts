@@ -18,12 +18,12 @@ export class ImpactComponent implements OnInit, OnChanges {
 
     spendingCategoriesWithImpact;
     activeMode: 'fi' | 'leanFi' | 'coastFi' = 'fi';
-    
+
     private scheduledChangesEnabled = true;
     private disabledChangeIds: Set<string> = new Set();
 
     get hasCoastFi(): boolean {
-        return birthdateToDate(this.calculateInput?.birthdate) !== null && 
+        return birthdateToDate(this.calculateInput?.birthdate) !== null &&
            this.calculateInput?.targetRetirementAge !== null;
     }
 
@@ -62,7 +62,7 @@ export class ImpactComponent implements OnInit, OnChanges {
         const categories = [].concat(...this.calculateInput.budgetCategoryGroups.map((group) => {
             return group.categories;
         }));
-        const categoriesWithSpending = categories.filter(category => 
+        const categoriesWithSpending = categories.filter(category =>
             category.fiBudget > 0 ||
             category.leanFiBudget > 0 ||
             (category.computedFiBudgetSchedule?.schedule || []).some(p => p.value > 0) ||
@@ -167,10 +167,8 @@ export class ImpactComponent implements OnInit, OnChanges {
         } else {
             calcInput.leanAnnualExpensesSeries = this.calculateInput.leanAnnualExpensesSeries.subtract(series);
             calcInput.leanAnnualExpenses = calcInput.leanAnnualExpensesSeries.getBaselineValue() * 12;
-            // console.log(calcInput.leanAnnualExpensesSeries);
-            // console.log(calcInput.leanAnnualExpenses);
         }
-        
+
         // Apply savings to monthly contribution
         calcInput.monthlyContributionSeries = aggregateTimeSeries([this.calculateInput.monthlyContributionSeries, series]);
         calcInput.monthlyContribution = calcInput.monthlyContributionSeries.getBaselineValue() * 12;

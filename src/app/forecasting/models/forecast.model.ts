@@ -83,9 +83,6 @@ export class Forecast {
       leanAnnualExpenses: initialLeanAnnualExpenses,
     })];
 
-    console.log("current ", currentNetWorth);
-    console.log("stop ", stopForecastingAmount);
-
     while (currentNetWorth < stopForecastingAmount && month < 1000) {
       month++;
       const monthString = this.getMonthString(month);
@@ -94,7 +91,6 @@ export class Forecast {
       const contribution = calculateInput.getMonthlyContributionAt(monthString);
       const annualExpenses = calculateInput.getAnnualExpensesAt(monthString);
       const leanAnnualExpenses = calculateInput.getLeanAnnualExpensesAt(monthString);
-      // console.log('Month:', month, 'Lean Annual Expenses:', leanAnnualExpenses);
 
       const newNetWorth = round(((currentNetWorth + contribution) * 100 * monthlyAverageGrowth) / 100);
       const interestGain = round(newNetWorth - currentNetWorth - contribution);
@@ -116,8 +112,6 @@ export class Forecast {
       currentNetWorth = newNetWorth;
     }
     this.monthlyForecasts = monthlyForecasts;
-    // console.log("@here: ", this.monthlyForecasts);
-    // console.log("month: ", month);
   }
 
   /**
