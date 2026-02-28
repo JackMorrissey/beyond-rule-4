@@ -11,7 +11,8 @@ export type Birthdate = {
  */
 export function birthdateToDate(birthdate: Birthdate): Date {
   try {
-    return new Date(birthdate.year, birthdate.month - 1, birthdate.day);
+    const b = new Date(birthdate.year, birthdate.month - 1, birthdate.day);
+    return !isNaN(b.getTime()) ? b : null;
   } catch (e) {
     return null;
   }
@@ -23,9 +24,9 @@ export function birthdateToDate(birthdate: Birthdate): Date {
  * @returns A Birthdate object representing the same date.
  */
 export function dateToBirthdate(date: Date): Birthdate {
-  return {
+  return !isNaN(date.getTime()) ? {
     year: date.getFullYear(),
     month: date.getMonth() + 1, // Months are 0-based in JavaScript
     day: date.getDate(),
-  };
+  } : null;
 }

@@ -90,6 +90,39 @@ export class TimeSeries {
   }
 
   /**
+   * Get the final date in the series or undefined if the series is empty.
+   */
+  getFinalDate(): string {
+    const dates = this.getScheduledDates();
+    return dates[dates.length - 1];
+  }
+
+  /**
+   * Subtracts the value of the points in a series
+   */
+  subtract(points: TimeSeries): TimeSeries {
+    const allDates = new Set<string>([
+      ...this.getScheduledDates(),
+      ...points.getScheduledDates(),
+    ]);
+
+    const result = new TimeSeries(this.getBaselineValue() - points.getBaselineValue());
+
+    Array.from(allDates).sort().forEach(date => {
+      const value = this.getValueAt(date) - points.getValueAt(date);
+      
+      const existingPoint = result.points.find(p => p.effectiveDate === date);
+      if (existingPoint) {
+        existingPoint.value = value; // update
+      } else {
+        result.addPoint(date, value); // add new
+      }
+    });
+
+    return result;
+  }
+
+  /**
    * Create a new TimeSeries with all values offset by a given amount.
    * Useful for applying a manual adjustment while preserving scheduled changes.
    */

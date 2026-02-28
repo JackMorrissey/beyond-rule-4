@@ -86,20 +86,21 @@
     <p *ngIf="coastFiNumber !== null">
       <strong>Coast FI</strong> is the amount needed today where, with zero
       future contributions, investment growth alone reaches your FI number by
-      age <strong>{{ targetRetirementAge }}</strong
-      >. Your Coast FI number is
-      <strong>{{
-        coastFiNumber | currency: calculateInput.currencyIsoCode
-      }}</strong
-      >. Once you reach Coast FI, you could theoretically stop saving and still
-      reach FI by your target retirement age.
+      age <strong>{{ targetRetirementAge }}</strong>.
+            
       <span *ngIf="coastFiDate !== 'Never'">
-        You are forecasted to reach Coast FI on <strong>{{ coastFiDate }}</strong
-        >; {{ coastFiDateDistance }} from now.
-        <span *ngIf="coastFiAge !== null"
-          >You'll be <strong>{{ coastFiAge }}</strong> old at that time.</span
-        >
+        <span *ngIf="coastFiDateDistance !== '0 Months'; else canCoast">
+          You can coast with a forecasted portfolio of at least <strong>{{ coastFiNumber | currency: calculateInput.currencyIsoCode }}</strong> by
+          <strong>{{ coastFiDate }}</strong>; {{ coastFiDateDistance }} from now.
+          At that time you'll be <strong>{{ coastFiAge }}</strong> old.
+          Once you reach Coast FI, you could theoretically stop saving.
+        </span>
       </span>
     </p>
   </div>
 </div>
+
+<ng-template #canCoast>
+  You've reached Coast FI! Your portfolio is at least <strong>{{ coastFiNumber | currency: calculateInput.currencyIsoCode }}</strong>,
+  which is theoretically sufficient to stop saving and still reach FI by your target retirement age.
+</ng-template>
