@@ -41,7 +41,7 @@ export class ChartComponent implements OnInit, AfterContentInit, OnChanges {
   public yAxisTickFormattingFn = this.yAxisTickFormatting.bind(this);
 
   colorScheme = {
-    domain: ['#5AA454', '#A10A28', '#C7B42C', '#AAAAAA']
+    domain: ['#5AA454', '#1F77B4', '#A10A28', '#C7B42C' , '#AAAAAA']
   };
 
   // line, area
@@ -159,6 +159,21 @@ export class ChartComponent implements OnInit, AfterContentInit, OnChanges {
         series: returns
       }
     ];
+
+    const coastFiProjection = this.forecast.monthlyForecasts
+      .filter(mf => mf.coastFiProjection !== undefined)
+      .map(mf => ({
+        name: mf.date,
+        value: mf.coastFiProjection
+      }));
+
+    if (coastFiProjection.length > 0) {
+      this.data.splice(1, 0, {
+        name: 'Coasting',
+        series: coastFiProjection
+      });
+    }
+
     this.referenceLines = milestones;
   }
 

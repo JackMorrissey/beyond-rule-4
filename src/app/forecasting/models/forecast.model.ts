@@ -70,6 +70,14 @@ export class Forecast {
     const initialAnnualExpenses = calculateInput.getAnnualExpensesAt(initialMonthString);
     const initialLeanAnnualExpenses = calculateInput.getLeanAnnualExpensesAt(initialMonthString);
 
+    // coastFI
+    const initialDate = new Date(this.month0Date);
+    const initialCoastFi = calculateInput.getCoastFiNumberAt(initialDate);
+    let coastFiProjectedNetWorth: number | null = null;
+    if (initialCoastFi !== null && startingNetWorth >= initialCoastFi) {
+      coastFiProjectedNetWorth = startingNetWorth;
+    }
+
     const monthlyForecasts = [new MonthlyForecast({
       monthIndex: 0,
       netWorth: startingNetWorth,
@@ -81,6 +89,7 @@ export class Forecast {
       totalReturns: 0,
       annualExpenses: initialAnnualExpenses,
       leanAnnualExpenses: initialLeanAnnualExpenses,
+      coastFiProjection: coastFiProjectedNetWorth ?? undefined
     })];
 
     while (currentNetWorth < stopForecastingAmount && month < 1000) {
@@ -97,6 +106,22 @@ export class Forecast {
       const timesAnnualExpenses = round(newNetWorth / (annualExpenses || baseAnnualExpenses || 1));
       totalContributions += contribution;
       const totalReturns = round(newNetWorth - totalContributions);
+
+      // coastFI
+      if (coastFiProjectedNetWorth !== null) {
+        // project growth without contributions
+        coastFiProjectedNetWorth = round((coastFiProjectedNetWorth * 100 * monthlyAverageGrowth) / 100);
+      } else {
+        // Check if we hit Coast FI this month
+        const currentDate = new Date(this.month0Date);
+        currentDate.setMonth(currentDate.getMonth() + month);
+        const coastFiNumber = calculateInput.getCoastFiNumberAt(currentDate);
+        
+        if (coastFiNumber !== null && newNetWorth >= coastFiNumber) {
+          coastFiProjectedNetWorth = newNetWorth; // start projecting
+        }
+      }
+
       monthlyForecasts.push(new MonthlyForecast({
         monthIndex: month,
         netWorth: newNetWorth,
@@ -108,6 +133,7 @@ export class Forecast {
         totalReturns: totalReturns,
         annualExpenses: annualExpenses,
         leanAnnualExpenses: leanAnnualExpenses,
+        coastFiProjection: coastFiProjectedNetWorth ?? undefined
       }));
       currentNetWorth = newNetWorth;
     }
@@ -149,6 +175,7 @@ export class MonthlyForecast {
   totalReturns: number;
   annualExpenses: number;
   leanAnnualExpenses: number;
+  coastFiProjection?: number;
 
   public constructor(init?: Partial<MonthlyForecast>) {
     Object.assign(this, init);
