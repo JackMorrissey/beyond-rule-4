@@ -215,6 +215,7 @@ export class YnabComponent implements OnInit {
       selectedMonthA: ['', [Validators.required]],
       selectedMonthB: ['', [Validators.required]],
       monthlyContribution: [0, [Validators.required]],
+      contributionsToDate: [0],
       includeHiddenYnabCategories: [true],
       categoryGroups: this.formBuilder.array([]),
       accounts: this.formBuilder.array([]),
@@ -323,6 +324,7 @@ export class YnabComponent implements OnInit {
     result.leanAnnualExpenses = this.expenses.leanFi.annual;
     result.netWorth = this.netWorth;
     result.monthlyContribution = this.budgetForm.value.monthlyContribution;
+    result.contributionsToDate = this.budgetForm.value.contributionsToDate;
     result.budgetCategoryGroups = this.budgetForm.value.categoryGroups;
     result.currencyIsoCode = this.currencyIsoCode;
     result.monthFromName = this.selectedMonthA.month;
@@ -1225,6 +1227,7 @@ export class YnabComponent implements OnInit {
       selectedMonthB: this.selectedMonthB.month,
       includeHiddenYnabCategories: this.includeHiddenYnabCategories,
       monthlyContribution,
+      contributionsToDate: this.netWorth,
       expectedAnnualGrowthRate: this.expectedAnnualGrowthRate,
       safeWithdrawalRatePercentage: this.safeWithdrawalRatePercentage,
       birthdate: this.birthdate,
