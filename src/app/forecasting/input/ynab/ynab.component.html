@@ -429,7 +429,7 @@
                   <tr>
                     <th>
                       <div>Starting Balance</div>
-                      <small style="font-weight: 400;">
+                      <small style="font-weight: 400;" *ngIf="!hideInstructions">
                         The initial amount to compound with the expected annual rate of return
                       </small>
                     </th>
@@ -439,7 +439,7 @@
                   <tr>
                     <th>
                       <div>Contributions to Date</div>
-                      <small style="font-weight: 400;">
+                      <small style="font-weight: 400;" *ngIf="!hideInstructions">
                         The portion of your portfolio you have contributed so far
                       </small>
                     </th>
