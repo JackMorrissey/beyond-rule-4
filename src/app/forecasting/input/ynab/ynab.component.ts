@@ -667,7 +667,7 @@ export class YnabComponent implements OnInit {
             categoryName: account.name,
             categoryId: account.name,
             type: 'monthlyContribution',
-            baselineValue: account.monthlyContribution || 0,
+            baselineValue: lastContribution,
             scheduledValue: point.value,
             effectiveDate: point.effectiveDate,
             enabled: !this.disabledChangeIds.has(id),
