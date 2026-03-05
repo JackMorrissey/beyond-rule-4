@@ -40,7 +40,6 @@ export class YnabComponent implements OnInit {
   @Output() calculateInputChange = new EventEmitter<CalculateInput>();
 
   budgetForm: UntypedFormGroup;
-  displayContributionInfo = true;
   currencyIsoCode = 'USD';
   public safeWithdrawalRatePercentage = 4.0;
   public expectedAnnualGrowthRate = 7.0;
@@ -55,6 +54,7 @@ export class YnabComponent implements OnInit {
   public selectedMonthA: ynab.MonthDetail;
   public selectedMonthB: ynab.MonthDetail;
   public includeHiddenYnabCategories = false;
+  public hideInstructions = false;
   public categoryGroupsWithCategories: ynab.CategoryGroupWithCategories[];
 
   public ynabNetWorth: number;
@@ -235,6 +235,7 @@ export class YnabComponent implements OnInit {
         this.targetRetirementAge,
         [Validators.required, Validators.min(18), Validators.max(120)],
       ],
+      hideInstructions: [true],
     });
   }
 
@@ -385,6 +386,9 @@ export class YnabComponent implements OnInit {
     this.includeHiddenYnabCategories = !!window.localStorage.getItem(
       'br4-include-hidden-ynab-categories',
     );
+    this.hideInstructions = !!window.localStorage.getItem(
+      'br4-hidden-instructions',
+    );
 
     const selectedMonths = getSelectedMonths(
       this.currentMonth,
@@ -417,6 +421,18 @@ export class YnabComponent implements OnInit {
       );
     } else {
       window.localStorage.removeItem('br4-include-hidden-ynab-categories');
+    }
+  }
+
+  toggleHiddenInstructions(newValue: boolean) {
+    this.hideInstructions = newValue;
+    if (newValue) {
+      window.localStorage.setItem(
+        'br4-hidden-instructions',
+        newValue.toString(),
+      );
+    } else {
+      window.localStorage.removeItem('br4-hidden-instructions');
     }
   }
 
@@ -541,6 +557,15 @@ export class YnabComponent implements OnInit {
       toggledHidden = true;
       this.toggleIncludeHiddenYnabCategories(
         this.budgetForm.value.includeHiddenYnabCategories,
+      );
+    }
+
+    if (
+      this.hideInstructions !==
+      this.budgetForm.value.hideInstructions
+    ) {
+      this.toggleHiddenInstructions(
+        this.budgetForm.value.hideInstructions,
       );
     }
 
@@ -1228,10 +1253,10 @@ export class YnabComponent implements OnInit {
       expectedAnnualGrowthRate: this.expectedAnnualGrowthRate,
       safeWithdrawalRatePercentage: this.safeWithdrawalRatePercentage,
       birthdate: this.birthdate,
-      expectedExternalAnnualContributions:
-        this.expectedExternalAnnualContributions,
+      expectedExternalAnnualContributions: this.expectedExternalAnnualContributions,
       additionalLumpSumNeeded: this.additionalLumpSumNeeded,
       targetRetirementAge: this.targetRetirementAge,
+      hideInstructions: this.hideInstructions,
     });
 
     const categoryGroupFormGroups = categoriesDisplay.map((cg) =>
