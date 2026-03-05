@@ -4,6 +4,7 @@ import {
   UntypedFormArray,
   UntypedFormBuilder,
   Validators,
+  AbstractControl
 } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { timer } from 'rxjs';
@@ -93,6 +94,8 @@ export class YnabComponent implements OnInit {
 
   // Track YNAB-calculated contribution to detect manual edits
   public ynabCalculatedContribution: number = 0;
+
+  private contributionsSubscription: any = null;
 
   /**
    * Check if the monthly contribution has been manually modified from the YNAB-calculated value.
@@ -1097,6 +1100,41 @@ export class YnabComponent implements OnInit {
 
     this.ynabNetWorth = ynabNetWorth;
     this.netWorth = netWorth;
+
+    const control = this.budgetForm.get('contributionsToDate');
+    if (control) {
+      // Apply dynamic validator
+      control.setValidators([
+        Validators.required,
+        this.contributionsToDateValidator()
+      ]);
+      control.updateValueAndValidity({ emitEvent: false });
+
+      // subscribe to clamp contributionsToDate
+      if (!this.contributionsSubscription) {
+        this.contributionsSubscription = control.valueChanges.subscribe(value => {
+          if (value == null) return; // skip null
+          if (value < 0) control.setValue(0, { emitEvent: false });
+          else if (value > this.netWorth) control.setValue(this.netWorth, { emitEvent: false });
+        });
+      }
+
+      // auto-correct if current value > netWorth
+      if (control.value > this.netWorth) {
+        control.setValue(this.netWorth, { emitEvent: false });
+      }
+    }
+  }
+
+  // dynamic max validator
+  contributionsToDateValidator() {
+    return (control: AbstractControl) => {
+      const value = control.value;
+      if (value == null) return null;
+      if (value < 0) return { min: { requiredMin: 0, actual: value } };
+      if (value > this.netWorth) return { max: { requiredMax: this.netWorth, actual: value } };
+      return null;
+    };
   }
 
   private mapAccounts(accounts: ynab.Account[]) {
