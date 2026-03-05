@@ -427,16 +427,28 @@
               <table class="table col-12">
                 <thead class="thead-sum">
                   <tr>
-                    <th>Starting Balance</th>
-                    <td>{{ ynabNetWorth | currency : currencyIsoCode }}</td>
-                    <td>{{ netWorth | currency : currencyIsoCode }}</td>
+                    <th>
+                      <div>Starting Balance</div>
+                      <small style="font-weight: 400;">
+                        The initial amount to compound with the expected annual rate of return
+                      </small>
+                    </th>
+                    <td class="align-middle">{{ ynabNetWorth | currency : currencyIsoCode }}</td>
+                    <td class="align-middle">{{ netWorth | currency : currencyIsoCode }}</td>
                   </tr>
                   <tr>
-                    <td colspan="3">
-                      <small
-                        >The initial amount to compound with the expected annual
-                        rate of return</small
-                      >
+                    <th>
+                      <div>Contributions to Date</div>
+                      <small style="font-weight: 400;">
+                        The portion of your portfolio you have contributed so far
+                      </small>
+                    </th>
+                    <td colspan="2" class="align-middle">
+                      <input
+                        class="form-control"
+                        formControlName="balance"
+                        type="number"
+                      />
                     </td>
                   </tr>
                 </thead>
