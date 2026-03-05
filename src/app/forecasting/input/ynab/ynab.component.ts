@@ -3,8 +3,7 @@ import {
   UntypedFormGroup,
   UntypedFormArray,
   UntypedFormBuilder,
-  Validators,
-  AbstractControl
+  Validators
 } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { timer } from 'rxjs';
@@ -1103,14 +1102,11 @@ export class YnabComponent implements OnInit {
 
     const control = this.budgetForm.get('contributionsToDate');
     if (control) {
-      // Apply dynamic validator
-      control.setValidators([
-        Validators.required,
-        this.contributionsToDateValidator()
-      ]);
-      control.updateValueAndValidity({ emitEvent: false });
+      if (control.value == null) {
+        control.setValue(this.netWorth, { emitEvent: false });
+      }
 
-      // subscribe to clamp contributionsToDate
+      // subscribe once to clamp live typing
       if (!this.contributionsSubscription) {
         this.contributionsSubscription = control.valueChanges.subscribe(value => {
           if (value == null) return; // skip null
@@ -1119,22 +1115,14 @@ export class YnabComponent implements OnInit {
         });
       }
 
-      // auto-correct if current value > netWorth
+      // clamp
       if (control.value > this.netWorth) {
         control.setValue(this.netWorth, { emitEvent: false });
       }
+      if (control.value < 0) {
+        control.setValue(0, { emitEvent: false });
+      }
     }
-  }
-
-  // dynamic max validator
-  contributionsToDateValidator() {
-    return (control: AbstractControl) => {
-      const value = control.value;
-      if (value == null) return null;
-      if (value < 0) return { min: { requiredMin: 0, actual: value } };
-      if (value > this.netWorth) return { max: { requiredMax: this.netWorth, actual: value } };
-      return null;
-    };
   }
 
   private mapAccounts(accounts: ynab.Account[]) {
@@ -1265,7 +1253,7 @@ export class YnabComponent implements OnInit {
       selectedMonthB: this.selectedMonthB.month,
       includeHiddenYnabCategories: this.includeHiddenYnabCategories,
       monthlyContribution,
-      contributionsToDate: this.netWorth,
+      // contributionsToDate: this.netWorth,
       expectedAnnualGrowthRate: this.expectedAnnualGrowthRate,
       safeWithdrawalRatePercentage: this.safeWithdrawalRatePercentage,
       birthdate: this.birthdate,
