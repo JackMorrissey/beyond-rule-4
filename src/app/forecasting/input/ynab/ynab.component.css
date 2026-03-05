@@ -52,10 +52,6 @@ table.expenses {
 .currency-input {
     position: relative;
 }
- 
-.currency-input input {
-    padding-left: 20px;
-}
 
 .currency-input::before {
     content: "$";

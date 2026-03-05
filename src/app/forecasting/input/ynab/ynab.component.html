@@ -446,8 +446,10 @@
                     <td colspan="2" class="align-middle currency-input">
                       <input
                         class="form-control"
+                        style="padding-left: 20px;"
                         formControlName="contributionsToDate"
                         type="number"
+                        step="100"
                       />
                     </td>
                   </tr>
@@ -527,10 +529,11 @@
                 class="col-sm-12 col-md-5 col-form-label"
                 >Monthly Investment Contribution</label
               >
-              <div class="col">
+              <div class="col currency-input">
                 <input
                   type="number"
                   class="form-control"
+                  style="padding-left: 17px;"
                   id="monthlyContribution"
                   formControlName="monthlyContribution"
                   step="100"
