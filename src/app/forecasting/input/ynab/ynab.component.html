@@ -443,10 +443,10 @@
                         The total amount you've contributed to your portfolio so far (shown in red)
                       </small>
                     </th>
-                    <td colspan="2" class="align-middle">
+                    <td colspan="2" class="align-middle currency-input">
                       <input
                         class="form-control"
-                        formControlName="balance"
+                        formControlName="contributionsToDate"
                         type="number"
                       />
                     </td>
@@ -464,8 +464,8 @@
                     *ngFor="let account of accounts.controls; let i = index"
                     [formGroupName]="i"
                   >
-                    <td>{{ account.value.name }}</td>
-                    <td>
+                    <td class="align-middle">{{ account.value.name }}</td>
+                    <td class="align-middle">
                       {{
                         account.value.ynabBalance | currency : currencyIsoCode
                       }}
@@ -521,7 +521,7 @@
       <div ngbAccordionCollapse>
         <div ngbAccordionBody>
           <ng-template>
-            <div class="form-group row mb-3">
+            <div class="form-group row mb-3 align-items-center">
               <label
                 for="monthlyContribution"
                 class="col-sm-12 col-md-5 col-form-label"
@@ -698,7 +698,7 @@
                     </th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody class="align-middle">
                   <tr>
                     <th>Monthly Expenses</th>
                     <td>
@@ -738,7 +738,7 @@
                     <th>Lean FI Budget<span class="mobile-currency"> ({{ currencyIsoCode }})</span></th>
                   </tr>
                 </thead>
-                <tbody formArrayName="categoryGroups">
+                <tbody formArrayName="categoryGroups" class="align-middle">
                   <ng-container
                     *ngFor="
                       let categoryGroup of categoryGroups.controls;
