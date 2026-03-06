@@ -120,7 +120,7 @@ export class FiTextComponent implements OnInit, OnChanges {
     // Coast FI calculation - only show if birthdate is set
     this.targetRetirementAge = this.calculateInput.targetRetirementAge;
 
-    if (birthdate === null || isNaN(birthdate.getTime())) {
+    if (birthdate === null || isNaN(birthdate.getTime()) || this.forecast.visualizingCoast) {
       // No birthdate set - hide Coast FI
       this.coastFiNumber = null;
       this.coastFiDate = null;
