@@ -425,7 +425,7 @@
           <ng-template>
             <div class="row mb-3">
               <table class="table col-12">
-                <thead class="thead-sum">
+                <thead class="thead-sum" style="width: 50%;">
                   <tr>
                     <th>
                       <div>Starting Balance</div>
@@ -433,8 +433,8 @@
                         The initial amount to compound with the expected annual rate of return
                       </small>
                     </th>
-                    <td class="align-middle">{{ ynabNetWorth | currency : currencyIsoCode }}</td>
-                    <td class="align-middle">{{ netWorth | currency : currencyIsoCode }}</td>
+                    <td class="align-middle" style="width: 25%;">{{ ynabNetWorth | currency : currencyIsoCode }}</td>
+                    <td class="align-middle" style="width: 25%;">{{ netWorth | currency : currencyIsoCode }}</td>
                   </tr>
                   <tr>
                     <th>
