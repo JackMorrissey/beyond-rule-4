@@ -342,7 +342,7 @@ export class YnabComponent implements OnInit {
     result.monthFromName = this.selectedMonthA.month;
     result.monthToName = this.selectedMonthB.month;
     result.birthdate = this.birthdate;
-    result.visualCoastDate = (this.visualCoastMonth && this.visualCoastYear ? new Date(this.visualCoastYear, this.visualCoastMonth, 1) : null);
+    result.visualCoastDate = (this.visualCoastMonth != null && this.visualCoastYear != null ? new Date(this.visualCoastYear, this.visualCoastMonth, 1) : null);
 
     // Add time series data
     // If user manually changed the contribution, apply the difference as an offset
