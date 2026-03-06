@@ -6,8 +6,6 @@ import {
 import { Forecast } from '../../../models/forecast.model';
 import { Milestones } from '../milestone.model';
 
-declare let d3: any;
-
 @Component({
     selector: 'app-milestones-chart',
     templateUrl: './chart.component.html',
@@ -41,7 +39,7 @@ export class ChartComponent implements OnInit, AfterContentInit, OnChanges {
   public yAxisTickFormattingFn = this.yAxisTickFormatting.bind(this);
 
   colorScheme = {
-    domain: ['#5AA454', '#1F77B4', '#A10A28', '#C7B42C' , '#AAAAAA']
+    domain: ['#5AA454', '#A10A28', '#C7B42C' , '#AAAAAA']
   };
 
   // line, area
@@ -124,13 +122,24 @@ export class ChartComponent implements OnInit, AfterContentInit, OnChanges {
       };
     }));
 
-    const netWorth = this.forecast.monthlyForecasts.map((monthForecast) => {
-      return {
-        name: monthForecast.date,
-        value: monthForecast.netWorth
-      };
-    });
+    const coastFi = this.forecast.monthlyForecasts
+      .filter(mf => mf.coastFiProjection !== undefined)
+      .map(mf => ({ name: mf.date, value: mf.coastFiProjection }));
 
+    let netWorth: { name: Date; value: number; }[];
+    if (this.forecast.visualizingCoast) {
+      netWorth = this.forecast.monthlyForecasts
+        .filter(mf => mf.coastFiProjection === undefined || mf.monthIndex === this.forecast.monthlyForecasts.find(m => m.coastFiProjection)?.monthIndex)
+        .map(mf => ({ name: mf.date, value: mf.netWorth }));
+    } else {
+      netWorth = this.forecast.monthlyForecasts.map((monthForecast) => {
+        return {
+          name: monthForecast.date,
+          value: monthForecast.netWorth
+        };
+      });
+    }
+    
     const contributions = this.forecast.monthlyForecasts.map((monthForecast) => {
       return {
         name: monthForecast.date,
@@ -160,18 +169,17 @@ export class ChartComponent implements OnInit, AfterContentInit, OnChanges {
       }
     ];
 
-    const coastFiProjection = this.forecast.monthlyForecasts
-      .filter(mf => mf.coastFiProjection !== undefined)
-      .map(mf => ({
-        name: mf.date,
-        value: mf.coastFiProjection
-      }));
-
-    if (coastFiProjection.length > 0) {
+    if (coastFi.length > 0) {
       this.data.splice(1, 0, {
         name: 'Coasting',
-        series: coastFiProjection
+        series: coastFi
       });
+
+      if (this.colorScheme.domain[1] != '#1F77B4')
+        this.colorScheme.domain.splice(1, 0, '#1F77B4');
+    } else {
+      if (this.colorScheme.domain[1] == '#1F77B4')
+        this.colorScheme.domain.splice(1, 1)
     }
 
     this.referenceLines = milestones;

@@ -6,6 +6,7 @@ export class Forecast {
   monthlyForecasts: MonthlyForecast[];
   month0Date: Date;
   birthdate: Date;
+  visualizingCoast: Boolean;
 
   public constructor(calculateInput: CalculateInput, forNumber: 'fiNumber' | 'leanFiNumber' = 'fiNumber', month0Date?: Date) {
     if (!calculateInput) {
@@ -15,6 +16,7 @@ export class Forecast {
     this.month0Date = month0Date || new Date();
     this.month0Date.setDate(1); // make it the first of the month
     this.birthdate = birthdateToDate(calculateInput.birthdate);
+    this.visualizingCoast = calculateInput.visualCoastDate !== null && this.birthdate !== null;
     this.computeForecast(calculateInput, forNumber);
     this.setDates();
   }
@@ -71,10 +73,16 @@ export class Forecast {
     const initialLeanAnnualExpenses = calculateInput.getLeanAnnualExpensesAt(initialMonthString);
 
     // coastFI
+    const visualCoastDate = calculateInput.visualCoastDate;
     const initialDate = new Date(this.month0Date);
     const initialCoastFi = calculateInput.getCoastFiNumberAt(initialDate);
     let coastFiProjectedNetWorth: number | null = null;
-    if (initialCoastFi !== null && startingNetWorth >= initialCoastFi) {
+
+    if (this.visualizingCoast) {
+      if (visualCoastDate <= initialDate) {
+        coastFiProjectedNetWorth = startingNetWorth;
+      }
+    } else if (initialCoastFi !== null && startingNetWorth >= initialCoastFi) {
       coastFiProjectedNetWorth = startingNetWorth;
     }
 
@@ -95,9 +103,11 @@ export class Forecast {
     while (currentNetWorth < stopForecastingAmount && month < 1000) {
       month++;
       const monthString = this.getMonthString(month);
-      
+      const currentDate = new Date(this.month0Date);
+      currentDate.setMonth(currentDate.getMonth() + month);
+
       // Get time-varying contribution and expenses for this month
-      const contribution = calculateInput.getMonthlyContributionAt(monthString);
+      const contribution = (this.visualizingCoast && visualCoastDate <= currentDate) ? 0 : calculateInput.getMonthlyContributionAt(monthString); // if visualizingCoast: stop contributing
       const annualExpenses = calculateInput.getAnnualExpensesAt(monthString);
       const leanAnnualExpenses = calculateInput.getLeanAnnualExpensesAt(monthString);
 
@@ -113,11 +123,8 @@ export class Forecast {
         coastFiProjectedNetWorth = round((coastFiProjectedNetWorth * 100 * monthlyAverageGrowth) / 100);
       } else {
         // Check if we hit Coast FI this month
-        const currentDate = new Date(this.month0Date);
-        currentDate.setMonth(currentDate.getMonth() + month);
         const coastFiNumber = calculateInput.getCoastFiNumberAt(currentDate);
-        
-        if (coastFiNumber !== null && newNetWorth >= coastFiNumber) {
+        if ((coastFiNumber !== null && newNetWorth >= coastFiNumber) || (visualCoastDate && visualCoastDate <= currentDate)) {
           coastFiProjectedNetWorth = newNetWorth; // start projecting
         }
       }
