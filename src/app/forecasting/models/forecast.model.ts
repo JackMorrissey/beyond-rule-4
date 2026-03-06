@@ -124,8 +124,12 @@ export class Forecast {
       } else {
         // Check if we hit Coast FI this month
         const coastFiNumber = calculateInput.getCoastFiNumberAt(currentDate);
-        if ((coastFiNumber !== null && newNetWorth >= coastFiNumber) || (visualCoastDate && visualCoastDate <= currentDate)) {
-          coastFiProjectedNetWorth = newNetWorth; // start projecting
+        if (this.visualizingCoast) {
+          if (visualCoastDate <= currentDate) {
+            coastFiProjectedNetWorth = newNetWorth;
+          }
+        } else if (coastFiNumber !== null && newNetWorth >= coastFiNumber) {
+          coastFiProjectedNetWorth = newNetWorth;
         }
       }
 
