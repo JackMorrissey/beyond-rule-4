@@ -365,7 +365,8 @@
                   </div>
                 </div>
               </div>
-              <div class="row">
+              <hr>
+              <div class="row mb-3">
                 <label
                   for="targetRetirementAge"
                   class="col-sm-12 col-md-5 col-form-label"
@@ -386,9 +387,35 @@
                 </div>
               </div>
               <div class="row mb-3">
+                <label for="visualCoastDate" class="col-sm-12 col-md-5 col-form-label"
+                  >Visualize Coasting From</label
+                >
+                <div class="col">
+                  <div class="input-group">
+                    <input
+                      class="form-control"
+                      id="ngVisualCoastDate"
+                      formControlName="visualCoastDate"
+                      ngbDatepicker
+                      #d="ngbDatepicker"
+                      [minDate]="{ year: 1925, month: 1, day: 1 }"
+                      placeholder="Earliest Date Possible"
+                      [readonly]="false"
+                    />
+                    <div class="input-group-append">
+                      <button
+                        class="btn btn-outline-secondary bi bi-calendar3"
+                        (click)="d.toggle()"
+                        type="button"
+                      ></button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-3">
                 <div class="col">
                   <small
-                    >Used for Coast FI calculation. Coast FI is the amount
+                    >These are used for Coast FI calculations. Coast FI is the amount
                     needed today where investment growth alone reaches your FI
                     number by your target retirement age.</small
                   >
