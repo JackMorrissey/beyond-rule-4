@@ -106,7 +106,7 @@
                   for="selectedBudget"
                   class="col-sm-12 col-md-5 col-form-label"
                 ></label>
-                <div class="col">
+                <div class="col" *ngIf="!isUsingSampleData">
                   <div ngbDropdown class="input-group d-inline-block">
                     <button
                       class="btn btn-outline-secondary btn-sm w-100"
@@ -391,25 +391,12 @@
                   >Visualize Coasting From</label
                 >
                 <div class="col">
-                  <div class="input-group">
-                    <input
-                      class="form-control"
-                      id="ngVisualCoastDate"
-                      formControlName="visualCoastDate"
-                      ngbDatepicker
-                      #d="ngbDatepicker"
-                      [minDate]="{ year: 1925, month: 1, day: 1 }"
-                      placeholder="Earliest Date Possible"
-                      [readonly]="false"
-                    />
-                    <div class="input-group-append">
-                      <button
-                        class="btn btn-outline-secondary bi bi-calendar3"
-                        (click)="d.toggle()"
-                        type="button"
-                      ></button>
-                    </div>
-                  </div>
+                    <app-month-year-picker 
+                      [selectedMonth]="visualCoastMonth" 
+                      [selectedYear]="visualCoastYear"
+                      [placeholder]="'Earliest Possible Date'"
+                      (dateChange)="onVisualCoastDateChange($event)">
+                    </app-month-year-picker>
                 </div>
               </div>
               <div class="row mb-3">

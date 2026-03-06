@@ -47,6 +47,8 @@ export class YnabComponent implements OnInit {
   public expectedExternalAnnualContributions = 0;
   public additionalLumpSumNeeded = 0;
   public targetRetirementAge: number | null = 65;
+  public visualCoastMonth: number | null = null;
+  public visualCoastYear: number | null = null;
 
   public budgets: ynab.BudgetSummary[];
   public budget: ynab.BudgetDetail;
@@ -328,6 +330,10 @@ export class YnabComponent implements OnInit {
     result.monthFromName = this.selectedMonthA.month;
     result.monthToName = this.selectedMonthB.month;
     result.birthdate = this.birthdate;
+    result.visualCoastDate = (this.visualCoastMonth && this.visualCoastYear ? new Date(this.visualCoastYear, this.visualCoastMonth, 1) : null);
+    console.log(this.visualCoastMonth);
+    console.log(this.visualCoastYear);
+    console.log(this.birthdate);
 
     // Add time series data
     // If user manually changed the contribution, apply the difference as an offset
@@ -721,6 +727,20 @@ export class YnabComponent implements OnInit {
   getEnabledScheduleCount(): number {
     if (!this.scheduledChangesEnabled) return 0;
     return this.scheduledChanges.filter((c) => c.enabled).length;
+  }
+
+  onVisualCoastDateChange(event: { month: number, year: number } | null) {
+    if (event) {
+      this.visualCoastMonth = event.month;
+      this.visualCoastYear = event.year;
+    } else {
+      this.visualCoastMonth = null;
+      this.visualCoastYear = null;
+    }
+    
+    // Logic to handle the "null" state in your forecasting
+    // e.g., if null, use current month for calculations
+    this.recalculate(); 
   }
 
   /**
