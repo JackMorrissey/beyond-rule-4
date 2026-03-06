@@ -156,6 +156,18 @@ export class YnabComponent implements OnInit {
       this.birthdate = null;
     }
 
+    try {
+      let month = parseFloat(window.localStorage.getItem('br4-visual-coast-month'));
+      let year = parseFloat(window.localStorage.getItem('br4-visual-coast-year'));
+      if (!isNaN(month) && !isNaN(year)) {
+        this.visualCoastMonth = month;
+        this.visualCoastYear = year;
+      }
+    } catch {
+      this.visualCoastMonth = null;
+      this.visualCoastYear = null;
+    }
+
     const targetRetirementAgeRaw = window.localStorage.getItem('br4-target-retirement-age');
     if (targetRetirementAgeRaw === '') {
       // User explicitly cleared the value
@@ -331,9 +343,6 @@ export class YnabComponent implements OnInit {
     result.monthToName = this.selectedMonthB.month;
     result.birthdate = this.birthdate;
     result.visualCoastDate = (this.visualCoastMonth && this.visualCoastYear ? new Date(this.visualCoastYear, this.visualCoastMonth, 1) : null);
-    console.log(this.visualCoastMonth);
-    console.log(this.visualCoastYear);
-    console.log(this.birthdate);
 
     // Add time series data
     // If user manually changed the contribution, apply the difference as an offset
@@ -737,6 +746,9 @@ export class YnabComponent implements OnInit {
       this.visualCoastMonth = null;
       this.visualCoastYear = null;
     }
+
+    window.localStorage.setItem('br4-visual-coast-month', String(this.visualCoastMonth));
+    window.localStorage.setItem('br4-visual-coast-year', String(this.visualCoastYear));
     
     // Logic to handle the "null" state in your forecasting
     // e.g., if null, use current month for calculations
