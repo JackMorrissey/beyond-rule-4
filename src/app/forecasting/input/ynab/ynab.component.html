@@ -450,9 +450,9 @@
                     <td>{{ ynabNetWorth | currency : currencyIsoCode }}</td>
                     <td>{{ netWorth | currency : currencyIsoCode }}</td>
                   </tr>
-                  <tr *ngIf="!hideInstructions">
+                  <tr>
                     <td colspan="3">
-                      <small
+                      <small *ngIf="!hideInstructions"
                         >The initial amount to compound with the expected annual
                         rate of return</small
                       >
