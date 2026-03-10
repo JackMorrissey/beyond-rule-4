@@ -47,6 +47,7 @@ export class YnabComponent implements OnInit {
   public expectedExternalAnnualContributions = 0;
   public additionalLumpSumNeeded = 0;
   public targetRetirementAge: number | null = 65;
+  public contributionsToDate: number | null = null;
 
   public budgets: ynab.BudgetSummary[];
   public budget: ynab.BudgetDetail;
@@ -211,13 +212,21 @@ export class YnabComponent implements OnInit {
     if (!!additionalLumpSumStorage && !isNaN(additionalLumpSumStorage)) {
       this.additionalLumpSumNeeded = additionalLumpSumStorage;
     }
+    
+    const contributionsToDateStorage = window.localStorage.getItem('br4-contributions-to-date');
+    if (contributionsToDateStorage !== null) {
+      const parsed = parseFloat(contributionsToDateStorage);
+      if (!isNaN(parsed)) {
+        this.contributionsToDate = parsed;
+      }
+    }
 
     this.budgetForm = this.formBuilder.group({
       selectedBudget: ['', [Validators.required]],
       selectedMonthA: ['', [Validators.required]],
       selectedMonthB: ['', [Validators.required]],
       monthlyContribution: [0, [Validators.required]],
-      contributionsToDate: [0],
+      contributionsToDate: [this.contributionsToDate],
       includeHiddenYnabCategories: [true],
       categoryGroups: this.formBuilder.array([]),
       accounts: this.formBuilder.array([]),
@@ -533,6 +542,22 @@ export class YnabComponent implements OnInit {
       this.targetRetirementAge = null;
       // Store empty string to remember user explicitly cleared the value
       window.localStorage.setItem('br4-target-retirement-age', '');
+    }
+
+    const parsedContributionsToDate = Number.parseFloat(
+      this.budgetForm.value.contributionsToDate,
+    );
+    // Only save if it's a valid number AND it is different from the auto-populated net worth
+    if (!Number.isNaN(parsedContributionsToDate) && parsedContributionsToDate !== this.netWorth) {
+      this.contributionsToDate = parsedContributionsToDate;
+      window.localStorage.setItem(
+        'br4-contributions-to-date',
+        parsedContributionsToDate.toString(),
+      );
+    } else {
+      // otherwise clear
+      this.contributionsToDate = null;
+      window.localStorage.removeItem('br4-contributions-to-date');
     }
   }
 
@@ -1253,7 +1278,7 @@ export class YnabComponent implements OnInit {
       selectedMonthB: this.selectedMonthB.month,
       includeHiddenYnabCategories: this.includeHiddenYnabCategories,
       monthlyContribution,
-      // contributionsToDate: this.netWorth,
+      contributionsToDate: this.contributionsToDate,
       expectedAnnualGrowthRate: this.expectedAnnualGrowthRate,
       safeWithdrawalRatePercentage: this.safeWithdrawalRatePercentage,
       birthdate: this.birthdate,
