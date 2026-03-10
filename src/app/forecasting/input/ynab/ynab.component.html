@@ -383,6 +383,16 @@
                       max="120"
                       step="1"
                     />
+                    <div class="input-group-append">
+                      <button
+                        class="btn btn-outline-secondary bi bi-eye"
+                        (click)="toggleSimulateToRetirement()"
+                        type="button"
+                        *ngIf="simulateToRetirement; else retirementAgeHidden"
+                        placement="top"
+                        ngbTooltip="Hide data beyond 1.5x FI."
+                      ></button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1284,3 +1294,14 @@
     </div>
   </div>
 </form>
+
+
+<ng-template #retirementAgeHidden>
+  <button
+    class="btn btn-outline-secondary bi bi-eye-slash"
+    (click)="toggleSimulateToRetirement()"
+    type="button"
+    placement="top"
+    ngbTooltip="Show data through to retirement age."
+  ></button>
+</ng-template>

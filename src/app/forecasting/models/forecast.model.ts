@@ -58,6 +58,16 @@ export class Forecast {
   }
 
   private computeForecast(calculateInput: CalculateInput, forNumber: 'fiNumber' | 'leanFiNumber' = 'fiNumber') {
+    const now = new Date();
+    const retirementDate = new Date(this.birthdate.getTime());
+    retirementDate.setFullYear(retirementDate.getFullYear() + (calculateInput.targetRetirementAge || 0));
+    
+    const yearsDiff = retirementDate.getFullYear() - now.getFullYear();
+    const monthsDiff = retirementDate.getMonth() - now.getMonth();      
+    const monthsUntilRetirement = (yearsDiff * 12) + monthsDiff;
+      
+    const stopForecastingMonth = Math.max(monthsUntilRetirement + 6, 0);
+    console.log(stopForecastingMonth);
     const stopForecastingAmount = calculateInput[forNumber] * 1.6; // default to a bit more than Fat FI.
 
     const baseAnnualExpenses = calculateInput.annualExpenses;
@@ -100,7 +110,7 @@ export class Forecast {
       coastFiProjection: coastFiProjectedNetWorth ?? undefined
     })];
 
-    while (currentNetWorth < stopForecastingAmount && month < 1000) {
+    while ((currentNetWorth < stopForecastingAmount || (month < stopForecastingMonth && calculateInput.simulateToRetirement)) && month < 1000) {
       month++;
       const monthString = this.getMonthString(month);
       const currentDate = new Date(this.month0Date);
