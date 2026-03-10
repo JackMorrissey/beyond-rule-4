@@ -415,8 +415,9 @@
       <h2 ngbAccordionHeader>
         <button ngbAccordionButton>
           <span class="float-start">Starting Portfolio</span>
-          <span class="ms-auto">
+          <span class="ms-auto text-end">
             {{ netWorth | currency : currencyIsoCode }}
+            <small class="opacity-75 d-block mt-1" *ngIf="contributionsToDate !== null && netWorth != contributionsToDate">{{ contributionsToDate | currency : currencyIsoCode }}</small>
           </span>
         </button>
       </h2>
