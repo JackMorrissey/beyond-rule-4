@@ -154,7 +154,7 @@ export class FiTextComponent implements OnInit, OnChanges {
           birthdate && !isNaN(birthdate.getTime())
             ? this.forecast.getDistanceFromDateText(
                 foundCoastFiForecast.date,
-                new Date()
+                birthdate
               )
             : null;
         if (birthdate && !isNaN(birthdate.getTime())) {
