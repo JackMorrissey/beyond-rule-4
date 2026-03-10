@@ -97,6 +97,11 @@
         </span>
       </span>
     </p>
+    <p *ngIf="coastFiNumber !== null && calculateInput.simulateToRetirement && retirementFiNumber > fiNumber">
+      If you choose to continue contributions, your net worth will be <strong>{{ retirementFiNumber | currency: calculateInput.currencyIsoCode }}</strong>
+      at your target retirement age of <strong>{{ targetRetirementAge }}</strong>.
+      That is <strong>{{ (retirementFiNumber - fiNumber) | currency: calculateInput.currencyIsoCode }}</strong> more than coasting to your FI number.
+    </p>
   </div>
 </div>
 

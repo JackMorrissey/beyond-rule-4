@@ -38,8 +38,10 @@ export class FiTextComponent implements OnInit, OnChanges {
   coastFiDate: string;
   coastFiDateDistance: string;
   coastFiAge: string;
+
   targetRetirementAge: number;
   coastFiCoastDistance: string;
+  retirementFiNumber: number;
 
   externalContributions: number;
   externalContributionReduction: number;
@@ -168,6 +170,15 @@ export class FiTextComponent implements OnInit, OnChanges {
           this.coastFiCoastDistance = null;
         }
       }
+    }
+
+    const foundRetirementForecast = this.forecast.monthlyForecasts.find(
+      (f) => Math.abs(f.date.getTime() - birthdate.getTime()) >= (this.targetRetirementAge*1000*60*60*24*365)
+    );
+    if (!foundRetirementForecast) {
+      this.retirementFiNumber = null;
+    } else {
+      this.retirementFiNumber = foundRetirementForecast.netWorth
     }
   }
 }
