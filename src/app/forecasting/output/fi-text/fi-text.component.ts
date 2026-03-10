@@ -158,14 +158,14 @@ export class FiTextComponent implements OnInit, OnChanges {
               )
             : null;
         if (birthdate && !isNaN(birthdate.getTime())) {
-          let retirementDate = birthdate
+          const retirementDate = new Date(birthdate.getTime());
           retirementDate.setFullYear(birthdate.getFullYear() + this.targetRetirementAge)
           this.coastFiCoastDistance = this.forecast.getDistanceFromDateText(
             retirementDate,
             new Date()
-          )
+          );
         } else {
-          this.coastFiCoastDistance = null
+          this.coastFiCoastDistance = null;
         }
       }
     }
