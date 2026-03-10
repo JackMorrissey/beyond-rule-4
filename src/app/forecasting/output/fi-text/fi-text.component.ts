@@ -39,6 +39,7 @@ export class FiTextComponent implements OnInit, OnChanges {
   coastFiDateDistance: string;
   coastFiAge: string;
   targetRetirementAge: number;
+  coastFiCoastDistance: string;
 
   externalContributions: number;
   externalContributionReduction: number;
@@ -153,9 +154,19 @@ export class FiTextComponent implements OnInit, OnChanges {
           birthdate && !isNaN(birthdate.getTime())
             ? this.forecast.getDistanceFromDateText(
                 foundCoastFiForecast.date,
-                birthdate
+                new Date()
               )
             : null;
+        if (birthdate && !isNaN(birthdate.getTime())) {
+          let retirementDate = birthdate
+          retirementDate.setFullYear(birthdate.getFullYear() + this.targetRetirementAge)
+          this.coastFiCoastDistance = this.forecast.getDistanceFromDateText(
+            retirementDate,
+            new Date()
+          )
+        } else {
+          this.coastFiCoastDistance = null
+        }
       }
     }
   }

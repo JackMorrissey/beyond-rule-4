@@ -24,7 +24,7 @@
       </li>
       <li class="list-inline-item"></li>
       <li class="list-inline-item">
-        <h4>{{ coastFiDate }} • {{ coastFiDateDistance }}
+        <h4 *ngIf="coastFiDateDistance !== '0 Months'; else coastFiAchieved">{{ coastFiDate }} • {{ coastFiDateDistance }}
           <span *ngIf="coastFiAge !== null" class="fst-italic">• {{ coastFiAge }} old</span>
         </h4>
       </li>
@@ -103,4 +103,8 @@
 <ng-template #canCoast>
   You've reached Coast FI! Your portfolio is at least <strong>{{ coastFiNumber | currency: calculateInput.currencyIsoCode }}</strong>,
   which is theoretically sufficient to stop saving and still reach FI by your target retirement age.
+</ng-template>
+
+<ng-template #coastFiAchieved>
+<h4>Achieved! • {{ coastFiCoastDistance }} to coast</h4>
 </ng-template>
