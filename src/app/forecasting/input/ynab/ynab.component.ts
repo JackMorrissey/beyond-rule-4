@@ -3,7 +3,7 @@ import {
   UntypedFormGroup,
   UntypedFormArray,
   UntypedFormBuilder,
-  Validators,
+  Validators
 } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { timer } from 'rxjs';
@@ -46,6 +46,7 @@ export class YnabComponent implements OnInit {
   public expectedExternalAnnualContributions = 0;
   public additionalLumpSumNeeded = 0;
   public targetRetirementAge: number | null = 65;
+  public contributionsToDate: number | null = null;
 
   public budgets: ynab.BudgetSummary[];
   public budget: ynab.BudgetDetail;
@@ -93,6 +94,8 @@ export class YnabComponent implements OnInit {
 
   // Track YNAB-calculated contribution to detect manual edits
   public ynabCalculatedContribution: number = 0;
+
+  private contributionsSubscription: any = null;
 
   /**
    * Check if the monthly contribution has been manually modified from the YNAB-calculated value.
@@ -209,12 +212,21 @@ export class YnabComponent implements OnInit {
     if (!!additionalLumpSumStorage && !isNaN(additionalLumpSumStorage)) {
       this.additionalLumpSumNeeded = additionalLumpSumStorage;
     }
+    
+    const contributionsToDateStorage = window.localStorage.getItem('br4-contributions-to-date');
+    if (contributionsToDateStorage !== null) {
+      const parsed = parseFloat(contributionsToDateStorage);
+      if (!isNaN(parsed)) {
+        this.contributionsToDate = parsed;
+      }
+    }
 
     this.budgetForm = this.formBuilder.group({
       selectedBudget: ['', [Validators.required]],
       selectedMonthA: ['', [Validators.required]],
       selectedMonthB: ['', [Validators.required]],
       monthlyContribution: [0, [Validators.required]],
+      contributionsToDate: [this.contributionsToDate],
       includeHiddenYnabCategories: [true],
       categoryGroups: this.formBuilder.array([]),
       accounts: this.formBuilder.array([]),
@@ -324,6 +336,7 @@ export class YnabComponent implements OnInit {
     result.leanAnnualExpenses = this.expenses.leanFi.annual;
     result.netWorth = this.netWorth;
     result.monthlyContribution = this.budgetForm.value.monthlyContribution;
+    result.contributionsToDate = this.budgetForm.value.contributionsToDate;
     result.budgetCategoryGroups = this.budgetForm.value.categoryGroups;
     result.currencyIsoCode = this.currencyIsoCode;
     result.monthFromName = this.selectedMonthA.month;
@@ -546,6 +559,22 @@ export class YnabComponent implements OnInit {
       // Store empty string to remember user explicitly cleared the value
       window.localStorage.setItem('br4-target-retirement-age', '');
     }
+
+    const parsedContributionsToDate = Number.parseFloat(
+      this.budgetForm.value.contributionsToDate,
+    );
+    // Only save if it's a valid number AND it is different from the auto-populated net worth
+    if (!Number.isNaN(parsedContributionsToDate) && parsedContributionsToDate !== this.netWorth) {
+      this.contributionsToDate = parsedContributionsToDate;
+      window.localStorage.setItem(
+        'br4-contributions-to-date',
+        parsedContributionsToDate.toString(),
+      );
+    } else {
+      // otherwise clear
+      this.contributionsToDate = null;
+      window.localStorage.removeItem('br4-contributions-to-date');
+    }
   }
 
   handleFormChanges() {
@@ -692,7 +721,7 @@ export class YnabComponent implements OnInit {
             categoryName: account.name,
             categoryId: account.name,
             type: 'monthlyContribution',
-            baselineValue: account.monthlyContribution || 0,
+            baselineValue: lastContribution,
             scheduledValue: point.value,
             effectiveDate: point.effectiveDate,
             enabled: !this.disabledChangeIds.has(id),
@@ -1120,6 +1149,30 @@ export class YnabComponent implements OnInit {
 
     this.ynabNetWorth = ynabNetWorth;
     this.netWorth = netWorth;
+
+    const control = this.budgetForm.get('contributionsToDate');
+    if (control) {
+      if (control.value == null) {
+        control.setValue(this.netWorth, { emitEvent: false });
+      }
+
+      // subscribe once to clamp live typing
+      if (!this.contributionsSubscription) {
+        this.contributionsSubscription = control.valueChanges.subscribe(value => {
+          if (value == null) return; // skip null
+          if (value < 0) control.setValue(0, { emitEvent: false });
+          else if (value > this.netWorth) control.setValue(this.netWorth, { emitEvent: false });
+        });
+      }
+
+      // clamp
+      if (control.value > this.netWorth) {
+        control.setValue(this.netWorth, { emitEvent: false });
+      }
+      if (control.value < 0) {
+        control.setValue(0, { emitEvent: false });
+      }
+    }
   }
 
   private mapAccounts(accounts: ynab.Account[]) {
@@ -1250,6 +1303,7 @@ export class YnabComponent implements OnInit {
       selectedMonthB: this.selectedMonthB.month,
       includeHiddenYnabCategories: this.includeHiddenYnabCategories,
       monthlyContribution,
+      contributionsToDate: this.contributionsToDate,
       expectedAnnualGrowthRate: this.expectedAnnualGrowthRate,
       safeWithdrawalRatePercentage: this.safeWithdrawalRatePercentage,
       birthdate: this.birthdate,
