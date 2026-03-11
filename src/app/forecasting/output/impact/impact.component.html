@@ -7,7 +7,7 @@
     <div class="btn-group" role="group">
         <button type="button" class="btn btn-sm" [ngClass]="{'btn-primary': activeMode === 'fi', 'btn-outline-primary': activeMode !== 'fi'}" (click)="setMode('fi')">FI Budget</button>
         <button type="button" class="btn btn-sm" [ngClass]="{'btn-primary': activeMode === 'leanFi', 'btn-outline-primary': activeMode !== 'leanFi'}" (click)="setMode('leanFi')">Lean FI Budget</button>
-        <button *ngIf="hasCoastFi" type="button" class="btn btn-sm" [ngClass]="{'btn-primary': activeMode === 'coastFi', 'btn-outline-primary': activeMode !== 'coastFi'}" (click)="setMode('coastFi')">Coast FI</button>
+        <button *ngIf="hasCoastFi && calculateInput.visualCoastDate === null" type="button" class="btn btn-sm" [ngClass]="{'btn-primary': activeMode === 'coastFi', 'btn-outline-primary': activeMode !== 'coastFi'}" (click)="setMode('coastFi')">Coast FI</button>
     </div>
 </div>
 <div class="table-responsive">

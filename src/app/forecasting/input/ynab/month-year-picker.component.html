@@ -1,0 +1,55 @@
+<div ngbDropdown class="d-block w-100">
+  <div class="input-group w-100 d-flex" style="flex-wrap: nowrap;">
+    <button type="button" class="btn btn-outline-secondary w-100" id="monthYearDropdown" ngbDropdownToggle>
+      <fa-icon class="me-2 bi-calendar3"></fa-icon>
+      <span *ngIf="selectedMonth !== null && selectedYear !== null; else noDate" class="text-emphasis">
+        {{ months[selectedMonth] }} {{ selectedYear }}
+      </span>
+      <ng-template #noDate>
+        <span class="text-muted">{{ placeholder }}</span>
+      </ng-template>
+    </button>
+    
+    <button *ngIf="selectedMonth !== null" 
+            type="button" 
+            class="btn btn-outline-secondary" 
+            (click)="clear($event)">
+      <fa-icon [icon]="faClear"></fa-icon>
+    </button>
+  </div>
+
+  <div ngbDropdownMenu aria-labelledby="monthYearDropdown" class="p-3" style="max-width: 250px;">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <button type="button" class="btn btn-sm btn-outline-secondary" (click)="changeYear(-1); $event.stopPropagation()">
+        <fa-icon [icon]="faLeft"></fa-icon>
+      </button>
+
+      <input 
+        type="text" 
+        inputmode="numeric"
+        pattern="\d*"
+        class="form-control form-control-sm text-center mx-2 fw-bold bg-transparent" 
+        style="width: 100px;"
+        [value]="displayYear"
+        (input)="onYearInput($event)"
+        (click)="$event.stopPropagation()" 
+      />
+      
+      <button type="button" class="btn btn-sm btn-outline-secondary" (click)="changeYear(1); $event.stopPropagation()">
+        <fa-icon [icon]="faRight"></fa-icon>
+      </button>
+    </div>
+
+    <div class="row g-2">
+      <div *ngFor="let month of months; let i = index" class="col-4">
+        <button 
+          type="button"
+          class="btn btn-sm w-100" 
+          [ngClass]="i === selectedMonth ? 'btn-primary' : 'btn-outline-secondary text-emphasis'"
+          (click)="selectMonth(i)">
+          {{ month }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

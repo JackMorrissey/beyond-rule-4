@@ -106,7 +106,7 @@
                   for="selectedBudget"
                   class="col-sm-12 col-md-5 col-form-label"
                 ></label>
-                <div class="col">
+                <div class="col" *ngIf="!isUsingSampleData">
                   <div ngbDropdown class="input-group d-inline-block">
                     <button
                       class="btn btn-outline-secondary btn-sm w-100"
@@ -365,7 +365,8 @@
                   </div>
                 </div>
               </div>
-              <div class="row">
+              <hr>
+              <div class="row mb-3">
                 <label
                   for="targetRetirementAge"
                   class="col-sm-12 col-md-5 col-form-label"
@@ -382,13 +383,36 @@
                       max="120"
                       step="1"
                     />
+                    <div class="input-group-append">
+                      <button
+                        class="btn btn-outline-secondary bi bi-eye"
+                        (click)="toggleSimulateToRetirement()"
+                        type="button"
+                        *ngIf="simulateToRetirement; else retirementAgeHidden"
+                        placement="top"
+                        ngbTooltip="Hide data beyond 1.5x FI."
+                      ></button>
+                    </div>
                   </div>
+                </div>
+              </div>
+              <div class="row">
+                <label for="visualCoastDate" class="col-sm-12 col-md-5 col-form-label"
+                  >Visualize Coasting From</label
+                >
+                <div class="col">
+                    <app-month-year-picker 
+                      [selectedMonth]="visualCoastMonth" 
+                      [selectedYear]="visualCoastYear"
+                      [placeholder]="'Earliest Possible Date'"
+                      (dateChange)="onVisualCoastDateChange($event)">
+                    </app-month-year-picker>
                 </div>
               </div>
               <div class="row mb-3">
                 <div class="col">
                   <small
-                    >Used for Coast FI calculation. Coast FI is the amount
+                    >These are used for Coast FI calculations. Coast FI is the amount
                     needed today where investment growth alone reaches your FI
                     number by your target retirement age.</small
                   >
@@ -1286,3 +1310,14 @@
     </div>
   </div>
 </form>
+
+
+<ng-template #retirementAgeHidden>
+  <button
+    class="btn btn-outline-secondary bi bi-eye-slash"
+    (click)="toggleSimulateToRetirement()"
+    type="button"
+    placement="top"
+    ngbTooltip="Show data through to retirement age."
+  ></button>
+</ng-template>
