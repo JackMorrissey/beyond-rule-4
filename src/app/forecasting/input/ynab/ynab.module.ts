@@ -1,9 +1,9 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { SharedModule } from '../../../shared.module';
 
 import { YnabComponent } from './ynab.component';
+import { MonthYearPickerComponent } from './month-year-picker.component';
 
 @NgModule({
   imports: [
@@ -13,6 +13,7 @@ import { YnabComponent } from './ynab.component';
   ],
   declarations: [
     YnabComponent,
+    MonthYearPickerComponent
   ],
   exports: [
     YnabComponent,

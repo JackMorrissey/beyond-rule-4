@@ -38,7 +38,10 @@ export class FiTextComponent implements OnInit, OnChanges {
   coastFiDate: string;
   coastFiDateDistance: string;
   coastFiAge: string;
+
   targetRetirementAge: number;
+  coastFiCoastDistance: string;
+  retirementFiNumber: number;
 
   externalContributions: number;
   externalContributionReduction: number;
@@ -120,7 +123,7 @@ export class FiTextComponent implements OnInit, OnChanges {
     // Coast FI calculation - only show if birthdate is set
     this.targetRetirementAge = this.calculateInput.targetRetirementAge;
 
-    if (birthdate === null || isNaN(birthdate.getTime())) {
+    if (birthdate === null || isNaN(birthdate.getTime()) || this.forecast.visualizingCoast) {
       // No birthdate set - hide Coast FI
       this.coastFiNumber = null;
       this.coastFiDate = null;
@@ -156,7 +159,26 @@ export class FiTextComponent implements OnInit, OnChanges {
                 birthdate
               )
             : null;
+        if (birthdate && !isNaN(birthdate.getTime())) {
+          const retirementDate = new Date(birthdate.getTime());
+          retirementDate.setFullYear(birthdate.getFullYear() + this.targetRetirementAge)
+          this.coastFiCoastDistance = this.forecast.getDistanceFromDateText(
+            retirementDate,
+            new Date()
+          );
+        } else {
+          this.coastFiCoastDistance = null;
+        }
       }
+    }
+
+    const foundRetirementForecast = this.forecast.monthlyForecasts.find(
+      (f) => Math.abs(f.date.getTime() - birthdate.getTime()) >= (this.targetRetirementAge*1000*60*60*24*365)
+    );
+    if (!foundRetirementForecast) {
+      this.retirementFiNumber = null;
+    } else {
+      this.retirementFiNumber = foundRetirementForecast.netWorth
     }
   }
 }

@@ -46,6 +46,9 @@ export class YnabComponent implements OnInit {
   public expectedExternalAnnualContributions = 0;
   public additionalLumpSumNeeded = 0;
   public targetRetirementAge: number | null = 65;
+  public simulateToRetirement = false;
+  public visualCoastMonth: number | null = null;
+  public visualCoastYear: number | null = null;
   public contributionsToDate: number | null = null;
 
   public budgets: ynab.BudgetSummary[];
@@ -155,6 +158,18 @@ export class YnabComponent implements OnInit {
       this.birthdate = JSON.parse(window.localStorage.getItem('br4-birthdate'));
     } catch {
       this.birthdate = null;
+    }
+
+    try {
+      let month = parseFloat(window.localStorage.getItem('br4-visual-coast-month'));
+      let year = parseFloat(window.localStorage.getItem('br4-visual-coast-year'));
+      if (!isNaN(month) && !isNaN(year)) {
+        this.visualCoastMonth = month;
+        this.visualCoastYear = year;
+      }
+    } catch {
+      this.visualCoastMonth = null;
+      this.visualCoastYear = null;
     }
 
     const targetRetirementAgeRaw = window.localStorage.getItem('br4-target-retirement-age');
@@ -342,6 +357,8 @@ export class YnabComponent implements OnInit {
     result.monthFromName = this.selectedMonthA.month;
     result.monthToName = this.selectedMonthB.month;
     result.birthdate = this.birthdate;
+    result.visualCoastDate = (this.visualCoastMonth != null && this.visualCoastYear != null ? new Date(this.visualCoastYear, this.visualCoastMonth, 1) : null);
+    result.simulateToRetirement = this.simulateToRetirement;
 
     // Add time series data
     // If user manually changed the contribution, apply the difference as an offset
@@ -401,6 +418,10 @@ export class YnabComponent implements OnInit {
     );
     this.hideInstructions = !!window.localStorage.getItem(
       'br4-hidden-instructions',
+    );
+
+    this.includeHiddenYnabCategories = !!window.localStorage.getItem(
+      'br4-simulate-to-retirement',
     );
 
     const selectedMonths = getSelectedMonths(
@@ -775,6 +796,36 @@ export class YnabComponent implements OnInit {
   getEnabledScheduleCount(): number {
     if (!this.scheduledChangesEnabled) return 0;
     return this.scheduledChanges.filter((c) => c.enabled).length;
+  }
+
+  onVisualCoastDateChange(event: { month: number, year: number } | null) {
+    if (event) {
+      this.visualCoastMonth = event.month;
+      this.visualCoastYear = event.year;
+    } else {
+      this.visualCoastMonth = null;
+      this.visualCoastYear = null;
+    }
+
+    window.localStorage.setItem('br4-visual-coast-month', String(this.visualCoastMonth));
+    window.localStorage.setItem('br4-visual-coast-year', String(this.visualCoastYear));
+    
+    // Logic to handle the "null" state in your forecasting
+    // e.g., if null, use current month for calculations
+    this.recalculate(); 
+  }
+
+  toggleSimulateToRetirement() {
+    this.simulateToRetirement = !this.simulateToRetirement;
+    if (this.simulateToRetirement) {
+      window.localStorage.setItem(
+        'br4-simulate-to-retirement',
+        this.simulateToRetirement.toString(),
+      );
+    } else {
+      window.localStorage.removeItem('br4-simulate-to-retirement');
+    }
+    this.recalculate();
   }
 
   /**

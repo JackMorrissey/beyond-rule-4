@@ -40,7 +40,7 @@ export class MilestonesComponent implements OnInit, OnChanges {
       return coastFiAtMonth !== null && f.netWorth >= coastFiAtMonth;
     });
     
-    if (foundCoastFiForecast) {
+    if (foundCoastFiForecast && !this.forecast.visualizingCoast) {
       coastFiNumber = foundCoastFiForecast.netWorth;
     }
 
