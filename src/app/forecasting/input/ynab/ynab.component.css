@@ -47,3 +47,16 @@ table.expenses {
     display: none;
   }
 }
+
+
+.currency-input {
+    position: relative;
+}
+
+.currency-input::before {
+    content: "$";
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+}

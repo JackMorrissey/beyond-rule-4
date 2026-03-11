@@ -4,6 +4,7 @@ import { round } from '../utilities/number-utility';
 
 export class CalculateInput {
   netWorth = 0;
+  contributionsToDate = 0;
   annualExpenses = 0;
   leanAnnualExpenses = 0;
   annualSafeWithdrawalRate = 0;
