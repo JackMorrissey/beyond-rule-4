@@ -62,7 +62,9 @@ export class Forecast {
     const monthlyAverageGrowth = 1 + calculateInput.expectedAnnualGrowthRate / 12;
     const startingNetWorth = calculateInput.netWorth;
     let currentNetWorth = startingNetWorth;
-    let totalContributions = currentNetWorth; // can't yet delve into the past
+    let totalContributions = calculateInput.contributionsToDate;
+    let totalReturns = startingNetWorth - totalContributions;
+
     let month = 0;
 
     // Get the initial month string for time-varying values
@@ -78,7 +80,7 @@ export class Forecast {
       interestGains: 0,
       timesAnnualExpenses: round(startingNetWorth / (initialAnnualExpenses || baseAnnualExpenses || 1)),
       totalContributions: totalContributions,
-      totalReturns: 0,
+      totalReturns: totalReturns,
       annualExpenses: initialAnnualExpenses,
       leanAnnualExpenses: initialLeanAnnualExpenses,
     })];

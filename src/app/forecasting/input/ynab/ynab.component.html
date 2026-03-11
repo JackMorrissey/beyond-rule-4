@@ -415,8 +415,9 @@
       <h2 ngbAccordionHeader>
         <button ngbAccordionButton>
           <span class="float-start">Starting Portfolio</span>
-          <span class="ms-auto">
+          <span class="ms-auto text-end">
             {{ netWorth | currency : currencyIsoCode }}
+            <small class="opacity-75 d-block mt-1" *ngIf="contributionsToDate !== null && netWorth != contributionsToDate">{{ contributionsToDate | currency : currencyIsoCode }}</small>
           </span>
         </button>
       </h2>
@@ -425,18 +426,32 @@
           <ng-template>
             <div class="row mb-3">
               <table class="table col-12">
-                <thead class="thead-sum">
+                <thead class="thead-sum" style="width: 50%;">
                   <tr>
-                    <th>Starting Balance</th>
-                    <td>{{ ynabNetWorth | currency : currencyIsoCode }}</td>
-                    <td>{{ netWorth | currency : currencyIsoCode }}</td>
+                    <th>
+                      <div>Starting Balance</div>
+                      <small style="font-weight: 400;" *ngIf="!hideInstructions">
+                        The initial amount to compound with the expected annual rate of return
+                      </small>
+                    </th>
+                    <td class="align-middle" style="width: 25%;">{{ ynabNetWorth | currency : currencyIsoCode }}</td>
+                    <td class="align-middle" style="width: 25%;">{{ netWorth | currency : currencyIsoCode }}</td>
                   </tr>
                   <tr>
-                    <td colspan="3">
-                      <small
-                        >The initial amount to compound with the expected annual
-                        rate of return</small
-                      >
+                    <th>
+                      <div>Contributions to Date</div>
+                      <small style="font-weight: 400;" *ngIf="!hideInstructions">
+                        The total amount you've contributed to your portfolio so far (shown in red)
+                      </small>
+                    </th>
+                    <td colspan="2" class="align-middle currency-input">
+                      <input
+                        class="form-control"
+                        style="padding-left: 21px;"
+                        formControlName="contributionsToDate"
+                        type="number"
+                        step="100"
+                      />
                     </td>
                   </tr>
                 </thead>
@@ -452,8 +467,8 @@
                     *ngFor="let account of accounts.controls; let i = index"
                     [formGroupName]="i"
                   >
-                    <td>{{ account.value.name }}</td>
-                    <td>
+                    <td class="align-middle">{{ account.value.name }}</td>
+                    <td class="align-middle">
                       {{
                         account.value.ynabBalance | currency : currencyIsoCode
                       }}
@@ -509,16 +524,17 @@
       <div ngbAccordionCollapse>
         <div ngbAccordionBody>
           <ng-template>
-            <div class="form-group row mb-3">
+            <div class="form-group row mb-3 align-items-center">
               <label
                 for="monthlyContribution"
                 class="col-sm-12 col-md-5 col-form-label"
                 >Monthly Investment Contribution</label
               >
-              <div class="col">
+              <div class="col currency-input">
                 <input
                   type="number"
                   class="form-control"
+                  style="padding-left: 17px;"
                   id="monthlyContribution"
                   formControlName="monthlyContribution"
                   step="100"
@@ -686,7 +702,7 @@
                     </th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody class="align-middle">
                   <tr>
                     <th>Monthly Expenses</th>
                     <td>
@@ -726,7 +742,7 @@
                     <th>Lean FI Budget<span class="mobile-currency"> ({{ currencyIsoCode }})</span></th>
                   </tr>
                 </thead>
-                <tbody formArrayName="categoryGroups">
+                <tbody formArrayName="categoryGroups" class="align-middle">
                   <ng-container
                     *ngFor="
                       let categoryGroup of categoryGroups.controls;
