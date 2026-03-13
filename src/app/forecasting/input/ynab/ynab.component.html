@@ -153,7 +153,7 @@
               </div>
 
               <div class="row mb-3">
-                <div class="col">
+                <div class="col" *ngIf="!hideInstructions">
                   <small
                     >The month range to use for average contributions and
                     expenses
@@ -184,7 +184,7 @@
                 </div>
               </div>
               <div class="row mb-3">
-                <div class="col">
+                <div class="col" *ngIf="!hideInstructions">
                   <small
                     >"The rate that you can withdraw from your portfolio every
                     year that ensures you have a high probability of never
@@ -226,7 +226,7 @@
               </div>
             </div>
             <div class="form-group">
-              <div class="row">
+              <div class="row align-items-center">
                 <label
                   for="expectedExternalAnnualContributions"
                   class="col-sm-12 col-md-5 col-form-label"
@@ -245,7 +245,7 @@
                 </div>
               </div>
               <div class="row mb-3">
-                <div class="col">
+                <div class="col" *ngIf="!hideInstructions">
                   <small
                     >Annual income expected in retirement from external sources
                     (e.g., pension, social security). This reduces your FI
@@ -255,7 +255,7 @@
               </div>
             </div>
             <div class="form-group">
-              <div class="row">
+              <div class="row align-items-center">
                 <label
                   for="additionalLumpSumNeeded"
                   class="col-sm-12 col-md-5 col-form-label"
@@ -274,7 +274,7 @@
                 </div>
               </div>
               <div class="row mb-3">
-                <div class="col">
+                <div class="col" *ngIf="!hideInstructions">
                   <small
                     >One-time amount needed at retirement (e.g., pay off
                     mortgage, major purchase). This increases your FI
@@ -284,7 +284,7 @@
               </div>
             </div>
             <div class="form-group">
-              <div class="row">
+              <div class="row align-items-center">
                 <label
                   for="expectedAnnualGrowthRate"
                   class="col-sm-12 col-md-5 col-form-label"
@@ -307,7 +307,7 @@
                 </div>
               </div>
               <div class="row mb-3">
-                <div class="col">
+                <div class="col" *ngIf="!hideInstructions">
                   <small>
                     <a
                       target="_blank"
@@ -319,24 +319,6 @@
                       ></fa-icon>
                     </a>
                   </small>
-                </div>
-              </div>
-              <div class="row mb-3">
-                <label
-                  for="includeHiddenYnabCategories"
-                  class="col-sm-12 col-md-5 col-form-label d-flex align-items-center"
-                  >Include Hidden Categories</label
-                >
-                <div class="col">
-                  <div class="form-check d-flex align-items-center">
-                    <input
-                      type="checkbox"
-                      class="form-check-input"
-                      id="includeHiddenYnabCategories"
-                      formControlName="includeHiddenYnabCategories"
-                      aria-describedby="includeHiddenYnabCategoriesHelp"
-                    />
-                  </div>
                 </div>
               </div>
               <div class="row mb-3">
@@ -366,7 +348,7 @@
                 </div>
               </div>
               <hr>
-              <div class="row mb-3">
+              <div class="row mb-3 align-items-center">
                 <label
                   for="targetRetirementAge"
                   class="col-sm-12 col-md-5 col-form-label"
@@ -410,7 +392,7 @@
                 </div>
               </div>
               <div class="row mb-3">
-                <div class="col">
+                <div class="col" *ngIf="!hideInstructions">
                   <small
                     >These are used for Coast FI calculations. Coast FI is the amount
                     needed today where investment growth alone reaches your FI
@@ -428,6 +410,43 @@
                       ></fa-icon>
                     </a>
                   </small>
+                </div>
+              </div>
+              <hr>
+              <div class="row mb-3 align-items-center">
+                <label
+                  for="includeHiddenYnabCategories"
+                  class="col-sm-12 col-md-5 col-form-label d-flex align-items-center"
+                  >Include Hidden Categories</label
+                >
+                <div class="col">
+                  <div class="form-check d-flex align-items-center">
+                    <input
+                      type="checkbox"
+                      class="form-check-input"
+                      id="includeHiddenYnabCategories"
+                      formControlName="includeHiddenYnabCategories"
+                      aria-describedby="includeHiddenYnabCategoriesHelp"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-3 align-items-center">
+                <label
+                  for="hideInstructions"
+                  class="col-sm-12 col-md-5 col-form-label d-flex align-items-center"
+                  >Hide Instructions</label
+                >
+                <div class="col">
+                  <div class="form-check d-flex align-items-center">
+                    <input
+                      type="checkbox"
+                      class="form-check-input"
+                      id="hideInstructions"
+                      formControlName="hideInstructions"
+                      aria-describedby="hideInstructions"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -508,7 +527,7 @@
                 </tbody>
               </table>
             </div>
-            <div class="row">
+            <div class="row" *ngIf="!hideInstructions">
               <div class="col-12">
                 <h4>How we pull these numbers from YNAB</h4>
                 <p>
@@ -572,11 +591,6 @@
                   Reset to YNAB value ({{ ynabCalculatedContribution | currency : currencyIsoCode }})
                 </a>
               </div>
-              <!-- <div class="col-sm-1">
-              <button type="button" class="btn btn-link" (click)="displayContributionInfo = !displayContributionInfo">
-                <fa-icon [icon]="['fas', 'info-circle']"></fa-icon>
-              </button>
-            </div> -->
             </div>
             <div
               class="row"
@@ -612,7 +626,7 @@
                 </tbody>
               </table>
             </div>
-            <div *ngIf="displayContributionInfo">
+            <div *ngIf="!hideInstructions">
               <div class="row">
                 <div class="col-12">
                   <h4>How we pull these numbers from YNAB</h4>
@@ -837,7 +851,7 @@
                 </tbody>
               </table>
             </div>
-            <div class="row">
+            <div class="row" *ngIf="!hideInstructions">
               <div class="col-12">
                 <h4>How we pull these numbers from YNAB</h4>
                 <p>
@@ -902,7 +916,7 @@
                 </p>
               </div>
             </div>
-            <div class="row">
+            <div class="row" *ngIf="!hideInstructions">
               <div class="col-12">
                 <img
                   src="assets/images/HousingCategory.png"
@@ -1113,7 +1127,7 @@
             </div>
 
             <!-- Help text -->
-            <div class="row mt-3">
+            <div class="row mt-3" *ngIf="!hideInstructions">
               <div class="col-12">
                 <p class="mb-2"><strong>About overwritten categories</strong></p>
                 <p class="mb-1">
@@ -1279,7 +1293,7 @@
               </div>
             </div>
 
-            <div class="row mt-3">
+            <div class="row mt-3" *ngIf="!hideInstructions">
               <div class="col-12">
                 <p class="mb-2"><strong>How to add scheduled changes</strong></p>
                 <p class="mb-1">
@@ -1287,15 +1301,15 @@
                 </p>
                 <ul class="small mb-2">
                   <li>
-                    <strong>Contributions:</strong> <code>BR4 + 500 BR4 2027-01 + 1000</code>
+                    <strong>Contributions:</strong><code> BR4 + 500 BR4 2027-01 + 1000</code>
                     — contributes $500/month now, increases to $1,000 starting Jan 2027
                   </li>
                   <li>
-                    <strong>FI Expenses:</strong> <code>BR4 FI 800 BR4 2029-07 FI 0</code>
+                    <strong>FI Expenses:</strong><code> BR4 FI 800 BR4 2029-07 FI 0</code>
                     — $800/month FI expense now, drops to $0 when paid off in Jul 2029
                   </li>
                   <li>
-                    <strong>Lean FI Expenses:</strong> <code>BR4 LFI 400 BR4 2035-01 LFI 0</code>
+                    <strong>Lean FI Expenses:</strong><code> BR4 LFI 400 BR4 2035-01 LFI 0</code>
                     — $400/month Lean FI expense, ends Jan 2035
                   </li>
                 </ul>
