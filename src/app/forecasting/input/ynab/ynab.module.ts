@@ -10,10 +10,10 @@ import { MonthYearPickerComponent } from './month-year-picker.component';
     ReactiveFormsModule,
     FormsModule,
     SharedModule,
+    MonthYearPickerComponent
   ],
   declarations: [
-    YnabComponent,
-    MonthYearPickerComponent
+    YnabComponent
   ],
   exports: [
     YnabComponent,
