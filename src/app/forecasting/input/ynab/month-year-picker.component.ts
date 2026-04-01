@@ -6,7 +6,7 @@ import { faCalendar, faChevronLeft, faChevronRight, faTimes } from '@fortawesome
 
 @Component({
   selector: 'app-month-year-picker',
-  standalone: false,
+  standalone: true,
   imports: [CommonModule, NgbDropdownModule, FontAwesomeModule],
   templateUrl: './month-year-picker.component.html'
 })
