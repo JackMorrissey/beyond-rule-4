@@ -153,13 +153,13 @@ export class FiTextComponent implements OnInit, OnChanges {
             foundCoastFiForecast.date
           ) || '0 Months';
         this.coastFiAge =
-          birthdate && !isNaN(birthdate.getTime())
+          birthdate !== null && !isNaN(birthdate.getTime())
             ? this.forecast.getDistanceFromDateText(
                 foundCoastFiForecast.date,
                 birthdate
               )
             : null;
-        if (birthdate && !isNaN(birthdate.getTime())) {
+        if (birthdate !== null && !isNaN(birthdate.getTime())) {
           const retirementDate = new Date(birthdate.getTime());
           retirementDate.setFullYear(birthdate.getFullYear() + this.targetRetirementAge)
           this.coastFiCoastDistance = this.forecast.getDistanceFromDateText(
@@ -172,9 +172,10 @@ export class FiTextComponent implements OnInit, OnChanges {
       }
     }
 
-    const foundRetirementForecast = this.forecast.monthlyForecasts.find(
-      (f) => Math.abs(f.date.getTime() - birthdate.getTime()) >= (this.targetRetirementAge*1000*60*60*24*365)
-    );
+    const foundRetirementForecast = (birthdate !== null && !isNaN(birthdate.getTime()))
+      ? this.forecast.monthlyForecasts.find(
+        (f) => Math.abs(f.date.getTime() - birthdate.getTime()) >= (this.targetRetirementAge*1000*60*60*24*365)
+      ) : null;
     if (!foundRetirementForecast) {
       this.retirementFiNumber = null;
     } else {
