@@ -32,7 +32,7 @@ jobs:
       run: ls
 
     - name: Deploy to FTP
-      uses: SamKirkland/FTP-Deploy-Action@3.1.2
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.5
       with:
         ftp-server: ${{ secrets.FTP_SERVER }}
         ftp-username: ${{ secrets.FTP_USERNAME }}
